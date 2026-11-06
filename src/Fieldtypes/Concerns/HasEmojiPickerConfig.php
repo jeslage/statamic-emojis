@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Fieldtypes\Concerns;
+namespace StatamicEmojis\Fieldtypes\Concerns;
 
-use Convoy\Emojis\EmojiFields;
+use StatamicEmojis\EmojiFields;
 
 /**
  * The "Emoji Picker" config section shared by the Emoji and Emoji Text fieldtypes.

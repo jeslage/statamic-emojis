@@ -1,9 +1,9 @@
 <?php
 
-namespace Convoy\Emojis\Tests;
+namespace StatamicEmojis\Tests;
 
-use Convoy\Emojis\Fieldtypes\Emoji;
-use Convoy\Emojis\Fieldtypes\EmojiText;
+use StatamicEmojis\Fieldtypes\Emoji;
+use StatamicEmojis\Fieldtypes\EmojiText;
 use Statamic\Fields\Fieldtype;
 use Statamic\Fieldtypes\Text;
 

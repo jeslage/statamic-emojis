@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis;
+namespace StatamicEmojis;
 
-use Convoy\Emojis\Contracts\SetNaming;
+use StatamicEmojis\Contracts\SetNaming;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;

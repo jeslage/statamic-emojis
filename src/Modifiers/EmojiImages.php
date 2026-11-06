@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Modifiers;
+namespace StatamicEmojis\Modifiers;
 
-use Convoy\Emojis\EmojiSets;
+use StatamicEmojis\EmojiSets;
 use Statamic\Fields\Value;
 use Statamic\Modifiers\Modifier;
 

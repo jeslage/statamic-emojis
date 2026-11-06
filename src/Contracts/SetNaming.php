@@ -1,6 +1,6 @@
 <?php
 
-namespace Convoy\Emojis\Contracts;
+namespace StatamicEmojis\Contracts;
 
 /**
  * File naming of a custom emoji image set, for sets that don't fit the built-in schemes

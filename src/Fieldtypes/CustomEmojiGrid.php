@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Fieldtypes;
+namespace StatamicEmojis\Fieldtypes;
 
-use Convoy\Emojis\CustomEmojis;
+use StatamicEmojis\CustomEmojis;
 use Statamic\Fields\Fieldtype;
 
 /**

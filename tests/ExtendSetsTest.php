@@ -1,10 +1,10 @@
 <?php
 
-namespace Convoy\Emojis\Tests;
+namespace StatamicEmojis\Tests;
 
-use Convoy\Emojis\Contracts\SetNaming;
-use Convoy\Emojis\EmojiSets;
-use Convoy\Emojis\Fieldtypes\Emoji;
+use StatamicEmojis\Contracts\SetNaming;
+use StatamicEmojis\EmojiSets;
+use StatamicEmojis\Fieldtypes\Emoji;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 

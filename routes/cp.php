@@ -1,9 +1,9 @@
 <?php
 
-use Convoy\Emojis\Http\Controllers\CustomEmojisController;
-use Convoy\Emojis\Http\Controllers\EmojibaseController;
-use Convoy\Emojis\Http\Controllers\EmojisPageController;
-use Convoy\Emojis\Http\Controllers\ImageCacheController;
+use StatamicEmojis\Http\Controllers\CustomEmojisController;
+use StatamicEmojis\Http\Controllers\EmojibaseController;
+use StatamicEmojis\Http\Controllers\EmojisPageController;
+use StatamicEmojis\Http\Controllers\ImageCacheController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('statamic-emojis/emojibase/{categories}/{locale}/{file}', EmojibaseController::class)

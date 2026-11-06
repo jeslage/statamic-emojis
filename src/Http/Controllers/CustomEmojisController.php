@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Http\Controllers;
+namespace StatamicEmojis\Http\Controllers;
 
-use Convoy\Emojis\CustomEmojis;
+use StatamicEmojis\CustomEmojis;
 use Illuminate\Http\JsonResponse;
 
 /**

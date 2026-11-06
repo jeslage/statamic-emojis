@@ -1,6 +1,6 @@
 <?php
 
-namespace Convoy\Emojis;
+namespace StatamicEmojis;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;

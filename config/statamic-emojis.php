@@ -51,10 +51,10 @@ return [
     |   "fluent"   1f9d1-200d-1f680.svg      (lowercase, joined by "-"; default)
     |   "openmoji" 1F9D1-200D-1F680.svg      (uppercase, joined by "-")
     |   "noto"     2D/svg/emoji_u1f9d1_200d_1f680.svg (Noto's repository layout)
-    |   or a class implementing Convoy\Emojis\Contracts\SetNaming.
+    |   or a class implementing StatamicEmojis\Contracts\SetNaming.
     | Variants with and without the variation selector FE0F are tried.
     |
-    | Sets can also be added in code: Convoy\Emojis\EmojiSets::extend('name', [...]).
+    | Sets can also be added in code: StatamicEmojis\EmojiSets::extend('name', [...]).
     */
 
     'sets' => [

@@ -1,6 +1,6 @@
 <?php
 
-namespace Convoy\Emojis;
+namespace StatamicEmojis;
 
 use Statamic\Addons\Addon as AddonInstance;
 use Statamic\Facades\Addon;
@@ -11,7 +11,7 @@ use Statamic\Facades\Addon;
  */
 class EmojiSettings
 {
-    public const PACKAGE = 'convoy/statamic-emojis';
+    public const PACKAGE = 'jeslage/statamic-emojis';
 
     public function addon(): ?AddonInstance
     {

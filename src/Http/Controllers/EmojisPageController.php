@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Http\Controllers;
+namespace StatamicEmojis\Http\Controllers;
 
-use Convoy\Emojis\EmojiSettings;
+use StatamicEmojis\EmojiSettings;
 use Statamic\CP\PublishForm;
 use Statamic\Http\Controllers\CP\CpController;
 

@@ -9,7 +9,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PACKAGE="convoy/statamic-emojis"
+PACKAGE="jeslage/statamic-emojis"
 DDEV_PROJECT="statamic-emojis"
 DDEV_URL="https://${DDEV_PROJECT}.ddev.site"
 # Name of the addon's folder (the parent of this playground), used for the DDEV mount.

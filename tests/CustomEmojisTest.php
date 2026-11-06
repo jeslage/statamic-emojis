@@ -1,9 +1,9 @@
 <?php
 
-namespace Convoy\Emojis\Tests;
+namespace StatamicEmojis\Tests;
 
-use Convoy\Emojis\CustomEmojis;
-use Convoy\Emojis\EmojiSets;
+use StatamicEmojis\CustomEmojis;
+use StatamicEmojis\EmojiSets;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;

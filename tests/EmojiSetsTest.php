@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Tests;
+namespace StatamicEmojis\Tests;
 
-use Convoy\Emojis\EmojiSets;
+use StatamicEmojis\EmojiSets;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\View;

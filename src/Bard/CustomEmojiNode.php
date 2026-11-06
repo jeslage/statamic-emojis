@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Bard;
+namespace StatamicEmojis\Bard;
 
-use Convoy\Emojis\CustomEmojis;
+use StatamicEmojis\CustomEmojis;
 use Tiptap\Core\Node;
 
 /**

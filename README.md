@@ -19,7 +19,7 @@ Add the addon to a Statamic site as a path repository in the site's `composer.js
 
 ```json
 "require": {
-    "convoy/statamic-emojis": "*"
+    "jeslage/statamic-emojis": "*"
 },
 "repositories": [
     { "type": "path", "url": "../statamic-emojis" }
@@ -29,7 +29,7 @@ Add the addon to a Statamic site as a path repository in the site's `composer.js
 Then run the following:
 
 ```bash
-composer update convoy/statamic-emojis   # in the site
+composer update jeslage/statamic-emojis   # in the site
 composer install && npm install          # in this addon
 npm run dev                              # HMR while developing
 npm run build                            # production build -> resources/dist
@@ -154,12 +154,12 @@ tried):
 | `fluent`   | `1f9d1-200d-1f680.svg` (default)      |
 | `openmoji` | `1F9D1-200D-1F680.svg`                |
 | `noto`     | `2D/svg/emoji_u1f9d1_200d_1f680.svg`  |
-| a class    | implementing `Convoy\Emojis\Contracts\SetNaming` (`files(array $codepoints): array`) |
+| a class    | implementing `StatamicEmojis\Contracts\SetNaming` (`files(array $codepoints): array`) |
 
 Sets can also be added in code, e.g. from a site's or another addon's service provider:
 
 ```php
-use Convoy\Emojis\EmojiSets;
+use StatamicEmojis\EmojiSets;
 
 EmojiSets::extend('twemoji', [
     'label' => 'Twemoji',

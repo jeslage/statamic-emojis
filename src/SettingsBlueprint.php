@@ -1,6 +1,6 @@
 <?php
 
-namespace Convoy\Emojis;
+namespace StatamicEmojis;
 
 /**
  * Blueprint of the Emojis CP page (Statamic addon settings, saved to resources/addons/statamic-emojis.yaml).

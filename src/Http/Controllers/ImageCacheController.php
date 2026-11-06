@@ -1,10 +1,10 @@
 <?php
 
-namespace Convoy\Emojis\Http\Controllers;
+namespace StatamicEmojis\Http\Controllers;
 
-use Convoy\Emojis\Emojibase;
-use Convoy\Emojis\EmojiSets;
-use Convoy\Emojis\EmojiSettings;
+use StatamicEmojis\Emojibase;
+use StatamicEmojis\EmojiSets;
+use StatamicEmojis\EmojiSettings;
 use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace Convoy\Emojis;
+namespace StatamicEmojis;
 
-use Convoy\Emojis\Bard\CustomEmojiNode;
-use Convoy\Emojis\Console\Commands\ClearEmojiSet;
-use Convoy\Emojis\Console\Commands\SetupCustomEmojis;
-use Convoy\Emojis\Console\Commands\WarmEmojiSet;
-use Convoy\Emojis\Fieldtypes\CustomEmojiGrid;
-use Convoy\Emojis\Fieldtypes\Emoji;
-use Convoy\Emojis\Fieldtypes\EmojiText;
-use Convoy\Emojis\Fieldtypes\ImageCache;
+use StatamicEmojis\Bard\CustomEmojiNode;
+use StatamicEmojis\Console\Commands\ClearEmojiSet;
+use StatamicEmojis\Console\Commands\SetupCustomEmojis;
+use StatamicEmojis\Console\Commands\WarmEmojiSet;
+use StatamicEmojis\Fieldtypes\CustomEmojiGrid;
+use StatamicEmojis\Fieldtypes\Emoji;
+use StatamicEmojis\Fieldtypes\EmojiText;
+use StatamicEmojis\Fieldtypes\ImageCache;
 use Illuminate\Support\Facades\Event;
 use Statamic\Events\AssetDeleted;
 use Statamic\Events\AssetReuploaded;

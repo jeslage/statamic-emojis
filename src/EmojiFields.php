@@ -1,6 +1,6 @@
 <?php
 
-namespace Convoy\Emojis;
+namespace StatamicEmojis;
 
 /**
  * Field definitions for the picker settings, shared by the fieldtypes' config ("Emoji Picker" section)

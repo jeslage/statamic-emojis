@@ -1,6 +1,6 @@
 <?php
 
-use Convoy\Emojis\Http\Controllers\EmojiImageController;
+use StatamicEmojis\Http\Controllers\EmojiImageController;
 use Illuminate\Support\Facades\Route;
 
 // Served at /!/statamic-emojis/sets/{set}/{codes}.svg (public: used in the CP and on the front end)

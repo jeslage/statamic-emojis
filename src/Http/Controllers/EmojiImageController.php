@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Http\Controllers;
+namespace StatamicEmojis\Http\Controllers;
 
-use Convoy\Emojis\EmojiSets;
+use StatamicEmojis\EmojiSets;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

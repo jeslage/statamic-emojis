@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Console\Commands;
+namespace StatamicEmojis\Console\Commands;
 
-use Convoy\Emojis\CustomEmojis;
+use StatamicEmojis\CustomEmojis;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Facades\AssetContainer;

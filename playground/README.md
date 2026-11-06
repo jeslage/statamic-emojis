@@ -106,5 +106,5 @@ should be committed.
 
 ```bash
 composer config repositories.statamic-emojis path ../path/to/statamic-emojis
-composer require convoy/statamic-emojis:@dev
+composer require jeslage/statamic-emojis:@dev
 ```

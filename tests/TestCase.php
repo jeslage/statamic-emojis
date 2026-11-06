@@ -1,8 +1,8 @@
 <?php
 
-namespace Convoy\Emojis\Tests;
+namespace StatamicEmojis\Tests;
 
-use Convoy\Emojis\ServiceProvider;
+use StatamicEmojis\ServiceProvider;
 use Statamic\Facades\User;
 use Statamic\Testing\AddonTestCase;
 

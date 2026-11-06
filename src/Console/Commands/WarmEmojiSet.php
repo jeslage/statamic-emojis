@@ -1,9 +1,9 @@
 <?php
 
-namespace Convoy\Emojis\Console\Commands;
+namespace StatamicEmojis\Console\Commands;
 
-use Convoy\Emojis\Emojibase;
-use Convoy\Emojis\EmojiSets;
+use StatamicEmojis\Emojibase;
+use StatamicEmojis\EmojiSets;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 
