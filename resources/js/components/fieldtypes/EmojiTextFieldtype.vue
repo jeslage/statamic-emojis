@@ -4,6 +4,7 @@ import { Fieldtype } from "@statamic/cms";
 import { Button, Input, Popover, useContentDirection } from "@statamic/cms/ui";
 import { SmilePlus } from "@lucide/vue";
 import EmojiPicker from "../EmojiPicker.vue";
+import { pickerOptions } from "../../settings.js";
 
 const emit = defineEmits(Fieldtype.emits);
 const props = defineProps(Fieldtype.props);
@@ -106,10 +107,7 @@ function insert(emoji) {
                 </Button>
             </template>
             <EmojiPicker
-                :categories="config.categories ?? []"
-                :set="config.emoji_set"
-                :skin-tone="config.skin_tone ?? 'none'"
-                :skin-tone-selector="config.skin_tone_selector ?? true"
+                v-bind="pickerOptions(config)"
                 @select="insert"
             />
         </Popover>

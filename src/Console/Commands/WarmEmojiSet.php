@@ -29,12 +29,7 @@ class WarmEmojiSet extends Command
             return self::FAILURE;
         }
 
-        $codes = collect($emojibase->data('en'))
-            ->flatMap(fn ($emoji) => [$emoji['emoji'] ?? null, ...array_column($emoji['skins'] ?? [], 'emoji')])
-            ->filter()
-            ->map(fn ($emoji) => $sets->codepoints($emoji))
-            ->unique()
-            ->values();
+        $codes = collect($sets->allCodes($emojibase));
 
         $this->components->info("Fetching {$codes->count()} emojis of [{$set}]…");
 
