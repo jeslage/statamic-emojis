@@ -1,0 +1,27 @@
+title: Emoji
+tabs:
+  main:
+    sections:
+      -
+        fields:
+          -
+            handle: alt
+            field:
+              type: text
+              display: 'statamic-emojis::messages.blueprint.name'
+              instructions: 'statamic-emojis::messages.blueprint.name_instructions'
+          -
+            handle: shortcode
+            field:
+              type: text
+              display: 'statamic-emojis::messages.blueprint.shortcode'
+              instructions: 'statamic-emojis::messages.blueprint.shortcode_instructions'
+              validate:
+                - nullable
+                - 'regex:/^[a-z0-9_+-]+$/'
+          -
+            handle: keywords
+            field:
+              type: taggable
+              display: 'statamic-emojis::messages.blueprint.keywords'
+              instructions: 'statamic-emojis::messages.blueprint.keywords_instructions'

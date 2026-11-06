@@ -6,11 +6,11 @@ A Statamic 6 addon that provides:
 - **Emoji Text fieldtype** (`emoji_text`): extends the core Text fieldtype and adds an emoji picker that inserts at the cursor.
 - **Bard emoji button**: a Bard toolbar button that inserts emojis at the cursor.
 
-The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.id), with category tabs, search, skin tones and a preview footer. Emoji data (Emojibase) is served through the Control Panel (see [Emoji data](#emoji-data)), and emojis can be shown as Noto, Fluent or OpenMoji images (see [Emoji sets](#emoji-sets)).
+The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.id), with category tabs, search, skin tones and a preview footer. Emoji data (Emojibase) is served through the Control Panel (see [Emoji data](#emoji-data)), emojis can be shown as Noto, Fluent or OpenMoji images (see [Emoji sets](#emoji-sets)), and editors can upload their own (see [Custom emojis](#custom-emojis)).
 
 ## Translations
 
-- **Picker UI** (search placeholder, loading/empty states, button labels): `lang/{locale}/messages.php`, available in JS as `__('statamic-emojis::messages.<key>')`. Ships with `en`, `de`, `es` and `fr`; override them in a site via `lang/vendor/statamic-emojis/{locale}/messages.php`.
+- **Picker UI, Emojis page and the custom emoji asset blueprint** (labels, instructions, button texts): `lang/{locale}/messages.php`, available in JS as `__('statamic-emojis::messages.<key>')`. Ships with `en`, `de`, `es` and `fr`; override them in a site via `lang/vendor/statamic-emojis/{locale}/messages.php`.
 - **Emoji categories, labels and search keywords** come from [Emojibase](https://emojibase.dev) in the Control Panel user's language (`resources/js/locale.js` maps Laravel locales such as `de_CH` or `zh_TW` to Emojibase locales, falling back to `en`).
 
 ## Local development
@@ -42,7 +42,27 @@ npm run build                            # production build -> resources/dist
 - **Emoji** (`type: emoji`): stores a single emoji string, or `null` when removed.
 - **Emoji Text** (`type: emoji_text`): accepts all Text field settings (placeholder, character limit, prepend, …).
 
-Both fieldtypes share these picker settings:
+## Emojis page
+
+**Settings → Emojis** in the Control Panel (users with the "edit Statamic Emojis settings" permission;
+the same settings are under Tools → Addons). Saved to `resources/addons/statamic-emojis.yaml`.
+
+- **General:** the site-wide emoji set, and picker defaults (categories, skin tone, skin tone selector)
+  plus **Recently used**: each editor's recently picked emojis as a row above the list in the search
+  tab (up to two rows, hidden while searching; stored in their browser; only in pickers without a
+  category limit).
+- **Custom Emojis:** turn custom emojis on or off, see all uploaded ones, and open the asset
+  container to upload more.
+- **Image Cache:** cached images and disk size per emoji set, with buttons to fill (with progress) or
+  clear a set's cache.
+
+**Which value applies:** a field's own setting, else the Emojis page, else `config/statamic-emojis.php`
+(and its `.env` variables). Values saved on the page take precedence over the config file.
+
+## Field settings
+
+Both fieldtypes share these picker settings. Empty values use the site-wide settings from the Emojis
+page; the field shows them as "Default (…)":
 
 | Setting              | Default | Description                                                                 |
 | -------------------- | ------- | --------------------------------------------------------------------------- |
@@ -50,6 +70,7 @@ Both fieldtypes share these picker settings:
 | `skin_tone`          | `none`  | Starting skin tone: `none`, `light`, `medium-light`, `medium`, `medium-dark`, `dark` |
 | `skin_tone_selector` | `true`  | Show a skin tone button in the picker; the editor's choice is remembered per browser |
 | `emoji_set`          | site-wide | `native`, `noto`, `fluent` or `openmoji` (see [Emoji sets](#emoji-sets)) |
+| `custom_emojis`      | `true`  | Offer the uploaded custom emojis (see [Custom emojis](#custom-emojis)) |
 
 Category keys: `smileys-people` (smileys, emotion, people and body, merged like Slack), `animals-nature`, `food-drink`, `travel-places`, `activities`, `objects`, `symbols`, `flags`.
 
@@ -86,7 +107,8 @@ Emojis are always **stored as Unicode**. How they look is a setting, so it can c
 Apple's emoji artwork is proprietary and can't be used as an image set; visitors on Apple devices
 see it with `native`.
 
-- **Site-wide:** `STATAMIC_EMOJIS_SET=noto` (or `set` in the published config). Default: `native`.
+- **Site-wide:** on the Emojis page, or `STATAMIC_EMOJIS_SET=noto` (`set` in the published config).
+  Default: `native`.
 - **Per field:** the "Emoji Set" setting in the field's "Emoji Picker" section overrides it.
 
 The set is used in the picker and by the `emoji_images` modifier. Image sets are SVGs that the
@@ -94,11 +116,59 @@ server fetches once (pinned versions, see the config), caches in `storage/statam
 serves from `/!/statamic-emojis/sets/{set}/{codepoints}.svg`, so visitors' browsers never contact a
 CDN. Emojis a set doesn't have fall back to the native character.
 
-Fill the cache in advance, e.g. after deploying (otherwise images are fetched on first view):
+Fill the cache in advance, e.g. after deploying (otherwise images are fetched on first view). The
+Image Cache tab on the Emojis page does the same with a progress bar:
 
 ```bash
 php please emojis:warm noto   # or: fluent, openmoji; default: the site-wide set
 ```
+
+### Adding, changing and disabling sets
+
+The built-in sets are always available. In the published config (`php artisan vendor:publish
+--tag=statamic-emojis-config`), `sets` only lists **additions or changes**, so you never have to
+copy the built-in ones:
+
+```php
+// config/statamic-emojis.php
+'sets' => [
+    // A new set (names: lowercase letters only)
+    'twemoji' => [
+        'label' => 'Twemoji',
+        'url' => 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg',
+        'naming' => 'fluent',
+    ],
+    // Only the keys you set change, e.g. a self-hosted copy of a built-in set
+    'noto' => ['url' => 'https://emojis.example.com/noto'],
+],
+
+// Remove sets from the selection: ['fluent'], or ['*'] for native emojis only
+'disabled_sets' => [],
+```
+
+`naming` is how the set names its files (variants with and without the variation selector FE0F are
+tried):
+
+| `naming`   | File for 🧑‍🚀                          |
+| ---------- | ------------------------------------- |
+| `fluent`   | `1f9d1-200d-1f680.svg` (default)      |
+| `openmoji` | `1F9D1-200D-1F680.svg`                |
+| `noto`     | `2D/svg/emoji_u1f9d1_200d_1f680.svg`  |
+| a class    | implementing `Convoy\Emojis\Contracts\SetNaming` (`files(array $codepoints): array`) |
+
+Sets can also be added in code, e.g. from a site's or another addon's service provider:
+
+```php
+use Convoy\Emojis\EmojiSets;
+
+EmojiSets::extend('twemoji', [
+    'label' => 'Twemoji',
+    'url' => 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg',
+]);
+```
+
+`label` can be plain text or a translation key. Check the license of a set you add (Twemoji, for
+example, is CC-BY 4.0 and needs an attribution).
 
 Empty the cache, e.g. after changing a set's `url` in the config (images are fetched again on next
 use; browsers may keep images they already loaded for up to 30 days):
@@ -138,6 +208,36 @@ Images get `class="emoji"`; size them with your CSS, e.g.
   appear in the picker, the Emoji field and the front-end output.
 - The picker hides emojis the *editor's* device can't render (e.g. flags in Chrome on Windows), even
   with an image set.
+
+## Custom emojis
+
+Editors can upload their own emoji images (PNG, GIF, WebP or SVG, up to 1 MB) and use them like
+regular emojis, referenced by **shortcode**, e.g. `:party-parrot:`.
+
+```bash
+php please emojis:custom-setup   # once: creates the "statamic-emojis" asset container and its blueprint
+```
+
+- **Upload:** Settings → Emojis → Custom Emojis → "Upload & manage" (the "Emojis" asset container; Statamic's per-container
+  permissions apply). Each image has a **Name** (picker label and alt text), an optional **Shortcode**
+  (defaults to the filename, e.g. `party-parrot.png` → `:party-parrot:`) and **Keywords** for search.
+- **Picker:** a "Custom" tab, and matching custom emojis above the regular search results. Fields can
+  turn them off with the "Custom Emojis" setting.
+- **Values:** the Emoji field stores `:shortcode:`, Emoji Text inserts `:shortcode:` as text, and Bard
+  inserts an inline image node (shown as the image in the editor).
+- **Output:** Bard renders custom emojis as `<img class="emoji emoji-custom">` automatically. For Emoji
+  and Emoji Text values, use the `emoji_images` modifier (in every emoji set, including `native`).
+  Unknown shortcodes stay text.
+
+Shortcodes are lowercase letters, numbers, `-`, `_` and `+`. **Renaming a shortcode breaks existing
+references** (they show as `:old-name:` text). Folders are only for organizing: the shortcode comes from the
+filename (or the Shortcode field), so `halloween/ghost.svg` is `:ghost:`. If two images share a shortcode,
+the first by path wins. Uploaded SVGs are sanitized by Statamic (`svg_sanitization_on_upload`).
+
+Images are stored on the `statamic-emojis` disk, which the addon defines as `public/statamic-emojis` unless your
+`config/filesystems.php` has a disk with that name (e.g. on S3). Container, disk and the feature itself
+can be changed in the config (`custom`) or with `STATAMIC_EMOJIS_CUSTOM`,
+`STATAMIC_EMOJIS_CUSTOM_CONTAINER` and `STATAMIC_EMOJIS_CUSTOM_DISK`.
 
 ## Databases
 

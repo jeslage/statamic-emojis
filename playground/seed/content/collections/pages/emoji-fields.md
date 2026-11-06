@@ -7,9 +7,9 @@ emoji: 🎉
 emoji_configured: 😎
 emoji_read_only: 🔒
 emoji_required: ✅
-emoji_text: 'Party time 🎉'
+emoji_text: 'Party time 🎉 :sparkle-star:'
 emoji_text_configured: '😎 relaxed'
-emoji_text_required: 'Done ✅'
+emoji_text_required: 'Done :approved:'
 content:
   -
     type: heading
@@ -25,6 +25,17 @@ content:
       -
         type: text
         text: 'Place the cursor here and use the emoji button in the toolbar 🚀'
+      -
+        type: text
+        text: ' Custom emojis: '
+      -
+        type: customEmoji
+        attrs:
+          shortcode: sparkle-star
+      -
+        type: customEmoji
+        attrs:
+          shortcode: pixel-heart
 content_without_emoji:
   -
     type: paragraph

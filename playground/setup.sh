@@ -142,6 +142,9 @@ run_composer config minimum-stability dev
 run_composer config prefer-stable true
 run_composer require "${PACKAGE}:@dev" --no-interaction
 
+# Asset container + blueprint for custom emojis (idempotent; the seed also ships them)
+run_php please emojis:custom-setup
+
 if [ "$mode" = "ddev" ]; then
   if grep -q "^APP_URL=" .env; then
     sed -i.bak "s|^APP_URL=.*|APP_URL=${DDEV_URL}|" .env && rm -f .env.bak

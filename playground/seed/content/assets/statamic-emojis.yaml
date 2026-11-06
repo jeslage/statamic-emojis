@@ -1,0 +1,6 @@
+title: Emojis
+disk: statamic-emojis
+validate:
+  - 'image:allow_svg'
+  - 'mimes:png,gif,webp,svg'
+  - 'max:1024'

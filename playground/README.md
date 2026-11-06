@@ -90,6 +90,10 @@ Fields in the `pages` blueprint:
 Both templates show each value as stored and through the `emoji_images` modifier, plus a row per
 emoji set. Run `php please emojis:warm noto` (and `fluent`, `openmoji`) once to fill the image cache.
 
+Custom emojis: the seed ships the `statamic-emojis` asset container (title "Emojis") with three sample images
+(`:sparkle-star:`, `:pixel-heart:`, `:approved:`), used in Emoji Text and Bard. Settings, the
+custom emoji grid and the image cache are under Settings → Emojis.
+
 The two emoji pages hold identical data, one rendered with Antlers (`/emoji-fields`) and one
 with Blade (`/emoji-fields-blade`), so the addon's output can be compared in both engines.
 Statamic only wraps Antlers templates in a layout, so the Blade page template is a full HTML
