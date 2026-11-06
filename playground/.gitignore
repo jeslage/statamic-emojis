@@ -1,0 +1,6 @@
+# Only the setup script, README and seed content are committed; the install is local.
+/*
+!/.gitignore
+!/README.md
+!/setup.sh
+!/seed/

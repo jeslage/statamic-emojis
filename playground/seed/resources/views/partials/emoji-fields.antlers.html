@@ -1,0 +1,50 @@
+{{#
+    Antlers counterpart of the <x-emoji-fields> Blade component: outputs every test field of the pages blueprint.
+    Usage: {{ partial:emoji-fields }}
+#}}
+<div class="max-w-2xl mx-auto py-12 px-4 space-y-10">
+    <h1 class="text-3xl font-bold">{{ title }}</h1>
+
+    <section class="space-y-3">
+        <h2 class="text-xl font-semibold">Emoji fieldtype</h2>
+        <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
+            <dt class="font-mono text-sm">emoji</dt>
+            <dd class="text-2xl">{{ emoji ?? '–' }}</dd>
+            <dt class="font-mono text-sm">emoji_configured</dt>
+            <dd class="text-2xl">{{ emoji_configured ?? '–' }}</dd>
+            <dt class="font-mono text-sm">emoji_read_only</dt>
+            <dd class="text-2xl">{{ emoji_read_only ?? '–' }}</dd>
+            <dt class="font-mono text-sm">emoji_required</dt>
+            <dd class="text-2xl">{{ emoji_required ?? '–' }}</dd>
+        </dl>
+    </section>
+
+    <section class="space-y-3">
+        <h2 class="text-xl font-semibold">Bard</h2>
+        <h3 class="font-mono text-sm">content</h3>
+        <div class="prose dark:prose-invert">{{ content }}</div>
+        <h3 class="font-mono text-sm">content_without_emoji</h3>
+        <div class="prose dark:prose-invert">{{ content_without_emoji }}</div>
+    </section>
+
+    <section class="space-y-3">
+        <h2 class="text-xl font-semibold">Replicator <span class="font-mono text-sm">blocks</span></h2>
+        {{ blocks }}
+            {{ if type === 'callout' }}
+                <aside class="flex gap-3 rounded-lg bg-white p-4 dark:bg-zinc-800">
+                    <span class="text-2xl">{{ icon }}</span>
+                    <div class="prose dark:prose-invert">{{ text }}</div>
+                </aside>
+            {{ /if }}
+        {{ /blocks }}
+    </section>
+
+    <section class="space-y-3">
+        <h2 class="text-xl font-semibold">Grid <span class="font-mono text-sm">reactions</span></h2>
+        <ul class="flex flex-wrap gap-2">
+            {{ reactions }}
+                <li class="rounded-full bg-white px-3 py-1 dark:bg-zinc-800">{{ emoji }} {{ label }}</li>
+            {{ /reactions }}
+        </ul>
+    </section>
+</div>

@@ -1,0 +1,135 @@
+title: Page
+tabs:
+  main:
+    display: Main
+    sections:
+      -
+        display: 'Emoji fieldtype'
+        fields:
+          -
+            handle: title
+            field:
+              type: text
+              validate:
+                - required
+          -
+            handle: emoji
+            field:
+              type: emoji
+              display: Emoji
+              instructions: 'Emoji field with default config.'
+          -
+            handle: emoji_configured
+            field:
+              type: emoji
+              display: 'Emoji (configured)'
+              instructions: 'Inherited Text config: placeholder, character limit, prepend.'
+              placeholder: 'Pick a mood…'
+              character_limit: 20
+              prepend: 'Mood:'
+              skin_tone: medium-dark
+              categories:
+                - smileys-emotion
+                - animals-nature
+              width: 50
+          -
+            handle: emoji_read_only
+            field:
+              type: emoji
+              display: 'Emoji (read only)'
+              visibility: read_only
+              width: 50
+          -
+            handle: emoji_required
+            field:
+              type: emoji
+              display: 'Emoji (required)'
+              instructions: 'Without the skin tone selector.'
+              skin_tone_selector: false
+              validate:
+                - required
+      -
+        display: 'Bard emoji button'
+        fields:
+          -
+            handle: content
+            field:
+              type: bard
+              display: Content
+              instructions: 'Bard with the emoji button enabled.'
+              buttons:
+                - h2
+                - bold
+                - italic
+                - unorderedlist
+                - anchor
+                - emoji
+          -
+            handle: content_without_emoji
+            field:
+              type: bard
+              display: 'Content (no emoji button)'
+              instructions: 'Control: the emoji button must not appear here.'
+              buttons:
+                - bold
+                - italic
+      -
+        display: 'Nested fields'
+        fields:
+          -
+            handle: blocks
+            field:
+              type: replicator
+              display: Blocks
+              sets:
+                main:
+                  display: Main
+                  sets:
+                    callout:
+                      display: Callout
+                      fields:
+                        -
+                          handle: icon
+                          field:
+                            type: emoji
+                        -
+                          handle: text
+                          field:
+                            type: bard
+                            buttons:
+                              - bold
+                              - emoji
+          -
+            handle: reactions
+            field:
+              type: grid
+              display: Reactions
+              fields:
+                -
+                  handle: emoji
+                  field:
+                    type: emoji
+                -
+                  handle: label
+                  field:
+                    type: text
+  sidebar:
+    display: Sidebar
+    sections:
+      -
+        fields:
+          -
+            handle: slug
+            field:
+              type: slug
+              validate:
+                - required
+          -
+            handle: parent
+            field:
+              type: entries
+              collections:
+                - pages
+              max_items: 1
+              listable: false
+              localizable: true
