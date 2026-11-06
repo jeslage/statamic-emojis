@@ -48,6 +48,8 @@ return [
         'section_picker' => 'Standards der Auswahl',
         'section_picker_instructions' => 'Gilt für alle Emoji-Felder und den Emoji-Button in Bard. Jedes Feld kann sie in seinen Einstellungen unter „Emoji-Auswahl“ überschreiben.',
         'categories_instructions' => 'Kategorien, die die Auswahl anbietet. Leer lassen, um alle zu erlauben.',
+        'suggestions' => 'Shortcode-Vorschläge',
+        'suggestions_instructions' => 'Schlägt beim Tippen von :name, z. B. :rock, Emojis vor – in Emoji-Text-Feldern und in Bard-Feldern mit Emoji-Button.',
         'recent_emojis' => 'Zuletzt verwendet',
         'recent_emojis_instructions' => 'Zeigt die zuletzt gewählten Emojis jedes Redakteurs über der Liste im Such-Tab (in seinem Browser gespeichert). Nicht in Auswahlen mit Kategorie-Einschränkung.',
         'tab_custom' => 'Eigene Emojis',

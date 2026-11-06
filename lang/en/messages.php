@@ -48,6 +48,8 @@ return [
         'section_picker' => 'Picker Defaults',
         'section_picker_instructions' => 'Used by all emoji fields and the Bard emoji button. Each field can override them in its "Emoji Picker" settings.',
         'categories_instructions' => 'Categories the picker offers. Leave empty to allow all.',
+        'suggestions' => 'Shortcode Suggestions',
+        'suggestions_instructions' => 'Suggest emojis while typing :name, e.g. :rock, in Emoji Text fields and in Bard fields with the emoji button.',
         'recent_emojis' => 'Recently Used',
         'recent_emojis_instructions' => 'Show the emojis each editor picked recently above the list in the search tab (stored in their browser). Not in pickers with a category limit.',
         'tab_custom' => 'Custom Emojis',

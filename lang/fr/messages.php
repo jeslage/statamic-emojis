@@ -48,6 +48,8 @@ return [
         'section_picker' => 'Valeurs par défaut du sélecteur',
         'section_picker_instructions' => 'Utilisées par tous les champs emoji et le bouton emoji de Bard. Chaque champ peut les remplacer dans ses réglages du sélecteur d’emojis.',
         'categories_instructions' => 'Catégories proposées par le sélecteur. Laisser vide pour toutes les autoriser.',
+        'suggestions' => 'Suggestions de codes courts',
+        'suggestions_instructions' => 'Propose des emojis en tapant :nom, par ex. :rock, dans les champs Texte avec emoji et dans les champs Bard avec le bouton emoji.',
         'recent_emojis' => 'Utilisés récemment',
         'recent_emojis_instructions' => 'Affiche les emojis choisis récemment par chaque éditeur au-dessus de la liste dans l’onglet de recherche (enregistrés dans son navigateur). Pas dans les sélecteurs limités à certaines catégories.',
         'tab_custom' => 'Emojis personnalisés',

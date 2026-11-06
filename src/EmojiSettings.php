@@ -42,6 +42,12 @@ class EmojiSettings
         return $this->bool($this->get('recent_emojis'), true);
     }
 
+    /** Shortcode suggestions while typing ":name" in Emoji Text and Bard. */
+    public function suggestions(): bool
+    {
+        return $this->bool($this->get('suggestions'), true);
+    }
+
     /** Default allowed categories, empty = all. */
     public function categories(): array
     {
@@ -68,6 +74,7 @@ class EmojiSettings
             'skinTone' => $this->skinTone(),
             'skinToneSelector' => $this->skinToneSelector(),
             'recent' => $this->recentEmojis(),
+            'suggestions' => $this->suggestions(),
         ];
     }
 

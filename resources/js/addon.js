@@ -4,6 +4,7 @@ import CustomEmojiGridFieldtype from "./components/fieldtypes/CustomEmojiGridFie
 import ImageCacheFieldtype from "./components/fieldtypes/ImageCacheFieldtype.vue";
 import EmojiToolbarButton from "./components/bard/EmojiToolbarButton.vue";
 import customEmojiNode from "./bard/custom-emoji-node.js";
+import emojiSuggestions from "./bard/emoji-suggestions.js";
 import { h, render } from "vue";
 import { SmilePlus } from "@lucide/vue";
 
@@ -25,6 +26,9 @@ Statamic.booting(() => {
 
     // Bard: inline node for custom emojis (":shortcode:"), rendered as their image in the editor
     Statamic.$bard.addExtension(customEmojiNode);
+
+    // Bard: shortcode suggestions (":rock") in fields with the emoji button
+    Statamic.$bard.addExtension(emojiSuggestions);
 
     // Bard: adds an "emoji" button that can be enabled in the Bard field's button config
     Statamic.$bard.buttons((buttons, button) => {

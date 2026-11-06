@@ -1,10 +1,13 @@
 <script setup>
-import { computed, nextTick, ref, useTemplateRef } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, useTemplateRef } from "vue";
 import { Fieldtype } from "@statamic/cms";
 import { Button, Input, Popover, useContentDirection } from "@statamic/cms/ui";
 import { SmilePlus } from "@lucide/vue";
 import EmojiPicker from "../EmojiPicker.vue";
-import { pickerOptions } from "../../settings.js";
+import EmojiSuggestions from "../EmojiSuggestions.vue";
+import { pickerOptions, siteSettings } from "../../settings.js";
+import { findTrigger, loadEmojiIndex, searchEmojis } from "../../emoji-search.js";
+import { rememberEmoji } from "../../recent-emojis.js";
 
 const emit = defineEmits(Fieldtype.emits);
 const props = defineProps(Fieldtype.props);
@@ -63,10 +66,99 @@ function insert(emoji) {
         }
     });
 }
+
+// Shortcode suggestions: typing ":rock" lists matching emojis; ↑/↓ choose, Enter/Tab insert, Escape closes.
+const suggest = reactive({ items: [], active: 0, start: 0, end: 0 });
+let suggestRequest = 0;
+
+function closeSuggestions() {
+    suggestRequest++;
+    suggest.items = [];
+}
+
+async function updateSuggestions() {
+    const el = nativeInput();
+
+    if (!el || isReadOnly.value || siteSettings().suggestions === false || el.selectionStart !== el.selectionEnd) {
+        return closeSuggestions();
+    }
+
+    const cursor = el.selectionStart ?? 0;
+    const trigger = findTrigger(el.value.slice(0, cursor));
+    if (!trigger) return closeSuggestions();
+
+    const request = ++suggestRequest;
+    await loadEmojiIndex();
+    if (request !== suggestRequest) return;
+
+    Object.assign(suggest, {
+        items: searchEmojis(trigger.query, { customEmojis: pickerOptions(props.config).customEmojis }),
+        active: 0,
+        start: cursor - trigger.length,
+        end: cursor,
+    });
+}
+
+function onSuggestKeydown(event) {
+    const count = suggest.items.length;
+    if (!count) return;
+
+    if (event.key === "ArrowDown") suggest.active = (suggest.active + 1) % count;
+    else if (event.key === "ArrowUp") suggest.active = (suggest.active - 1 + count) % count;
+    else if (event.key === "Enter" || event.key === "Tab") pickSuggestion(suggest.items[suggest.active]);
+    else if (event.key === "Escape") {
+        closeSuggestions();
+        event.stopPropagation(); // don't close a surrounding stack or modal
+    } else return;
+
+    event.preventDefault();
+}
+
+function onSuggestKeyup(event) {
+    if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) updateSuggestions();
+}
+
+function pickSuggestion(item) {
+    const el = nativeInput();
+    const value = el?.value ?? props.value ?? "";
+    const caret = suggest.start + item.emoji.length;
+
+    update(value.slice(0, suggest.start) + item.emoji + value.slice(suggest.end));
+    rememberEmoji(item.emoji, item.label);
+    closeSuggestions();
+
+    nextTick(() => {
+        if (!el) return;
+        el.focus();
+        try {
+            el.setSelectionRange(caret, caret);
+        } catch {
+            // Input types like email/number don't support selection ranges
+        }
+    });
+}
+
+const suggestListeners = {
+    input: updateSuggestions,
+    click: updateSuggestions,
+    keydown: onSuggestKeydown,
+    keyup: onSuggestKeyup,
+    blur: closeSuggestions,
+};
+
+onMounted(() => {
+    const el = nativeInput();
+    Object.entries(suggestListeners).forEach(([event, listener]) => el?.addEventListener(event, listener));
+});
+
+onBeforeUnmount(() => {
+    const el = nativeInput();
+    Object.entries(suggestListeners).forEach(([event, listener]) => el?.removeEventListener(event, listener));
+});
 </script>
 
 <template>
-    <div class="flex items-center gap-2">
+    <div class="relative flex items-center gap-2">
         <!-- Same config pass-through as the core Text fieldtype.
              Input doesn't emit focus/blur and those events don't bubble to its wrapper, so use focusin/focusout. -->
         <Input
@@ -111,5 +203,14 @@ function insert(emoji) {
                 @select="insert"
             />
         </Popover>
+        <EmojiSuggestions
+            v-if="suggest.items.length"
+            class="absolute top-full left-0 z-50 mt-1"
+            :items="suggest.items"
+            :active="suggest.active"
+            :set="config.emoji_set"
+            @select="pickSuggestion"
+            @hover="suggest.active = $event"
+        />
     </div>
 </template>

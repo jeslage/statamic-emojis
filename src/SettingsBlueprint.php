@@ -32,6 +32,13 @@ class SettingsBlueprint
                                 ['handle' => 'categories', 'field' => EmojiFields::categories(inherit: false)],
                                 ['handle' => 'skin_tone', 'field' => EmojiFields::skinTone(inherit: false)],
                                 ['handle' => 'skin_tone_selector', 'field' => EmojiFields::skinToneSelector(inherit: false)],
+                                ['handle' => 'suggestions', 'field' => [
+                                    'type' => 'toggle',
+                                    'default' => true,
+                                    'display' => $t('suggestions'),
+                                    'instructions' => $t('suggestions_instructions'),
+                                    'width' => 50,
+                                ]],
                                 ['handle' => 'recent_emojis', 'field' => [
                                     'type' => 'toggle',
                                     'default' => true,
