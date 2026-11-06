@@ -1,8 +1,8 @@
 <script setup>
-import { Button, Popover } from '@statamic/cms/ui';
-import EmojiPicker from '../EmojiPicker.vue';
+import { Button, Popover } from "@statamic/cms/ui";
+import { SmilePlus } from "@lucide/vue";
+import EmojiPicker from "../EmojiPicker.vue";
 
-// Props passed by Bard to custom toolbar button components
 const props = defineProps({
     button: Object,
     active: Boolean,
@@ -18,8 +18,7 @@ function insert(emoji) {
 </script>
 
 <template>
-    <!-- TODO: verify Popover trigger/slot API -->
-    <Popover>
+    <Popover inset class="w-fit! overflow-hidden" align="start">
         <template #trigger>
             <Button
                 class="px-2!"
@@ -28,8 +27,9 @@ function insert(emoji) {
                 :aria-label="button.text"
                 v-tooltip="button.text"
                 @mousedown.prevent
-                v-html="button.html"
-            />
+            >
+                <SmilePlus class="size-4" />
+            </Button>
         </template>
         <EmojiPicker @select="insert" />
     </Popover>
