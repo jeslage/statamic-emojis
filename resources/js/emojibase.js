@@ -76,3 +76,40 @@ export function emojiImageUrl(emoji, set) {
 
     return resolved === "native" ? null : `${setsConfig().imageUrl}/${resolved}/${codepoints(emoji)}.svg`;
 }
+
+// Category index of the "Recently used" category injected into frimousse's data (real ones are >= 0)
+const RECENT_CATEGORY = -1;
+
+/**
+ * Put the recently used emojis into frimousse's cached data as the first category, so they're part of
+ * its scrollable, virtualized list (sticky header, keyboard navigation, footer preview).
+ * Always removes a previously injected category first; pass no items to only remove it.
+ * Takes effect when the picker mounts; on a picker's very first load (nothing cached yet) it shows
+ * from the next opening on.
+ */
+export function applyRecentToFrimousseCache(locale, items, label) {
+    try {
+        const key = `frimousse/data/${locale}`;
+        const raw = localStorage.getItem(key);
+        if (!raw) return;
+
+        const cache = JSON.parse(raw);
+        const data = cache?.data;
+        if (!Array.isArray(data?.emojis) || !Array.isArray(data?.categories)) return;
+
+        data.emojis = data.emojis.filter((emoji) => emoji.category !== RECENT_CATEGORY);
+        data.categories = data.categories.filter((category) => category.index !== RECENT_CATEGORY);
+
+        if (items.length) {
+            data.categories.unshift({ index: RECENT_CATEGORY, label });
+            data.emojis.unshift(
+                // version 0: always supported; no skins: the stored emoji already has its skin tone
+                ...items.map((item) => ({ emoji: item.emoji, category: RECENT_CATEGORY, label: item.label, version: 0, tags: [] })),
+            );
+        }
+
+        localStorage.setItem(key, JSON.stringify(cache));
+    } catch {
+        // Storage unavailable or unexpected data: the picker works without the recent category
+    }
+}
