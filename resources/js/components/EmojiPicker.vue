@@ -339,9 +339,19 @@ function onEmojiSelect({ emoji, label }) {
     );
 }
 
+.emoji-picker [frimousse-viewport] > [aria-live] {
+    /* vue-frimousse sets this screen reader announcer's size as unitless numbers (width: 1, height: 1,
+       margin: -1), which Vue doesn't turn into px. The browser ignores them, so the announcer grows
+       with the hovered emoji's name and makes the list scroll sideways. */
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+}
+
 .emoji-picker [frimousse-viewport] {
     scrollbar-width: thin;
     scrollbar-color: var(--color-gray-400) transparent;
+    overflow-x: hidden;
 }
 
 .emoji-picker [frimousse-category-header] {
