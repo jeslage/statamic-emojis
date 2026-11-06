@@ -3,7 +3,6 @@
 /resources/dist/*
 !/resources/dist/.gitkeep
 composer.lock
-package-lock.json
 .phpunit.result.cache
 .phpunit.cache
 .DS_Store

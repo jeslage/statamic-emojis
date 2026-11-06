@@ -21,7 +21,8 @@
     ],
     "require": {
         "php": "^8.3",
-        "statamic/cms": "^6.0"
+        "statamic/cms": "^6.0",
+        "pixelfear/composer-dist-plugin": "^0.1.6"
     },
     "require-dev": {
         "orchestra/testbench": "^10.8"
@@ -40,6 +41,10 @@
             "providers": [
                 "StatamicEmojis\\ServiceProvider"
             ]
+        },
+        "download-dist": {
+            "url": "https://github.com/jeslage/statamic-emojis/releases/download/{$version}/dist.tar.gz",
+            "path": "resources/dist"
         }
     },
     "minimum-stability": "dev",

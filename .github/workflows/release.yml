@@ -1,0 +1,58 @@
+name: Release
+
+# release-please keeps a release PR up to date from the conventional commits on main.
+# Merging it creates the tag and GitHub release; the dist job then attaches the built assets
+# (dist.tar.gz), which pixelfear/composer-dist-plugin downloads when the addon is installed.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  dist:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Attach dist.tar.gz to the release
+        run: |
+          tar -czf dist.tar.gz -C resources/dist build
+          gh release upload "${{ needs.release-please.outputs.tag_name }}" dist.tar.gz --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
