@@ -17,19 +17,25 @@ tabs:
             field:
               type: emoji
               display: Emoji
-              instructions: 'Emoji field with default config.'
+              instructions: 'Picker-only field with default config.'
+              width: 50
+          -
+            handle: emoji_empty
+            field:
+              type: emoji
+              display: 'Emoji (empty)'
+              instructions: 'No value yet: shows the "Select emoji" button.'
+              width: 50
           -
             handle: emoji_configured
             field:
               type: emoji
               display: 'Emoji (configured)'
-              instructions: 'Inherited Text config: placeholder, character limit, prepend.'
-              placeholder: 'Pick a mood…'
-              character_limit: 20
-              prepend: 'Mood:'
+              instructions: 'OpenMoji set, only Smileys & People and Animals, starts medium-dark.'
+              emoji_set: openmoji
               skin_tone: medium-dark
               categories:
-                - smileys-emotion
+                - smileys-people
                 - animals-nature
               width: 50
           -
@@ -48,6 +54,40 @@ tabs:
               skin_tone_selector: false
               validate:
                 - required
+      -
+        display: 'Emoji Text fieldtype'
+        fields:
+          -
+            handle: emoji_text
+            field:
+              type: emoji_text
+              display: 'Emoji Text'
+              instructions: 'Text field with emoji picker, default config.'
+          -
+            handle: emoji_text_configured
+            field:
+              type: emoji_text
+              display: 'Emoji Text (configured)'
+              instructions: 'Inherited Text config: placeholder, character limit, prepend. Fluent set, only Smileys & People and Animals, starts medium-dark.'
+              placeholder: 'Pick a mood…'
+              character_limit: 20
+              prepend: 'Mood:'
+              emoji_set: fluent
+              skin_tone: medium-dark
+              categories:
+                - smileys-people
+                - animals-nature
+              width: 50
+          -
+            handle: emoji_text_required
+            field:
+              type: emoji_text
+              display: 'Emoji Text (required)'
+              instructions: 'Without the skin tone selector.'
+              skin_tone_selector: false
+              validate:
+                - required
+              width: 50
       -
         display: 'Bard emoji button'
         fields:
@@ -109,6 +149,7 @@ tabs:
                   handle: emoji
                   field:
                     type: emoji
+                    emoji_set: noto
                 -
                   handle: label
                   field:

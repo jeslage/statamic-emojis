@@ -1,21 +1,50 @@
 {{#
     Antlers counterpart of the <x-emoji-fields> Blade component: outputs every test field of the pages blueprint.
+    Each value is shown as stored (Unicode) and through the emoji_images modifier (field's set, or the site-wide set).
     Usage: {{ partial:emoji-fields }}
 #}}
+<style>
+    img.emoji { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
+</style>
 <div class="max-w-2xl mx-auto py-12 px-4 space-y-10">
     <h1 class="text-3xl font-bold">{{ title }}</h1>
 
     <section class="space-y-3">
         <h2 class="text-xl font-semibold">Emoji fieldtype</h2>
-        <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
+        <dl class="grid grid-cols-[max-content_1fr_1fr] gap-x-6 gap-y-2">
+            <dt></dt><dd class="text-sm text-zinc-500">stored</dd><dd class="text-sm text-zinc-500">emoji_images</dd>
             <dt class="font-mono text-sm">emoji</dt>
-            <dd class="text-2xl">{{ emoji ?? '–' }}</dd>
-            <dt class="font-mono text-sm">emoji_configured</dt>
-            <dd class="text-2xl">{{ emoji_configured ?? '–' }}</dd>
+            <dd class="text-2xl">{{ emoji ?? '–' }}</dd><dd class="text-2xl">{{ emoji | emoji_images }}</dd>
+            <dt class="font-mono text-sm">emoji_empty</dt>
+            <dd class="text-2xl">{{ emoji_empty ?? '–' }}</dd><dd class="text-2xl">{{ emoji_empty | emoji_images }}</dd>
+            <dt class="font-mono text-sm">emoji_configured (openmoji)</dt>
+            <dd class="text-2xl">{{ emoji_configured ?? '–' }}</dd><dd class="text-2xl">{{ emoji_configured | emoji_images }}</dd>
             <dt class="font-mono text-sm">emoji_read_only</dt>
-            <dd class="text-2xl">{{ emoji_read_only ?? '–' }}</dd>
+            <dd class="text-2xl">{{ emoji_read_only ?? '–' }}</dd><dd class="text-2xl">{{ emoji_read_only | emoji_images }}</dd>
             <dt class="font-mono text-sm">emoji_required</dt>
-            <dd class="text-2xl">{{ emoji_required ?? '–' }}</dd>
+            <dd class="text-2xl">{{ emoji_required ?? '–' }}</dd><dd class="text-2xl">{{ emoji_required | emoji_images }}</dd>
+        </dl>
+    </section>
+
+    <section class="space-y-3">
+        <h2 class="text-xl font-semibold">All sets <span class="font-mono text-sm">emoji_images('…')</span></h2>
+        <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-2xl">
+            <dt class="font-mono text-sm">native</dt><dd>{{ emoji_text | emoji_images('native') }} 🇩🇪 ❤️ 🧑‍🚀 👍🏽</dd>
+            <dt class="font-mono text-sm">noto</dt><dd>{{ emoji_text | emoji_images('noto') }} {{ "🇩🇪 ❤️ 🧑‍🚀 👍🏽" | emoji_images('noto') }}</dd>
+            <dt class="font-mono text-sm">fluent</dt><dd>{{ emoji_text | emoji_images('fluent') }} {{ "🇩🇪 ❤️ 🧑‍🚀 👍🏽" | emoji_images('fluent') }}</dd>
+            <dt class="font-mono text-sm">openmoji</dt><dd>{{ emoji_text | emoji_images('openmoji') }} {{ "🇩🇪 ❤️ 🧑‍🚀 👍🏽" | emoji_images('openmoji') }}</dd>
+        </dl>
+    </section>
+
+    <section class="space-y-3">
+        <h2 class="text-xl font-semibold">Emoji Text fieldtype</h2>
+        <dl class="grid grid-cols-[max-content_1fr_1fr] gap-x-6 gap-y-2">
+            <dt class="font-mono text-sm">emoji_text</dt>
+            <dd>{{ emoji_text ?? '–' }}</dd><dd>{{ emoji_text | emoji_images }}</dd>
+            <dt class="font-mono text-sm">emoji_text_configured (fluent)</dt>
+            <dd>{{ emoji_text_configured ?? '–' }}</dd><dd>{{ emoji_text_configured | emoji_images }}</dd>
+            <dt class="font-mono text-sm">emoji_text_required</dt>
+            <dd>{{ emoji_text_required ?? '–' }}</dd><dd>{{ emoji_text_required | emoji_images }}</dd>
         </dl>
     </section>
 
@@ -23,6 +52,8 @@
         <h2 class="text-xl font-semibold">Bard</h2>
         <h3 class="font-mono text-sm">content</h3>
         <div class="prose dark:prose-invert">{{ content }}</div>
+        <h3 class="font-mono text-sm">content | emoji_images('noto')</h3>
+        <div class="prose dark:prose-invert">{{ content | emoji_images('noto') }}</div>
         <h3 class="font-mono text-sm">content_without_emoji</h3>
         <div class="prose dark:prose-invert">{{ content_without_emoji }}</div>
     </section>
@@ -32,18 +63,18 @@
         {{ blocks }}
             {{ if type === 'callout' }}
                 <aside class="flex gap-3 rounded-lg bg-white p-4 dark:bg-zinc-800">
-                    <span class="text-2xl">{{ icon }}</span>
-                    <div class="prose dark:prose-invert">{{ text }}</div>
+                    <span class="text-2xl">{{ icon | emoji_images }}</span>
+                    <div class="prose dark:prose-invert">{{ text | emoji_images }}</div>
                 </aside>
             {{ /if }}
         {{ /blocks }}
     </section>
 
     <section class="space-y-3">
-        <h2 class="text-xl font-semibold">Grid <span class="font-mono text-sm">reactions</span></h2>
+        <h2 class="text-xl font-semibold">Grid <span class="font-mono text-sm">reactions (noto)</span></h2>
         <ul class="flex flex-wrap gap-2">
             {{ reactions }}
-                <li class="rounded-full bg-white px-3 py-1 dark:bg-zinc-800">{{ emoji }} {{ label }}</li>
+                <li class="rounded-full bg-white px-3 py-1 dark:bg-zinc-800">{{ emoji | emoji_images }} {{ label }}</li>
             {{ /reactions }}
         </ul>
     </section>

@@ -7,6 +7,9 @@ emoji: 🎉
 emoji_configured: 😎
 emoji_read_only: 🔒
 emoji_required: ✅
+emoji_text: 'Party time 🎉'
+emoji_text_configured: '😎 relaxed'
+emoji_text_required: 'Done ✅'
 content:
   -
     type: heading

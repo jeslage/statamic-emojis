@@ -74,14 +74,21 @@ Fields in the `pages` blueprint:
 
 | Handle                  | Type       | Tests                                                     |
 | ----------------------- | ---------- | --------------------------------------------------------- |
-| `emoji`                 | emoji      | default config                                            |
-| `emoji_configured`      | emoji      | inherited Text config (placeholder, character limit, prepend), default skin tone `medium-dark`, only Smileys and Animals categories |
-| `emoji_read_only`       | emoji      | read-only visibility (picker hidden)                      |
+| `emoji`                 | emoji      | picker-only field, default config                         |
+| `emoji_empty`           | emoji      | no value: "Select emoji" button                           |
+| `emoji_configured`      | emoji      | OpenMoji set, only Smileys & People and Animals, skin tone `medium-dark` |
+| `emoji_read_only`       | emoji      | read-only visibility (no buttons)                         |
 | `emoji_required`        | emoji      | validation, skin tone selector hidden                     |
+| `emoji_text`            | emoji_text | text field with picker, default config                    |
+| `emoji_text_configured` | emoji_text | inherited Text config (placeholder, character limit, prepend), Fluent set, categories, skin tone |
+| `emoji_text_required`   | emoji_text | validation, skin tone selector hidden                     |
 | `content`               | bard       | `emoji` toolbar button enabled                            |
 | `content_without_emoji` | bard       | control: button not configured, so it must not show       |
-| `blocks`                | replicator | emoji field and Bard with emoji button inside a set       |
-| `reactions`             | grid       | emoji field in grid rows                                  |
+| `blocks`                | replicator | Emoji field and Bard with emoji button inside a set       |
+| `reactions`             | grid       | Emoji field (Noto set) in grid rows                       |
+
+Both templates show each value as stored and through the `emoji_images` modifier, plus a row per
+emoji set. Run `php please emojis:warm noto` (and `fluent`, `openmoji`) once to fill the image cache.
 
 The two emoji pages hold identical data, one rendered with Antlers (`/emoji-fields`) and one
 with Blade (`/emoji-fields-blade`), so the addon's output can be compared in both engines.
