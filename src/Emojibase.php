@@ -13,20 +13,23 @@ class Emojibase
         'ko', 'lt', 'ms', 'nb', 'nl', 'pl', 'pt', 'ru', 'sv', 'th', 'uk', 'vi', 'zh-hant', 'zh',
     ];
 
+    /** Skin tones supported by Emojibase / vue-frimousse. */
+    public const SKIN_TONES = ['none', 'light', 'medium-light', 'medium', 'medium-dark', 'dark'];
+
     /**
-     * Emojibase groups (key => group index in data.json) that the picker shows.
-     * Group 2 ("component", skin tone and hair modifiers) is never shown as a category.
+     * Picker categories (key => Emojibase group indexes in data.json).
+     * Like Slack, "smileys & emotion" and "people & body" are merged into one category.
+     * Group 2 ("component", skin tone and hair modifiers) is never shown.
      */
     public const CATEGORIES = [
-        'smileys-emotion' => 0,
-        'people-body' => 1,
-        'animals-nature' => 3,
-        'food-drink' => 4,
-        'travel-places' => 5,
-        'activities' => 6,
-        'objects' => 7,
-        'symbols' => 8,
-        'flags' => 9,
+        'smileys-people' => [0, 1],
+        'animals-nature' => [3],
+        'food-drink' => [4],
+        'travel-places' => [5],
+        'activities' => [6],
+        'objects' => [7],
+        'symbols' => [8],
+        'flags' => [9],
     ];
 
     /**
@@ -37,8 +40,8 @@ class Emojibase
         $emojis = $this->fetch($locale, 'data.json');
 
         $groups = collect($categories)
-            ->map(fn ($key) => self::CATEGORIES[$key] ?? null)
-            ->filter(fn ($group) => $group !== null)
+            ->flatMap(fn ($key) => self::CATEGORIES[$key] ?? [])
+            ->unique()
             ->values()
             ->all();
 
@@ -65,12 +68,32 @@ class Emojibase
         return in_array($locale, self::LOCALES, true);
     }
 
+    /** Forget the cached data of all locales, so it's fetched again on next use. */
+    public function clear(): void
+    {
+        foreach (self::LOCALES as $locale) {
+            foreach (['data.json', 'messages.json'] as $file) {
+                Cache::forget($this->cacheKey($locale, $file));
+            }
+        }
+    }
+
+    protected function cacheKey(string $locale, string $file): string
+    {
+        return 'statamic-emojis:emojibase:'.md5($this->url($locale, $file));
+    }
+
+    protected function url(string $locale, string $file): string
+    {
+        return rtrim(config('statamic-emojis.emojibase.url'), '/')."/{$locale}/{$file}";
+    }
+
     protected function fetch(string $locale, string $file): array
     {
-        $url = rtrim(config('statamic-emojis.emojibase.url'), '/')."/{$locale}/{$file}";
+        $url = $this->url($locale, $file);
 
         return Cache::remember(
-            'statamic-emojis:emojibase:'.md5($url),
+            $this->cacheKey($locale, $file),
             config('statamic-emojis.emojibase.cache_ttl'),
             fn () => Http::timeout(15)->get($url)->throw()->json()
         );

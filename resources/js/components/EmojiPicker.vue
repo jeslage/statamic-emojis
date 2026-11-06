@@ -7,7 +7,6 @@ import { Button } from "@statamic/cms/ui";
 import {
     Flag,
     Lightbulb,
-    PersonStanding,
     Plane,
     Hamburger,
     Search,
@@ -23,6 +22,7 @@ import {
     prepareFrimousseCache,
 } from "../emojibase.js";
 import SkinToneButton from "./SkinToneButton.vue";
+import EmojiImage from "./EmojiImage.vue";
 
 const SKIN_TONES = [
     "none",
@@ -35,8 +35,7 @@ const SKIN_TONES = [
 const STORAGE_KEY = "statamic-emojis/skin-tone";
 
 const CATEGORY_ICONS = {
-    "smileys-emotion": Smile,
-    "people-body": PersonStanding,
+    "smileys-people": Smile,
     "animals-nature": Leaf,
     "food-drink": Hamburger,
     "travel-places": Plane,
@@ -56,6 +55,8 @@ const props = defineProps({
     skinToneSelector: { type: Boolean, default: true },
     // Allowed category keys (field config `categories`), empty = all
     categories: { type: Array, default: () => [] },
+    // Emoji set (field config `emoji_set`), empty = site-wide set from config/statamic-emojis.php
+    set: { type: String, default: null },
 });
 
 const emit = defineEmits(["select"]);
@@ -136,16 +137,18 @@ function onEmojiSelect({ emoji }) {
 
 <template>
     <div class="emoji-picker flex h-96 w-fit flex-col">
+        <!-- w-0 min-w-full: the tab bar never widens the picker; if the tabs don't fit, it scrolls sideways -->
         <div
-            class="flex shrink-0 items-center gap-0.5 border-b border-gray-200 p-2 dark:border-gray-700"
+            class="emoji-picker-tabs flex w-0 min-w-full shrink-0 items-center overflow-x-auto border-b border-gray-200 p-2 dark:border-gray-700"
             role="tablist"
         >
             <Button
                 v-for="item in tabs"
                 :key="item.key"
+                class="shrink-0"
                 icon-only
-                size="xs"
-                :variant="tab === item.key ? 'pressed' : 'ghost'"
+                size="sm"
+                :variant="tab === item.key ? 'default' : 'subtle'"
                 role="tab"
                 :aria-selected="tab === item.key"
                 :aria-label="item.label"
@@ -185,7 +188,12 @@ function onEmojiSelect({ emoji }) {
                 >
                     {{ __("statamic-emojis::messages.no_results") }}
                 </EmojiPicker.Empty>
-                <EmojiPicker.List class="select-none pb-1.5" />
+                <!-- Only the cell's content is replaced; frimousse keeps click, hover and keyboard handling -->
+                <EmojiPicker.List class="select-none pb-1.5">
+                    <template #emoji="{ emoji }">
+                        <EmojiImage :emoji="emoji.emoji" :set="set" />
+                    </template>
+                </EmojiPicker.List>
             </EmojiPicker.Viewport>
 
             <div
@@ -196,8 +204,8 @@ function onEmojiSelect({ emoji }) {
                         <span
                             class="emoji-picker-preview shrink-0 text-3xl leading-none"
                             aria-hidden="true"
-                            >{{ emoji.emoji }}</span
-                        >
+                            ><EmojiImage :emoji="emoji.emoji" :set="set"
+                        /></span>
                         <span
                             class="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-300"
                             :title="emoji.label"
@@ -211,6 +219,7 @@ function onEmojiSelect({ emoji }) {
                         {{ __("statamic-emojis::messages.pick_an_emoji") }}
                     </span>
                 </EmojiPicker.ActiveEmoji>
+
                 <SkinToneButton
                     v-if="skinToneSelector"
                     class="ms-auto shrink-0"
@@ -230,6 +239,15 @@ function onEmojiSelect({ emoji }) {
     cursor: pointer;
 }
 
+.emoji-picker-tabs {
+    /* Scrollable via trackpad, shift+wheel or keyboard focus; a scrollbar would crowd the tabs */
+    scrollbar-width: none;
+}
+
+.emoji-picker-tabs::-webkit-scrollbar {
+    display: none;
+}
+
 .emoji-picker-preview {
     font-family: var(
         --frimousse-emoji-font,
@@ -241,17 +259,15 @@ function onEmojiSelect({ emoji }) {
 }
 
 .emoji-picker [frimousse-viewport] {
-    /* Thin scrollbar like the CP's st-custom-scrollbar (gray thumb, transparent track so the popover background shows) */
     scrollbar-width: thin;
     scrollbar-color: var(--color-gray-400) transparent;
 }
 
 .emoji-picker [frimousse-category-header] {
-    padding: 0.75rem 0.75rem 0.375rem;
+    padding: 0 0.75rem 0.25rem;
     font-size: 0.75rem;
     font-weight: 500;
     color: var(--color-gray-600);
-    /* Sticky header needs an opaque background: same as the popover */
     background-color: var(--color-white);
 }
 
@@ -268,6 +284,12 @@ function onEmojiSelect({ emoji }) {
     height: 2rem;
     border-radius: var(--radius-md, 0.375rem);
     font-size: 1.125rem;
+}
+
+.emoji-picker [frimousse-emoji] .emoji-image {
+    /* Image sets: same visual size as the native characters */
+    width: 1.375rem;
+    height: 1.375rem;
 }
 
 .emoji-picker [frimousse-emoji][data-active] {

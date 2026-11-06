@@ -1,10 +1,12 @@
 // Emoji data is served by the addon's Control Panel route (routes/cp.php), filtered by category.
 // vue-frimousse requests "{emojibaseUrl}/{locale}/data.json" and ".../messages.json".
 
-/** Category keys in Emojibase order (group 2 "component" is never shown). Keep in sync with src/Emojibase.php. */
+/**
+ * Picker categories in Emojibase order. "smileys-people" merges the "smileys & emotion" and
+ * "people & body" groups (like Slack). Keep in sync with src/Emojibase.php.
+ */
 export const CATEGORIES = [
-    "smileys-emotion",
-    "people-body",
+    "smileys-people",
     "animals-nature",
     "food-drink",
     "travel-places",
@@ -51,4 +53,26 @@ export function prepareFrimousseCache(locale, url) {
     } catch {
         // Storage unavailable: frimousse can't cache either, so there's nothing to prepare
     }
+}
+
+/** Lowercase hex codepoints of an emoji joined by "-", fully qualified. Same as EmojiSets::codepoints() in PHP. */
+export function codepoints(emoji) {
+    return Array.from(emoji ?? "", (char) => char.codePointAt(0).toString(16)).join("-");
+}
+
+/** Site-wide emoji set and the image route, provided by the ServiceProvider. */
+function setsConfig() {
+    return Statamic.$config.get("statamicEmojis") ?? { set: "native", imageUrl: "" };
+}
+
+/** A field's set if given, otherwise the site-wide set. */
+export function resolveSet(set) {
+    return set || setsConfig().set || "native";
+}
+
+/** Image URL of an emoji in an image set, or null for native. */
+export function emojiImageUrl(emoji, set) {
+    const resolved = resolveSet(set);
+
+    return resolved === "native" ? null : `${setsConfig().imageUrl}/${resolved}/${codepoints(emoji)}.svg`;
 }

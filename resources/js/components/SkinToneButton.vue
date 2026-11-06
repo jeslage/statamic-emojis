@@ -21,19 +21,31 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 
-const current = computed(() => (TONES.includes(props.modelValue) ? props.modelValue : "none"));
+const current = computed(() =>
+    TONES.includes(props.modelValue) ? props.modelValue : "none",
+);
 const label = computed(
     () =>
         `${__("statamic-emojis::messages.change_skin_tone")} (${__(`statamic-emojis::messages.skin_tones.${current.value}`)})`,
 );
 
 function next() {
-    emit("update:modelValue", TONES[(TONES.indexOf(current.value) + 1) % TONES.length]);
+    emit(
+        "update:modelValue",
+        TONES[(TONES.indexOf(current.value) + 1) % TONES.length],
+    );
 }
 </script>
 
 <template>
-    <Button icon-only :size="size" variant="ghost" :aria-label="label" v-tooltip="label" @click="next">
+    <Button
+        icon-only
+        :size="size"
+        variant="default"
+        :aria-label="label"
+        v-tooltip="label"
+        @click="next"
+    >
         <span class="text-sm leading-none">✋{{ MODIFIERS[current] }}</span>
     </Button>
 </template>
