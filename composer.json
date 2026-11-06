@@ -1,0 +1,47 @@
+{
+    "name": "convoy/statamic-emojis",
+    "description": "Emoji picker fieldtype and Bard toolbar button for Statamic",
+    "type": "statamic-addon",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Convoy\\Emojis\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Convoy\\Emojis\\Tests\\": "tests"
+        }
+    },
+    "authors": [
+        {
+            "name": "Johannes Eslage",
+            "email": "je@convoyinteractive.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "statamic/cms": "^6.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.8"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Emojis",
+            "description": "Emoji picker fieldtype and Bard toolbar button"
+        },
+        "laravel": {
+            "providers": [
+                "Convoy\\Emojis\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
