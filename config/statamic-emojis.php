@@ -31,32 +31,70 @@ return [
     | "emoji_images" modifier. "native" uses each device's own emoji font;
     | the other sets are SVG images, fetched once by the server, cached in
     | "cache_path" and served from your own domain (no visitor IPs go to a CDN).
-    | Fields can override the set in their "Emoji Picker" settings.
+    | "set" is the site-wide default (the Emojis page in the CP overrides it);
+    | fields can override it in their "Emoji Picker" settings.
     |
-    | Licenses: Noto (Apache 2.0), Fluent (MIT), OpenMoji (CC BY-SA 4.0,
-    | attribution required: "Emoji graphics by OpenMoji, https://openmoji.org").
+    | Built-in sets: noto, fluent, openmoji. Licenses: Noto (Apache 2.0),
+    | Fluent (MIT), OpenMoji (CC BY-SA 4.0, attribution required:
+    | "Emoji graphics by OpenMoji, https://openmoji.org").
     |
     */
 
     'set' => env('STATAMIC_EMOJIS_SET', 'native'),
 
+    /*
+    | Add your own image sets here; they're added to the built-in ones. An entry
+    | with a built-in name changes only the keys you set (e.g. a self-hosted url).
+    | Names: lowercase letters only.
+    |
+    | "naming" is how the set names its files:
+    |   "fluent"   1f9d1-200d-1f680.svg      (lowercase, joined by "-"; default)
+    |   "openmoji" 1F9D1-200D-1F680.svg      (uppercase, joined by "-")
+    |   "noto"     2D/svg/emoji_u1f9d1_200d_1f680.svg (Noto's repository layout)
+    |   or a class implementing Convoy\Emojis\Contracts\SetNaming.
+    | Variants with and without the variation selector FE0F are tried.
+    |
+    | Sets can also be added in code: Convoy\Emojis\EmojiSets::extend('name', [...]).
+    */
+
     'sets' => [
-        'noto' => [
-            'url' => 'https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e',
-            'naming' => 'noto',
-        ],
-        'fluent' => [
-            'url' => 'https://cdn.jsdelivr.net/npm/@lobehub/fluent-emoji-flat@1.1.0/assets',
-            'naming' => 'fluent',
-        ],
-        'openmoji' => [
-            'url' => 'https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg',
-            'naming' => 'openmoji',
-        ],
+        // 'twemoji' => [
+        //     'label' => 'Twemoji',
+        //     'url' => 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg',
+        //     'naming' => 'fluent',
+        // ],
     ],
+
+    /*
+    | Image sets to remove from the selection, e.g. ['fluent'], or ['*'] for
+    | native emojis only.
+    */
+
+    'disabled_sets' => [],
 
     'images' => [
         'cache_path' => storage_path('statamic-emojis/sets'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom emojis
+    |--------------------------------------------------------------------------
+    |
+    | Editors upload their own emoji images to an asset container and use them
+    | by shortcode, e.g. ":party-parrot:". Run "php please emojis:custom-setup"
+    | once to create the container and its blueprint.
+    |
+    | "disk" is defined by the addon (public/statamic-emojis) unless your
+    | config/filesystems.php already has a disk with that name, e.g. on S3.
+    | Container and disk are prefixed to avoid clashes with a site's own ones.
+    |
+    */
+
+    'custom' => [
+        'enabled' => env('STATAMIC_EMOJIS_CUSTOM', true),
+        'container' => env('STATAMIC_EMOJIS_CUSTOM_CONTAINER', 'statamic-emojis'),
+        'disk' => env('STATAMIC_EMOJIS_CUSTOM_DISK', 'statamic-emojis'),
     ],
 
 ];

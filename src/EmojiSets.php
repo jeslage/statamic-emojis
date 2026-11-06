@@ -2,16 +2,19 @@
 
 namespace Convoy\Emojis;
 
+use Convoy\Emojis\Contracts\SetNaming;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 /**
- * Emoji image sets (Noto, Fluent, OpenMoji) besides the device's native emoji font.
+ * Emoji image sets besides the device's native emoji font: the built-in Noto, Fluent and OpenMoji,
+ * plus sets added in config/statamic-emojis.php ("sets") or with EmojiSets::extend().
  *
- * Images are fetched once from the configured upstream, stored in the cache path and
+ * Images are fetched once from the set's upstream, stored in the cache path and
  * served by the addon (see EmojiImageController), so browsers never talk to the CDN.
  */
 class EmojiSets
@@ -26,21 +29,103 @@ class EmojiSets
         .'|\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})*(?:\x{200D}\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})*)*'
         .'|\x{1F3F4}[\x{E0061}-\x{E007A}]+\x{E007F}/u';
 
-    /** All selectable sets: native plus the configured image sets. */
+    /** Built-in image sets (pinned versions). Config entries with the same name override single keys. */
+    public const BUILT_IN = [
+        'noto' => [
+            'label' => 'statamic-emojis::messages.sets.noto',
+            'url' => 'https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e',
+            'naming' => 'noto',
+        ],
+        'fluent' => [
+            'label' => 'statamic-emojis::messages.sets.fluent',
+            'url' => 'https://cdn.jsdelivr.net/npm/@lobehub/fluent-emoji-flat@1.1.0/assets',
+            'naming' => 'fluent',
+        ],
+        'openmoji' => [
+            'label' => 'statamic-emojis::messages.sets.openmoji',
+            'url' => 'https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg',
+            'naming' => 'openmoji',
+        ],
+    ];
+
+    /** Set names: lowercase letters only (used in URLs and cache paths). */
+    public const NAME_PATTERN = '/^[a-z]+$/';
+
+    /** Sets registered in code with extend(). */
+    protected static array $extended = [];
+
+    /**
+     * Add an image set in code, e.g. in a service provider:
+     * EmojiSets::extend('twemoji', ['label' => 'Twemoji', 'url' => 'https://…/svg', 'naming' => 'fluent']).
+     */
+    public static function extend(string $name, array $definition): void
+    {
+        static::$extended[$name] = array_merge(static::$extended[$name] ?? [], $definition);
+    }
+
+    /** Forget sets registered with extend() (tests). */
+    public static function flushExtended(): void
+    {
+        static::$extended = [];
+    }
+
+    /**
+     * All image sets: built-in, then config "sets" and extend() (adding sets or overriding single keys
+     * of existing ones), minus config "disabled_sets". Entries need a valid name and a url.
+     *
+     * @return array<string, array{label?: string, url: string, naming?: string}>
+     */
+    public function definitions(): array
+    {
+        $definitions = self::BUILT_IN;
+
+        foreach ([config('statamic-emojis.sets', []), static::$extended] as $additions) {
+            foreach ((array) $additions as $name => $definition) {
+                $definitions[$name] = array_merge($definitions[$name] ?? [], (array) $definition);
+            }
+        }
+
+        $disabled = (array) config('statamic-emojis.disabled_sets', []);
+
+        return collect($definitions)
+            ->reject(fn ($definition, $name) => in_array($name, $disabled, true) || in_array('*', $disabled, true))
+            ->filter(fn ($definition, $name) => preg_match(self::NAME_PATTERN, $name) && $name !== self::NATIVE && ! empty($definition['url']))
+            ->all();
+    }
+
+    public function definition(string $set): ?array
+    {
+        return $this->definitions()[$set] ?? null;
+    }
+
+    /** All selectable sets: native plus the image sets. */
     public function sets(): array
     {
-        return [self::NATIVE, ...array_keys(config('statamic-emojis.sets', []))];
+        return [self::NATIVE, ...array_keys($this->definitions())];
     }
 
     public function isImageSet(?string $set): bool
     {
-        return $set !== null && $set !== self::NATIVE && array_key_exists($set, config('statamic-emojis.sets', []));
+        return $set !== null && $set !== self::NATIVE && $this->definition($set) !== null;
+    }
+
+    /**
+     * Label of a set: translated text, or (translate: false) the translation key / label as given,
+     * for blueprints built before the user's locale is known (the CP translates them).
+     */
+    public function label(string $set, bool $translate = true): string
+    {
+        $label = $set === self::NATIVE
+            ? 'statamic-emojis::messages.sets.native'
+            : ($this->definition($set)['label'] ?? Str::headline($set));
+
+        return $translate ? __($label) : $label;
     }
 
     /** The site-wide set from the config, "native" if it isn't a known set. */
     public function default(): string
     {
-        $set = config('statamic-emojis.set', self::NATIVE);
+        $set = app(EmojiSettings::class)->set();
 
         return $this->isImageSet($set) ? $set : self::NATIVE;
     }
@@ -76,14 +161,16 @@ class EmojiSets
             array_values(array_diff($parts, [self::VARIATION_SELECTOR])),
         ])->filter()->map(fn ($p) => array_values($p))->unique(fn ($p) => implode('-', $p))->values();
 
-        $naming = config("statamic-emojis.sets.{$set}.naming");
+        $naming = $this->definition($set)['naming'] ?? 'fluent';
+        $custom = class_exists($naming) && is_subclass_of($naming, SetNaming::class) ? app($naming) : null;
 
-        return $variants->flatMap(fn ($p) => match ($naming) {
-            'noto' => $this->isFlag($p)
+        return $variants->flatMap(fn ($p) => match (true) {
+            $custom !== null => $custom->files($p),
+            $naming === 'noto' => $this->isFlag($p)
                 ? ['third_party/region-flags/waved-svg/emoji_u'.implode('_', $p).'.svg']
                 : ['2D/svg/emoji_u'.implode('_', $p).'.svg'],
-            'openmoji' => [strtoupper(implode('-', $p)).'.svg'],
-            default => [implode('-', $p).'.svg'],
+            $naming === 'openmoji' => [strtoupper(implode('-', $p)).'.svg'],
+            default => [implode('-', $p).'.svg'], // "fluent": lowercase, joined by "-"
         })->unique()->values()->all();
     }
 
@@ -107,7 +194,7 @@ class EmojiSets
             return null;
         }
 
-        $base = rtrim(config("statamic-emojis.sets.{$set}.url"), '/');
+        $base = rtrim($this->definition($set)['url'], '/');
 
         foreach ($this->candidates($set, $codes) as $file) {
             try {
@@ -148,7 +235,7 @@ class EmojiSets
      */
     public function warm(string $set, array $codesList): array
     {
-        $base = rtrim(config("statamic-emojis.sets.{$set}.url"), '/');
+        $base = rtrim($this->definition($set)['url'], '/');
         $todo = collect($codesList)->map(fn ($c) => strtolower($c))
             ->reject(fn ($codes) => $this->isCached($set, $codes))
             ->values();
@@ -194,25 +281,40 @@ class EmojiSets
     }
 
     /**
-     * Replace every emoji in text or HTML with an <img> of the set. Only text between tags is
-     * touched, so attributes stay intact. Native returns the input unchanged.
+     * Replace every emoji in text or HTML with an <img> of the set, and custom ":shortcode:" emojis with
+     * their image. Only text between tags is touched, so attributes stay intact. Native leaves Unicode
+     * emojis as they are, but still replaces custom emojis.
      */
     public function replace(?string $html, string $set): string
     {
         $html = (string) $html;
+        $imageSet = $this->isImageSet($set);
+        $custom = app(CustomEmojis::class);
 
-        if (! $this->isImageSet($set) || $html === '') {
+        if ($html === '' || (! $imageSet && ! str_contains($html, ':'))) {
             return $html;
         }
 
         $parts = preg_split('/(<[^>]*>)/u', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-        return collect($parts)->map(function ($part) use ($set) {
+        return collect($parts)->map(function ($part) use ($set, $imageSet, $custom) {
             if ($part === '' || str_starts_with($part, '<')) {
                 return $part;
             }
 
-            return preg_replace_callback(self::EMOJI_PATTERN, fn ($m) => $this->img($set, $m[0]), $part);
+            // Custom emojis (":shortcode:") are images in every set, native included
+            $part = $custom->replace($part);
+
+            if (! $imageSet) {
+                return $part;
+            }
+
+            // Split again so the <img> tags just inserted for custom emojis stay untouched
+            return collect(preg_split('/(<[^>]*>)/u', $part, -1, PREG_SPLIT_DELIM_CAPTURE))
+                ->map(fn ($text) => $text === '' || str_starts_with($text, '<')
+                    ? $text
+                    : preg_replace_callback(self::EMOJI_PATTERN, fn ($m) => $this->img($set, $m[0]), $text))
+                ->implode('');
         })->implode('');
     }
 
@@ -229,6 +331,47 @@ class EmojiSets
     {
         return count($parts) === 2
             && collect($parts)->every(fn ($p) => hexdec($p) >= 0x1F1E6 && hexdec($p) <= 0x1F1FF);
+    }
+
+    /**
+     * Codepoints of every emoji including skin tone variants (from the Emojibase data), e.g. for warming.
+     */
+    public function allCodes(Emojibase $emojibase): array
+    {
+        return collect($emojibase->data('en'))
+            ->flatMap(fn ($emoji) => [$emoji['emoji'] ?? null, ...array_column($emoji['skins'] ?? [], 'emoji')])
+            ->filter()
+            ->map(fn ($emoji) => $this->codepoints($emoji))
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /** Per image set: number of cached images, their size in bytes and the total number of emojis. */
+    public function cacheStatus(): array
+    {
+        try {
+            $total = count($this->allCodes(app(Emojibase::class)));
+        } catch (\Throwable) {
+            $total = null; // Emojibase data unreachable
+        }
+
+        return collect($this->sets())
+            ->reject(fn ($set) => $set === self::NATIVE)
+            ->map(function ($set) use ($total) {
+                $directory = rtrim(config('statamic-emojis.images.cache_path'), '/')."/{$set}";
+                $files = File::isDirectory($directory) ? File::files($directory) : [];
+
+                return [
+                    'set' => $set,
+                    'label' => $this->label($set),
+                    'cached' => count($files),
+                    'size' => array_sum(array_map(fn ($file) => $file->getSize(), $files)),
+                    'total' => $total,
+                ];
+            })
+            ->values()
+            ->all();
     }
 
     /**
