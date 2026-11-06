@@ -8,11 +8,18 @@ return [
     'loading' => 'Wird geladen…',
     'no_results' => 'Kein Emoji gefunden.',
     'pick_an_emoji' => 'Emoji auswählen…',
+    'select_emoji' => 'Emoji auswählen',
+    'change_emoji' => 'Emoji ändern',
+    'remove_emoji' => 'Emoji entfernen',
     'change_skin_tone' => 'Hautfarbe ändern',
 
+    'fieldtypes' => [
+        'emoji' => 'Emoji',
+        'emoji_text' => 'Emoji-Text',
+    ],
+
     'categories' => [
-        'smileys-emotion' => 'Smileys & Emotionen',
-        'people-body' => 'Menschen & Körper',
+        'smileys-people' => 'Smileys & Menschen',
         'animals-nature' => 'Tiere & Natur',
         'food-drink' => 'Essen & Trinken',
         'travel-places' => 'Reisen & Orte',
@@ -20,6 +27,14 @@ return [
         'objects' => 'Objekte',
         'symbols' => 'Symbole',
         'flags' => 'Flaggen',
+    ],
+
+    'sets' => [
+        'default' => 'Standard (:set)',
+        'native' => 'Nativ (Gerätschrift)',
+        'noto' => 'Noto',
+        'fluent' => 'Fluent',
+        'openmoji' => 'OpenMoji',
     ],
 
     'skin_tones' => [
@@ -33,6 +48,8 @@ return [
 
     'config' => [
         'section' => 'Emoji-Auswahl',
+        'emoji_set' => 'Emoji-Set',
+        'emoji_set_instructions' => 'Wie Emojis in der Auswahl und in der Ausgabe des Modifiers emoji_images aussehen. Leer lassen, um das seitenweite Set zu verwenden.',
         'categories' => 'Kategorien',
         'categories_instructions' => 'Kategorien, die die Auswahl anbietet. Leer lassen, um alle zu erlauben.',
         'skin_tone' => 'Hautfarbe',
