@@ -3,7 +3,11 @@
 namespace StatamicEmojis\Fieldtypes;
 
 use StatamicEmojis\Fieldtypes\Concerns\HasEmojiPickerConfig;
+use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fieldtype;
+use StatamicEmojis\EmojiSets;
+use StatamicEmojis\GraphQL\EmojiValueType;
+use StatamicEmojis\Values\EmojiValue;
 
 /**
  * A single emoji, chosen with the emoji picker.
@@ -36,8 +40,23 @@ class Emoji extends Fieldtype
         return $data === '' ? null : $data;
     }
 
+    /** A string in templates, an object with name, image and set in the API (see EmojiValue). */
     public function augment($value)
     {
-        return $value;
+        if (! is_string($value) || $value === '') {
+            return null;
+        }
+
+        return new EmojiValue($value, app(EmojiSets::class)->resolve($this->config('emoji_set')));
+    }
+
+    public function toGqlType()
+    {
+        return GraphQL::type(EmojiValueType::NAME);
+    }
+
+    public function addGqlTypes()
+    {
+        GraphQL::addType(EmojiValueType::class);
     }
 }

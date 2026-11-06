@@ -3,7 +3,11 @@
 namespace StatamicEmojis\Fieldtypes;
 
 use StatamicEmojis\Fieldtypes\Concerns\HasEmojiPickerConfig;
+use Statamic\Facades\GraphQL;
 use Statamic\Fieldtypes\Text;
+use StatamicEmojis\EmojiSets;
+use StatamicEmojis\GraphQL\EmojiTextValueType;
+use StatamicEmojis\Values\EmojiTextValue;
 
 /**
  * A text field with an emoji picker attached.
@@ -33,5 +37,27 @@ class EmojiText extends Text
             ...parent::configFieldItems(),
             $this->emojiPickerConfigSection(),
         ];
+    }
+
+    /** The text in templates, {value, html, set} in the API (see EmojiTextValue). */
+    public function augment($value)
+    {
+        $value = parent::augment($value);
+
+        if (! is_string($value) || $value === '') {
+            return $value;
+        }
+
+        return new EmojiTextValue($value, app(EmojiSets::class)->resolve($this->config('emoji_set')));
+    }
+
+    public function toGqlType()
+    {
+        return GraphQL::type(EmojiTextValueType::NAME);
+    }
+
+    public function addGqlTypes()
+    {
+        GraphQL::addType(EmojiTextValueType::class);
     }
 }

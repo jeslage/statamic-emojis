@@ -35,6 +35,16 @@
     </section>
 
     <section class="space-y-3">
+        <h2 class="text-xl font-semibold">Name and image <span class="font-mono text-sm">$page->emoji['label'] / ['url']</span></h2>
+        <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
+            @foreach (['emoji', 'emoji_configured'] as $handle)
+                <dt class="font-mono text-sm">{{ $handle }}</dt>
+                <dd>{{ $page->$handle['label'] ?? '–' }} · <span class="font-mono text-xs">{{ $page->$handle['url'] ?? 'native' }}</span></dd>
+            @endforeach
+        </dl>
+    </section>
+
+    <section class="space-y-3">
         <h2 class="text-xl font-semibold">All sets <span class="font-mono text-sm">emoji_images('…')</span></h2>
         <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-2xl">
             @foreach (['native', 'noto', 'fluent', 'openmoji'] as $set)

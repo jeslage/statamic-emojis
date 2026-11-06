@@ -262,15 +262,17 @@ class EmojiSetsTest extends TestCase
         $this->assertSame('👍', $other);
     }
 
-    public function test_modifier_falls_back_when_the_value_is_ambiguous(): void
+    public function test_each_value_uses_its_own_fields_set(): void
     {
         config(['statamic-emojis.set' => 'fluent']);
 
+        // The same emoji in two fields with different sets: each value carries its field's set
         [, , $a] = explode('|', $this->renderAntlers([
             'a' => $this->emojiValue('🎉', 'openmoji'),
             'b' => $this->emojiValue('🎉', 'noto'),
         ]));
 
-        $this->assertStringContainsString('/sets/fluent/1f389.svg', $a);
+        $this->assertStringContainsString('/sets/openmoji/1f389.svg', $a);
+        $this->assertStringContainsString('/sets/fluent/1f389.svg', (string) Modify::value('🎉')->emoji_images());
     }
 }

@@ -27,6 +27,14 @@
     </section>
 
     <section class="space-y-3">
+        <h2 class="text-xl font-semibold">Name and image <span class="font-mono text-sm">emoji:label / emoji:url</span></h2>
+        <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
+            <dt class="font-mono text-sm">emoji</dt><dd>{{ emoji:label ?? '–' }} · <span class="font-mono text-xs">{{ emoji:url ?? 'native' }}</span></dd>
+            <dt class="font-mono text-sm">emoji_configured</dt><dd>{{ emoji_configured:label ?? '–' }} · <span class="font-mono text-xs">{{ emoji_configured:url ?? 'native' }}</span></dd>
+        </dl>
+    </section>
+
+    <section class="space-y-3">
         <h2 class="text-xl font-semibold">All sets <span class="font-mono text-sm">emoji_images('…')</span></h2>
         <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-2xl">
             <dt class="font-mono text-sm">native</dt><dd>{{ emoji_text | emoji_images('native') }} 🇩🇪 ❤️ 🧑‍🚀 👍🏽</dd>

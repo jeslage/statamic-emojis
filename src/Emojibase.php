@@ -35,6 +35,48 @@ class Emojibase
     /**
      * Emoji data, limited to the given category keys (empty = all categories).
      */
+    /** Emoji names per locale, including skin tone variants (emoji => label). */
+    protected array $labels = [];
+
+    /**
+     * Emojibase locale for a Laravel/Statamic locale (e.g. "de_CH" -> "de", "zh_TW" -> "zh-hant").
+     * Same as emojibaseLocale() in resources/js/locale.js.
+     */
+    public static function locale(?string $locale): string
+    {
+        $normalized = str_replace('_', '-', strtolower((string) ($locale ?: 'en')));
+
+        if (in_array($normalized, ['zh-tw', 'zh-hk', 'zh-mo', 'zh-hant'], true)) {
+            return 'zh-hant';
+        }
+
+        if (self::isLocale($normalized)) {
+            return $normalized;
+        }
+
+        $language = explode('-', $normalized)[0];
+
+        if (in_array($language, ['no', 'nn'], true)) {
+            return 'nb';
+        }
+
+        return self::isLocale($language) ? $language : 'en';
+    }
+
+    /** Names of all emojis and their skin tone variants in a locale, e.g. ['👍🏻' => 'thumbs up: light skin tone']. */
+    public function labels(string $locale): array
+    {
+        $locale = self::locale($locale);
+
+        return $this->labels[$locale] ??= collect($this->data($locale))
+            ->flatMap(fn ($emoji) => [
+                $emoji['emoji'] ?? '' => $emoji['label'] ?? null,
+                ...collect($emoji['skins'] ?? [])->mapWithKeys(fn ($skin) => [$skin['emoji'] ?? '' => $skin['label'] ?? null])->all(),
+            ])
+            ->filter()
+            ->all();
+    }
+
     public function data(string $locale, array $categories = []): array
     {
         $emojis = $this->fetch($locale, 'data.json');
