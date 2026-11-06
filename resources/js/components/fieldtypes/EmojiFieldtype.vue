@@ -1,116 +1,74 @@
 <script setup>
-import { computed, nextTick, ref, useTemplateRef } from "vue";
+// A single emoji, chosen with the picker. Empty: "Select emoji" button. Filled: the emoji (click to change) + remove button.
+import { ref } from "vue";
 import { Fieldtype } from "@statamic/cms";
-import { Button, Input, Popover, useContentDirection } from "@statamic/cms/ui";
-import { SmilePlus } from "@lucide/vue";
+import { Button, Popover } from "@statamic/cms/ui";
+import { SmilePlus, X } from "@lucide/vue";
 import EmojiPicker from "../EmojiPicker.vue";
+import EmojiImage from "../EmojiImage.vue";
 
 const emit = defineEmits(Fieldtype.emits);
 const props = defineProps(Fieldtype.props);
-const { name, isReadOnly, update, updateDebounced, expose } = Fieldtype.use(emit, props);
+const { isReadOnly, update, expose } = Fieldtype.use(emit, props);
 defineExpose(expose);
 
-const { direction: contentDirection } = useContentDirection();
+const open = ref(false);
 
-// Same autofocus behaviour as the core Text fieldtype
-const shouldFocus = computed(() => {
-    if (props.config.focus === false || props.config.focus === true) {
-        return props.config.focus;
-    }
-
-    const isRootField = !props.fieldPathPrefix;
-    const isImplicitAutofocusField = name.value === "title" || name.value === "alt";
-
-    return isRootField && isImplicitAutofocusField;
-});
-
-function inputUpdated(value) {
-    return !props.config.debounce ? update(value) : updateDebounced(value);
+function select(emoji) {
+    update(emoji);
+    open.value = false;
 }
 
-const input = useTemplateRef("input");
-// Until the input has been focused, its caret position is meaningless, so emojis are appended.
-const hasCaret = ref(false);
-
-function nativeInput() {
-    return input.value?.$el?.querySelector("input") ?? null;
-}
-
-function onFocus() {
-    hasCaret.value = true;
-    emit("focus");
-}
-
-// The caret position survives the blur caused by opening the picker.
-function insert(emoji) {
-    const value = props.value ?? "";
-    const el = nativeInput();
-    const start = hasCaret.value && el ? (el.selectionStart ?? value.length) : value.length;
-    const end = hasCaret.value && el ? (el.selectionEnd ?? start) : value.length;
-
-    update(value.slice(0, start) + emoji + value.slice(end));
-
-    // Put the caret right after the inserted emoji
-    const caret = start + emoji.length;
-    nextTick(() => {
-        if (!el) return;
-        el.focus();
-        try {
-            el.setSelectionRange(caret, caret);
-        } catch {
-            // Input types like email/number don't support selection ranges
-        }
-    });
+function remove() {
+    update(null);
 }
 </script>
 
 <template>
-    <div class="flex items-center gap-2">
-        <!-- Same config pass-through as the core Text fieldtype.
-             Input doesn't emit focus/blur and those events don't bubble to its wrapper, so use focusin/focusout. -->
-        <Input
-            ref="input"
-            class="flex-1"
-            :model-value="value"
-            :classes="config.classes"
-            :focus="shouldFocus"
-            :autocomplete="config.autocomplete"
-            :autoselect="config.autoselect"
-            :type="config.input_type"
-            :read-only="isReadOnly"
-            :prepend="__(config.prepend)"
-            :append="__(config.append)"
-            :limit="config.character_limit"
-            :placeholder="__(config.placeholder)"
-            :name="name"
-            :id="id"
-            :input-attrs="{ dir: contentDirection }"
-            @update:model-value="inputUpdated"
-            @focusin="onFocus"
-            @focusout="$emit('blur')"
-        />
+    <div v-if="isReadOnly" class="text-xl leading-none">
+        <EmojiImage v-if="value" :emoji="value" :set="config.emoji_set" />
+        <template v-else>–</template>
+    </div>
+
+    <div v-else class="flex items-center gap-2">
         <Popover
-            v-if="!isReadOnly"
+            v-model:open="open"
             inset
             class="w-fit! overflow-hidden"
-            align="end"
+            align="start"
         >
             <template #trigger>
-                <!-- Statamic's icon set has no smiley, so use Lucide's -->
+                <!-- One button for both states: swapping the trigger element would leave
+                     the popover anchored to the removed one, misplacing it on the next open. -->
                 <Button
-                    icon-only
-                    :aria-label="__('statamic-emojis::messages.insert_emoji')"
-                    v-tooltip="__('statamic-emojis::messages.insert_emoji')"
+                    :icon-only="!!value"
+                    :aria-label="value ? __('statamic-emojis::messages.change_emoji') : undefined"
+                    v-tooltip="value ? __('statamic-emojis::messages.change_emoji') : null"
+                    @focus="$emit('focus')"
+                    @blur="$emit('blur')"
                 >
-                    <SmilePlus class="size-4" />
+                    <span v-if="value" class="text-xl leading-none"><EmojiImage :emoji="value" :set="config.emoji_set" /></span>
+                    <template v-else>
+                        <SmilePlus class="me-2 size-4" />
+                        {{ __("statamic-emojis::messages.select_emoji") }}
+                    </template>
                 </Button>
             </template>
             <EmojiPicker
                 :categories="config.categories ?? []"
+                :set="config.emoji_set"
                 :skin-tone="config.skin_tone ?? 'none'"
                 :skin-tone-selector="config.skin_tone_selector ?? true"
-                @select="insert"
+                @select="select"
             />
         </Popover>
+        <Button
+            v-if="value"
+            icon="x"
+            icon-only
+            :aria-label="__('statamic-emojis::messages.remove_emoji')"
+            v-tooltip="__('statamic-emojis::messages.remove_emoji')"
+            @click="remove"
+        />
     </div>
 </template>

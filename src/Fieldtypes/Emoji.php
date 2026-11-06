@@ -2,67 +2,42 @@
 
 namespace Convoy\Emojis\Fieldtypes;
 
-use Convoy\Emojis\Emojibase;
-use Statamic\Fieldtypes\Text;
+use Convoy\Emojis\Fieldtypes\Concerns\HasEmojiPickerConfig;
+use Statamic\Fields\Fieldtype;
 
 /**
- * A text field with an emoji picker attached.
- *
- * Inherits all config, processing and augmentation from the core Text fieldtype.
+ * A single emoji, chosen with the emoji picker.
  */
-class Emoji extends Text
+class Emoji extends Fieldtype
 {
+    use HasEmojiPickerConfig;
+
     protected static $handle = 'emoji';
 
-    /** Skin tones supported by Emojibase / vue-frimousse. */
-    public const SKIN_TONES = ['none', 'light', 'medium-light', 'medium', 'medium-dark', 'dark'];
+    protected static $title = 'statamic-emojis::messages.fieldtypes.emoji';
 
-    /**
-     * Icon in the fieldtype selector. Statamic accepts raw SVG markup;
-     * same Lucide icon as the picker triggers in the Control Panel.
-     */
+    protected $categories = ['controls'];
+
+    /** Icon in the fieldtype selector (raw SVG): Lucide "smile". */
     public function icon()
     {
-        return file_get_contents(__DIR__.'/../../resources/svg/smile-plus.svg');
+        return file_get_contents(__DIR__.'/../../resources/svg/smile.svg');
     }
 
     protected function configFieldItems(): array
     {
-        $items = parent::configFieldItems();
+        return [$this->emojiPickerConfigSection()];
+    }
 
-        $items[] = [
-            'display' => __('statamic-emojis::messages.config.section'),
-            'fields' => [
-                'categories' => [
-                    'display' => __('statamic-emojis::messages.config.categories'),
-                    'instructions' => __('statamic-emojis::messages.config.categories_instructions'),
-                    'type' => 'checkboxes',
-                    'inline' => true,
-                    'options' => collect(Emojibase::CATEGORIES)
-                        ->keys()
-                        ->mapWithKeys(fn ($key) => [$key => __("statamic-emojis::messages.categories.{$key}")])
-                        ->all(),
-                ],
-                'skin_tone' => [
-                    'display' => __('statamic-emojis::messages.config.skin_tone'),
-                    'instructions' => __('statamic-emojis::messages.config.skin_tone_instructions'),
-                    'type' => 'select',
-                    'default' => 'none',
-                    'options' => collect(self::SKIN_TONES)
-                        ->mapWithKeys(fn ($tone) => [$tone => __("statamic-emojis::messages.skin_tones.{$tone}")])
-                        ->all(),
-                    'width' => 50,
-                ],
-                'skin_tone_selector' => [
-                    'display' => __('statamic-emojis::messages.config.skin_tone_selector'),
-                    'instructions' => __('statamic-emojis::messages.config.skin_tone_selector_instructions'),
-                    'type' => 'toggle',
-                    'default' => true,
-                    'width' => 50,
-                ],
-            ],
-        ];
+    public function process($data)
+    {
+        $data = is_string($data) ? trim($data) : null;
 
-        return $items;
+        return $data === '' ? null : $data;
+    }
+
+    public function augment($value)
+    {
+        return $value;
     }
 }
