@@ -5,6 +5,8 @@ A Statamic 6 addon that provides:
 - **Emoji fieldtype** (`emoji`): a single emoji, chosen with the picker. Shows a "Select emoji" button, then the chosen emoji with a button to remove it.
 - **Emoji Text fieldtype** (`emoji_text`): extends the core Text fieldtype and adds an emoji picker that inserts at the cursor.
 - **Bard emoji button**: a Bard toolbar button that inserts emojis at the cursor.
+- **Shortcode suggestions**: typing `:rock` in Emoji Text and Bard suggests matching emojis.
+- **API support**: emoji values are objects with name and image in the REST API and GraphQL.
 
 The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.id), with category tabs, search, skin tones and a preview footer. Emoji data (Emojibase) is served through the Control Panel (see [Emoji data](#emoji-data)), emojis can be shown as Noto, Fluent or OpenMoji images (see [Emoji sets](#emoji-sets)), and editors can upload their own (see [Custom emojis](#custom-emojis)).
 
@@ -180,8 +182,9 @@ php please emojis:clear --data   # also forget the cached Emojibase data (names,
 
 ### Output
 
-Values stay plain strings. To render them in the set, use the `emoji_images` modifier. It works on
-a single emoji, text and HTML (only text between tags is replaced, attributes stay untouched):
+In templates, values print as plain text (`{{ emoji }}` → 🎉). To render them in the set, use the
+`emoji_images` modifier. It works on a single emoji, text and HTML (only text between tags is
+replaced, attributes stay untouched):
 
 ```antlers
 {{ emoji | emoji_images }}                 {{# field's set, else the site-wide set #}}
@@ -190,14 +193,20 @@ a single emoji, text and HTML (only text between tags is replaced, attributes st
 ```
 
 ```blade
-{!! Statamic::modify($page->augmentedValue('emoji'))->emoji_images() !!}
+{!! Statamic::modify($page->emoji)->emoji_images() !!}
 {!! Statamic::modify($page->content)->emoji_images('noto') !!}
 ```
 
-In Blade, pass the `Value` (`$entry->augmentedValue('handle')`, or
-`$values->getProxiedInstance()->get('handle')` in grids and replicators) so the field's set is used;
-a plain string uses the site-wide set. Antlers finds the field automatically. If fields with
-different sets hold the same value, pass the set explicitly.
+Emoji and Emoji Text values carry their field's set, so the modifier uses it in Antlers and Blade
+alike; other values (e.g. Bard) use the site-wide set unless you pass one.
+
+The Emoji field also gives you the emoji's name and image directly:
+
+```antlers
+{{ emoji }}          {{# 🎉 #}}
+{{ emoji:label }}    {{# party popper (Emojibase name in the site's language, or the custom emoji's name) #}}
+{{ emoji:url }}      {{# image of the field's set or custom emoji; empty for native #}}
+```
 
 Images get `class="emoji"`; size them with your CSS, e.g.
 `img.emoji { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }`.
@@ -239,11 +248,71 @@ Images are stored on the `statamic-emojis` disk, which the addon defines as `pub
 can be changed in the config (`custom`) or with `STATAMIC_EMOJIS_CUSTOM`,
 `STATAMIC_EMOJIS_CUSTOM_CONTAINER` and `STATAMIC_EMOJIS_CUSTOM_DISK`.
 
+## Shortcode suggestions
+
+Typing `:` and at least two characters (e.g. `:rock`) in an Emoji Text field or in a Bard field
+with the emoji button lists matching emojis: custom emojis by shortcode first, then emojis by name
+and keywords. ↑/↓ choose, Enter or Tab insert, Escape closes. Turn it off with "Shortcode
+Suggestions" on the Emojis page.
+
+## API (REST & GraphQL)
+
+Emoji fields are objects in the API (in templates they still print as plain text):
+
+```json
+"mood": {
+    "value": "👍🏻",
+    "label": "thumbs up: light skin tone",
+    "url": "https://example.com/!/statamic-emojis/sets/openmoji/1f44d-1f3fb.svg",
+    "set": "openmoji",
+    "custom": false,
+    "shortcode": null
+}
+```
+
+`url` is the image of the field's set (`null` for native) or the custom emoji's image; custom
+emojis have `"value": ":party-parrot:"`, `"custom": true` and their `shortcode`. Emoji Text fields
+are `{ "value": "Done 👍", "html": "Done <img class=\"emoji\" …>", "set": "noto" }`.
+
+GraphQL has matching types, `EmojiValue` and `EmojiTextValue`:
+
+```graphql
+{
+    entry(id: "…") {
+        ... on Entry_Pages_Page {
+            mood { value label url set custom shortcode }
+            motto { value html set }
+        }
+    }
+}
+```
+
 ## Databases
 
 Values are plain Unicode. Statamic's database driver stores field data JSON-encoded with ASCII
 escapes (`\ud83d\ude00`), so it's safe in any MySQL character set. If you copy values into your own
 text columns, use `utf8mb4` (Laravel's default) – the older 3-byte `utf8` can't hold emojis.
+
+## Installation
+
+```bash
+composer require jeslage/statamic-emojis
+php please emojis:custom-setup   # optional: container for custom emojis
+```
+
+Releases ship the built Control Panel assets (`dist.tar.gz`), which
+[`pixelfear/composer-dist-plugin`](https://github.com/pixelfear/composer-dist-plugin) downloads
+into `resources/dist` on install. When installing a development branch, build them yourself
+(`npm ci && npm run build`).
+
+## Releasing
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org) (`feat:`, `fix:`, …).
+[release-please](https://github.com/googleapis/release-please) keeps a release pull request with the
+changelog and next version up to date; merging it creates the tag and GitHub release, and the
+release workflow attaches `dist.tar.gz`. Before 1.0, `feat` bumps the minor and `fix` the patch
+version. The repository needs "Allow GitHub Actions to create and approve pull requests"
+(Settings → Actions → General).
 
 ## Tests
 
