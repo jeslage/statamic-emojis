@@ -2,3 +2,25 @@
 @source '../js';
 
 /** Your custom styles go here */
+
+/* Custom emojis in the Bard editor: inline, text-sized (Bard's prose styles would make images full width) */
+.ProseMirror .bard-custom-emoji {
+    display: inline-block;
+    vertical-align: -0.2em;
+    line-height: 1;
+}
+
+.ProseMirror .bard-custom-emoji img {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    max-width: none;
+    margin: 0;
+    object-fit: contain;
+}
+
+.ProseMirror .bard-custom-emoji.ProseMirror-selectednode {
+    border-radius: 0.25rem;
+    outline: 2px solid var(--color-focus-outline, #3b82f6);
+    outline-offset: 1px;
+}

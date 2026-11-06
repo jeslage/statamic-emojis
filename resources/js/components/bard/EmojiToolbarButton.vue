@@ -2,6 +2,8 @@
 import { Button, Popover } from "@statamic/cms/ui";
 import { SmilePlus } from "@lucide/vue";
 import EmojiPicker from "../EmojiPicker.vue";
+import { isShortcode } from "../../custom-emojis.js";
+import { pickerOptions } from "../../settings.js";
 
 const props = defineProps({
     button: Object,
@@ -13,7 +15,12 @@ const props = defineProps({
 });
 
 function insert(emoji) {
-    props.editor.chain().focus().insertContent(emoji).run();
+    // Custom emojis become an inline image node, Unicode emojis plain text
+    const content = isShortcode(emoji)
+        ? { type: "customEmoji", attrs: { shortcode: emoji.slice(1, -1) } }
+        : emoji;
+
+    props.editor.chain().focus().insertContent(content).run();
 }
 </script>
 
@@ -31,6 +38,6 @@ function insert(emoji) {
                 <SmilePlus class="size-4" />
             </Button>
         </template>
-        <EmojiPicker @select="insert" />
+        <EmojiPicker v-bind="pickerOptions()" @select="insert" />
     </Popover>
 </template>
