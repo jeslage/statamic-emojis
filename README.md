@@ -118,7 +118,7 @@ Set it on the Emojis page, or with `STATAMIC_EMOJIS_SET=noto` (`set` in the publ
 Default: `native`. The set is site-wide, so all fields and the front end look the same.
 
 The set is used in the picker, the Emoji, Emoji Text and Bard fields in the Control Panel, and by the
-`emoji_images` modifier. Image sets are SVGs that the
+`emojis` modifier. Image sets are SVGs that the
 server fetches once (pinned versions, see the config), caches in `storage/statamic-emojis/sets` and
 serves from `/!/statamic-emojis/sets/{set}/{codepoints}.svg`, so visitors' browsers never contact a
 CDN. Emojis a set doesn't have fall back to the native character.
@@ -188,18 +188,18 @@ php please emojis:clear --data   # also forget the cached Emojibase data (names,
 ### Output
 
 In templates, values print as plain text (`{{ emoji }}` → 🎉). To render them in the set, use the
-`emoji_images` modifier. It works on a single emoji, text and HTML (only text between tags is
+`emojis` modifier. It works on a single emoji, text and HTML (only text between tags is
 replaced, attributes stay untouched):
 
 ```antlers
-{{ emoji | emoji_images }}                 {{# site-wide set #}}
-{{ content | emoji_images }}               {{# Bard / Emoji Text #}}
-{{ content | emoji_images('openmoji') }}   {{# explicit set #}}
+{{ emoji | emojis }}                 {{# site-wide set #}}
+{{ content | emojis }}               {{# Bard / Emoji Text #}}
+{{ content | emojis('openmoji') }}   {{# explicit set #}}
 ```
 
 ```blade
-{!! Statamic::modify($page->emoji)->emoji_images() !!}
-{!! Statamic::modify($page->content)->emoji_images('noto') !!}
+{!! Statamic::modify($page->emoji)->emojis() !!}
+{!! Statamic::modify($page->content)->emojis('noto') !!}
 <s:emojis :value="$page->content" />   {{-- the same with the emojis tag, see below --}}
 ```
 
@@ -261,7 +261,7 @@ php please emojis:custom-setup   # once: creates the "statamic-emojis" asset con
 - **Values:** the Emoji field stores `:shortcode:`, Emoji Text stores `:shortcode:` as text (shown as
   the image in the editor), and Bard inserts an inline image node (shown as the image in the editor).
 - **Output:** Bard renders custom emojis as `<img class="emoji emoji-custom">` automatically. For Emoji
-  and Emoji Text values, use the `emoji_images` modifier (in every emoji set, including `native`).
+  and Emoji Text values, use the `emojis` modifier (in every emoji set, including `native`).
   Unknown shortcodes stay text.
 
 Shortcodes are lowercase letters, numbers, `-`, `_` and `+`. **Renaming a shortcode breaks existing

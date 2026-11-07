@@ -44,7 +44,7 @@ return [
     'settings' => [
         'tab_general' => 'General',
         'section_set' => 'Emoji Set',
-        'emoji_set_instructions' => 'How emojis look in the picker and in the output of the emoji_images modifier. Noto, Fluent and OpenMoji are images served from your own domain. OpenMoji requires an attribution on your site.',
+        'emoji_set_instructions' => 'How emojis look in the picker and in the output of the "emojis" modifier. Noto, Fluent and OpenMoji are images served from your own domain. OpenMoji requires an attribution on your site.',
         'section_picker' => 'Picker Defaults',
         'section_picker_instructions' => 'Used by all emoji fields and the Bard emoji button. Each field can override them in its "Emoji Picker" settings.',
         'categories_instructions' => 'Categories the picker offers. Leave empty to allow all.',

@@ -87,7 +87,7 @@ Fields in the `pages` blueprint:
 | `blocks`                | replicator | Emoji field and Bard with emoji button inside a set       |
 | `reactions`             | grid       | Emoji field (Noto set) in grid rows                       |
 
-Both templates show each value as stored and through the `emoji_images` modifier, plus a row per
+Both templates show each value as stored and through the `emojis` modifier, plus a row per
 emoji set. Run `php please emojis:warm noto` (and `fluent`, `openmoji`) once to fill the image cache.
 
 Custom emojis: the seed ships the `statamic-emojis` asset container (title "Emojis") with three sample images

@@ -28,7 +28,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | How emojis look in the picker and in the front-end output of the
-    | "emoji_images" modifier. "native" uses each device's own emoji font;
+    | "emojis" modifier. "native" uses each device's own emoji font;
     | the other sets are SVG images, fetched once by the server, cached in
     | "cache_path" and served from your own domain (no visitor IPs go to a CDN).
     | "set" is the site-wide set (the Emojis page in the CP overrides it);

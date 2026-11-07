@@ -5,12 +5,12 @@
     $page->field returns the augmented value: emoji fields are strings, Bard is HTML,
     replicator and grid are arrays of Statamic\Fields\Values.
 
-    emoji_images uses the site-wide set unless a set is passed (emoji_images('noto')).
+    emojis uses the site-wide set unless a set is passed (emojis('noto')).
 --}}
 @props(['page'])
 
 @php
-    $images = fn ($value, $set = null) => Statamic::modify($value)->emoji_images($set);
+    $images = fn ($value, $set = null) => Statamic::modify($value)->emojis($set);
     $sample = '🇩🇪 ❤️ 🧑‍🚀 👍🏽';
 @endphp
 
@@ -23,7 +23,7 @@
     <section class="space-y-3">
         <h2 class="text-xl font-semibold">Emoji fieldtype</h2>
         <dl class="grid grid-cols-[max-content_1fr_1fr] gap-x-6 gap-y-2">
-            <dt></dt><dd class="text-sm text-zinc-500">stored</dd><dd class="text-sm text-zinc-500">emoji_images</dd>
+            <dt></dt><dd class="text-sm text-zinc-500">stored</dd><dd class="text-sm text-zinc-500">emojis</dd>
             @foreach (['emoji', 'emoji_empty', 'emoji_configured', 'emoji_read_only', 'emoji_required'] as $handle)
                 <dt class="font-mono text-sm">{{ $handle }}</dt>
                 <dd class="text-2xl">{{ $page->$handle ?? '–' }}</dd>
@@ -43,7 +43,7 @@
     </section>
 
     <section class="space-y-3">
-        <h2 class="text-xl font-semibold">All sets <span class="font-mono text-sm">emoji_images('…')</span></h2>
+        <h2 class="text-xl font-semibold">All sets <span class="font-mono text-sm">emojis('…')</span></h2>
         <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-2xl">
             @foreach (['native', 'noto', 'fluent', 'openmoji'] as $set)
                 <dt class="font-mono text-sm">{{ $set }}</dt>
@@ -67,7 +67,7 @@
         <h2 class="text-xl font-semibold">Bard</h2>
         <h3 class="font-mono text-sm">content</h3>
         <div class="prose dark:prose-invert">{!! $page->content !!}</div>
-        <h3 class="font-mono text-sm">content | emoji_images('noto')</h3>
+        <h3 class="font-mono text-sm">content | emojis('noto')</h3>
         <div class="prose dark:prose-invert">{!! $images($page->content, 'noto') !!}</div>
         <h3 class="font-mono text-sm">content_without_emoji</h3>
         <div class="prose dark:prose-invert">{!! $page->content_without_emoji !!}</div>

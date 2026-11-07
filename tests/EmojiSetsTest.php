@@ -229,9 +229,9 @@ class EmojiSetsTest extends TestCase
     {
         config(['statamic-emojis.set' => 'fluent']);
 
-        $this->assertStringContainsString('/sets/fluent/1f389.svg', (string) Modify::value('🎉')->emoji_images());
-        $this->assertStringContainsString('/sets/noto/1f389.svg', (string) Modify::value('🎉')->emoji_images('noto'));
-        $this->assertSame('🎉', (string) Modify::value('🎉')->emoji_images('native'));
+        $this->assertStringContainsString('/sets/fluent/1f389.svg', (string) Modify::value('🎉')->emojis());
+        $this->assertStringContainsString('/sets/noto/1f389.svg', (string) Modify::value('🎉')->emojis('noto'));
+        $this->assertSame('🎉', (string) Modify::value('🎉')->emojis('native'));
     }
 
     private function emojiValue(string $emoji, string $type = 'emoji'): Value
@@ -241,19 +241,19 @@ class EmojiSetsTest extends TestCase
         return new Value($emoji, 'field', $field->fieldtype());
     }
 
-    /** Renders tests/views/emoji-images.antlers.html like a site template (Antlers::parse treats input as user content). */
+    /** Renders tests/views/emojis-modifier.antlers.html like a site template (Antlers::parse treats input as user content). */
     private function renderAntlers(array $data): string
     {
         View::addLocation(__DIR__.'/views');
 
-        return trim(view('emoji-images', $data + ['mood' => null, 'other' => null, 'a' => null])->render());
+        return trim(view('emojis-modifier', $data + ['mood' => null, 'other' => null, 'a' => null])->render());
     }
 
     public function test_field_values_use_the_site_set(): void
     {
         config(['statamic-emojis.set' => 'openmoji']);
 
-        $this->assertStringContainsString('/sets/openmoji/1f389.svg', (string) Modify::value($this->emojiValue('🎉'))->emoji_images());
+        $this->assertStringContainsString('/sets/openmoji/1f389.svg', (string) Modify::value($this->emojiValue('🎉'))->emojis());
 
         [$mood, $other] = explode('|', $this->renderAntlers([
             'mood' => $this->emojiValue('🎉'),

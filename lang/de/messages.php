@@ -44,7 +44,7 @@ return [
     'settings' => [
         'tab_general' => 'Allgemein',
         'section_set' => 'Emoji-Set',
-        'emoji_set_instructions' => 'Wie Emojis in der Auswahl und in der Ausgabe des Modifiers emoji_images aussehen. Noto, Fluent und OpenMoji sind Bilder, die von deiner eigenen Domain ausgeliefert werden. OpenMoji verlangt eine Namensnennung auf deiner Website.',
+        'emoji_set_instructions' => 'Wie Emojis in der Auswahl und in der Ausgabe des Modifiers „emojis“ aussehen. Noto, Fluent und OpenMoji sind Bilder, die von deiner eigenen Domain ausgeliefert werden. OpenMoji verlangt eine Namensnennung auf deiner Website.',
         'section_picker' => 'Standards der Auswahl',
         'section_picker_instructions' => 'Gilt für alle Emoji-Felder und den Emoji-Button in Bard. Jedes Feld kann sie in seinen Einstellungen unter „Emoji-Auswahl“ überschreiben.',
         'categories_instructions' => 'Kategorien, die die Auswahl anbietet. Leer lassen, um alle zu erlauben.',

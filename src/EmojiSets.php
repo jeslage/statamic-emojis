@@ -134,7 +134,7 @@ class EmojiSets
         return $this->isImageSet($set) ? $set : self::NATIVE;
     }
 
-    /** A set if valid (e.g. the emoji_images parameter), otherwise the site-wide set. */
+    /** A set if valid (e.g. the emojis parameter), otherwise the site-wide set. */
     public function resolve(?string $set): string
     {
         if ($set === self::NATIVE || $this->isImageSet($set)) {
@@ -324,7 +324,7 @@ class EmojiSets
 
     /**
      * A value (emoji, text or HTML; also field values) with its emojis as images: the given set, else the
-     * site-wide set. Used by the emoji_images modifier and the emojis tag.
+     * site-wide set. Used by the emojis modifier and the emojis tag.
      */
     public function html(mixed $value, ?string $set = null): string
     {

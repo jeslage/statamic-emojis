@@ -44,7 +44,7 @@ return [
     'settings' => [
         'tab_general' => 'Général',
         'section_set' => 'Jeu d’emojis',
-        'emoji_set_instructions' => 'Apparence des emojis dans le sélecteur et dans la sortie du modificateur emoji_images. Noto, Fluent et OpenMoji sont des images servies depuis votre propre domaine. OpenMoji exige une attribution sur votre site.',
+        'emoji_set_instructions' => 'Apparence des emojis dans le sélecteur et dans la sortie du modificateur « emojis ». Noto, Fluent et OpenMoji sont des images servies depuis votre propre domaine. OpenMoji exige une attribution sur votre site.',
         'section_picker' => 'Valeurs par défaut du sélecteur',
         'section_picker_instructions' => 'Utilisées par tous les champs emoji et le bouton emoji de Bard. Chaque champ peut les remplacer dans ses réglages du sélecteur d’emojis.',
         'categories_instructions' => 'Catégories proposées par le sélecteur. Laisser vide pour toutes les autoriser.',

@@ -142,12 +142,12 @@ class CustomEmojisTest extends TestCase
         $this->assertStringContainsString('at 10:30, not :unknown:', $out);
     }
 
-    public function test_emoji_images_modifier_handles_custom_emojis_in_every_set(): void
+    public function test_emojis_modifier_handles_custom_emojis_in_every_set(): void
     {
         $this->setUpContainer();
         $this->upload('statamic.svg');
 
-        $native = (string) Modify::value('<p title=":statamic:">I ❤️ :statamic:</p>')->emoji_images('native');
+        $native = (string) Modify::value('<p title=":statamic:">I ❤️ :statamic:</p>')->emojis('native');
         $this->assertStringContainsString('<p title=":statamic:">I ❤️ <img class="emoji emoji-custom"', $native);
 
         $noto = app(EmojiSets::class)->replace('I ❤️ :statamic:', 'noto');

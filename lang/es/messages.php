@@ -44,7 +44,7 @@ return [
     'settings' => [
         'tab_general' => 'General',
         'section_set' => 'Conjunto de emojis',
-        'emoji_set_instructions' => 'Cómo se ven los emojis en el selector y en la salida del modificador emoji_images. Noto, Fluent y OpenMoji son imágenes servidas desde tu propio dominio. OpenMoji requiere una atribución en tu sitio.',
+        'emoji_set_instructions' => 'Cómo se ven los emojis en el selector y en la salida del modificador «emojis». Noto, Fluent y OpenMoji son imágenes servidas desde tu propio dominio. OpenMoji requiere una atribución en tu sitio.',
         'section_picker' => 'Valores predeterminados del selector',
         'section_picker_instructions' => 'Se usan en todos los campos de emoji y en el botón de emoji de Bard. Cada campo puede sobrescribirlos en sus ajustes del selector de emojis.',
         'categories_instructions' => 'Categorías que ofrece el selector. Déjalo vacío para permitir todas.',
