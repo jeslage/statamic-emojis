@@ -4,7 +4,7 @@ A Statamic 6 addon that adds an emoji picker to the Control Panel: emoji fieldty
 shortcode suggestions and custom emoji uploads. Emojis are **stored as Unicode** and can be shown as
 native characters or as **Noto, Fluent or OpenMoji images**, in the Control Panel and on the front end.
 
-![An entry in the Statamic Control Panel with Emoji, Emoji Text and Bard fields and the open emoji picker](.github/demo.png)
+![Two Control Panel screenshots: an entry with the emoji picker open on an Emoji Text field, and shortcode suggestions for ":sunrise" in a Bard field](.github/demo.png)
 
 ## Features
 
