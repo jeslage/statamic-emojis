@@ -70,8 +70,8 @@ In entry listings, listable emoji fields show their emojis like the field does.
 
 ## Settings
 
-**Settings → Emojis** in the Control Panel (permission "edit Statamic Emojis settings"), saved to
-`resources/addons/statamic-emojis.yaml`:
+**Settings → Emojis** in the Control Panel (the "Statamic Emojis settings" permission, under Addons
+in the role editor), saved to `resources/addons/statamic-emojis.yaml`:
 
 - **General:** emoji set, picker defaults, recently used emojis and shortcode suggestions
 - **Custom Emojis:** turn them on or off, see and upload them
