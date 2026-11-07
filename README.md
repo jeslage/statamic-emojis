@@ -1,4 +1,4 @@
-# 😀 Statamic Emojis
+# 😄 Statamic Emojis
 
 A Statamic 6 addon that adds an emoji picker to the Control Panel: emoji fieldtypes, a Bard button,
 shortcode suggestions and, with **Pro**, custom emoji uploads. Emojis are **stored as Unicode** and can be
@@ -40,6 +40,7 @@ The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.id) and 
 - [Tests](#tests)
 - [Releasing](#releasing)
 - [License](#license)
+- [Credits](#credits)
 
 ## Editions
 
@@ -311,3 +312,11 @@ The repository needs **"Allow GitHub Actions to create and approve pull requests
 
 Statamic Emojis is commercial software: the free edition can be used free of charge, the Pro edition
 needs a license per site in production. See [LICENSE](LICENSE).
+
+## Credits
+
+The Marketplace image (`.github/marketplace.png`) uses the
+[😄 emoji (1F604)](https://openmoji.org/library/emoji-1F604/) by [OpenMoji](https://openmoji.org), the
+open-source emoji and icon project, licensed under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The image itself is available under the
+same license.
