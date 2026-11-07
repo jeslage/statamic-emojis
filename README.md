@@ -24,23 +24,13 @@ The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.id) and 
 
 ## Table of contents
 
-- [Editions](#editions)
-- [Installation](#installation)
-- [Fieldtypes](#fieldtypes)
-- [Settings](#settings)
-- [Emoji sets](#emoji-sets)
-- [Templates](#templates)
-- [Custom emojis](#custom-emojis)
-- [Shortcode suggestions](#shortcode-suggestions)
-- [API (REST & GraphQL)](#api-rest--graphql)
-- [Emoji data](#emoji-data)
-- [Translations](#translations)
-- [Notes](#notes)
-- [Local development](#local-development)
-- [Tests](#tests)
-- [Releasing](#releasing)
-- [License](#license)
-- [Credits](#credits)
+- **Getting started:** [Editions](#editions) · [Installation](#installation)
+- **Usage:** [Fieldtypes](#fieldtypes) · [Settings](#settings) · [Emoji sets](#emoji-sets) · [Templates](#templates) ·
+  [Custom emojis](#custom-emojis) · [Shortcode suggestions](#shortcode-suggestions) ·
+  [API (REST & GraphQL)](#api-rest--graphql) · [Emoji data](#emoji-data) · [Translations](#translations)
+- **More:** [Notes](#notes) · [Roadmap](#roadmap)
+- **Development:** [Local development](#local-development) · [Tests](#tests) · [Releasing](#releasing)
+- **About:** [License](#license) · [Credits](#credits)
 
 ## Editions
 
@@ -271,6 +261,16 @@ STATAMIC_EMOJIS_CACHE_TTL=604800
 
 - The picker hides emojis the editor's device can't render (e.g. flags in Chrome on Windows).
 - Values are plain Unicode. If you copy them into your own MySQL columns, **use `utf8mb4`**.
+
+## Roadmap
+
+Ideas for upcoming versions, without dates. Suggestions are welcome as
+[GitHub issues](https://github.com/jeslage/statamic-emojis/issues).
+
+- **Reactions:** let visitors react to entries with emojis, with the counts in the Control Panel and the API
+- **Emoji palettes:** limit a site or field to an approved set of emojis, or block specific ones
+- **Team favorites:** shared favorites at the top of the picker
+- **Forms:** an emoji field for Statamic forms, e.g. for feedback ratings
 
 ## Local development
 
