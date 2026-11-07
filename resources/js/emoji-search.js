@@ -9,8 +9,11 @@ const FLAGS_GROUP = 9;
 const DEFAULT_MAX_VERSION = 15;
 const TONES = { light: 1, "medium-light": 2, medium: 3, "medium-dark": 4, dark: 5 };
 
-/** ":query" right before the cursor, at the start or after whitespace; at least 2 characters. */
-const TRIGGER = /(?:^|\s):([a-z0-9_+-]{2,})$/i;
+/**
+ * ":query" right before the cursor, at least 2 characters. Anywhere except glued to a letter or digit:
+ * so right after an emoji or custom emoji works ("👍:rock"), times and URLs ("10:30", "a:bc") don't.
+ */
+const TRIGGER = /(?:^|[^\p{L}\p{N}]):([a-z0-9_+-]{2,})$/iu;
 
 let index = null;
 let loading = null;
@@ -42,39 +45,52 @@ function rememberedTone() {
     }
 }
 
-/** Loads the emoji data once (CP locale, all categories). */
-export function loadEmojiIndex() {
-    loadCustomEmojis();
-
-    loading ??= fetch(`${emojibaseUrl([])}/${cpEmojibaseLocale()}/data.json`, {
+function getJson(url, fallback) {
+    return fetch(url, {
         headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" },
         credentials: "same-origin",
     })
-        .then((response) => (response.ok ? response.json() : []))
-        .catch(() => [])
-        .then((data) => {
-            const { maxVersion, flags } = deviceSupport();
+        .then((response) => (response.ok ? response.json() : fallback))
+        .catch(() => fallback);
+}
 
-            index = data
-                .filter((emoji) => emoji.emoji && emoji.group !== undefined && emoji.group !== COMPONENT_GROUP)
-                .filter((emoji) => (emoji.version ?? 0) <= maxVersion && (flags || emoji.group !== FLAGS_GROUP))
-                .map((emoji) => ({
-                    emoji: emoji.emoji,
-                    label: emoji.label ?? "",
-                    tags: emoji.tags ?? [],
-                    skins: (emoji.skins ?? []).filter((skin) => typeof skin.tone === "number"),
-                }));
+/** Shortcodes of an Emojibase hexcode as an array ("rocket" or ["+1", "thumbsup"]). */
+const shortcodesOf = (shortcodes, hexcode) => [shortcodes[hexcode] ?? []].flat();
 
-            return index;
-        });
+/** Loads the emoji data (CP locale, all categories) and the English shortcodes once. */
+export function loadEmojiIndex() {
+    loadCustomEmojis();
+
+    loading ??= Promise.all([
+        getJson(`${emojibaseUrl([])}/${cpEmojibaseLocale()}/data.json`, []),
+        getJson(`${Statamic.$config.get("cpUrl")}/statamic-emojis/emojibase/shortcodes.json`, {}),
+    ]).then(([data, shortcodes]) => {
+        const { maxVersion, flags } = deviceSupport();
+
+        index = data
+            .filter((emoji) => emoji.emoji && emoji.group !== undefined && emoji.group !== COMPONENT_GROUP)
+            .filter((emoji) => (emoji.version ?? 0) <= maxVersion && (flags || emoji.group !== FLAGS_GROUP))
+            .map((emoji) => ({
+                emoji: emoji.emoji,
+                label: emoji.label ?? "",
+                tags: emoji.tags ?? [],
+                shortcodes: shortcodesOf(shortcodes, emoji.hexcode),
+                skins: (emoji.skins ?? [])
+                    .filter((skin) => typeof skin.tone === "number")
+                    .map((skin) => ({ ...skin, shortcodes: shortcodesOf(shortcodes, skin.hexcode) })),
+            }));
+
+        return index;
+    });
 
     return loading;
 }
 
 /**
- * Emojis matching a query, best first: custom emojis by shortcode, then names starting with the query,
- * names with a word starting with it, tags starting with it, and names containing it.
- * Returns [{ emoji, label, hint }] where custom emojis are ":shortcode:".
+ * Emojis matching a query, best first: custom emojis by shortcode, then emojis whose shortcode starts with
+ * the query, shortcodes with a part starting with it, names starting with it, names with a word starting
+ * with it, tags starting with it, and names containing it.
+ * Returns [{ emoji, label, shortcode }]: custom emojis are ":shortcode:" as emoji, label is the name.
  */
 export function searchEmojis(query, { customEmojis = true, limit = 8 } = {}) {
     const q = String(query ?? "").toLowerCase();
@@ -94,7 +110,7 @@ export function searchEmojis(query, { customEmojis = true, limit = 8 } = {}) {
                     : null;
 
             if (score !== null) {
-                results.push({ score, emoji: `:${custom.shortcode}:`, label: custom.label, hint: `:${custom.shortcode}:` });
+                results.push({ score, emoji: `:${custom.shortcode}:`, label: custom.label, shortcode: custom.shortcode });
             }
         }
     }
@@ -103,19 +119,29 @@ export function searchEmojis(query, { customEmojis = true, limit = 8 } = {}) {
 
     for (const entry of index ?? []) {
         const label = entry.label.toLowerCase();
-        const score = label.startsWith(q)
+        const prefixShortcode = entry.shortcodes.find((code) => code.startsWith(q));
+        const partShortcode = entry.shortcodes.find((code) => code.split(/[_-]/).some((part) => part.startsWith(q)));
+        const score = prefixShortcode
             ? 3
-            : label.split(/[\s:,-]+/).some((word) => word.startsWith(q))
+            : partShortcode
               ? 4
-              : entry.tags.some((tag) => tag.startsWith(q))
+              : label.startsWith(q)
                 ? 5
-                : label.includes(q)
+                : label.split(/[\s:,-]+/).some((word) => word.startsWith(q))
                   ? 6
-                  : null;
+                  : entry.tags.some((tag) => tag.startsWith(q))
+                    ? 7
+                    : label.includes(q)
+                      ? 8
+                      : null;
 
         if (score !== null) {
+            // Show the shortcode that matched, in the editor's skin tone if the emoji has one
             const skin = tone ? entry.skins.find((s) => s.tone === tone) : null;
-            results.push({ score, emoji: skin?.emoji ?? entry.emoji, label: entry.label, hint: "" });
+            const base = prefixShortcode ?? partShortcode ?? entry.shortcodes[0] ?? null;
+            const shortcode = skin && base ? (skin.shortcodes.find((code) => code.startsWith(base)) ?? base) : base;
+
+            results.push({ score, emoji: skin?.emoji ?? entry.emoji, label: skin?.label ?? entry.label, shortcode });
         }
     }
 

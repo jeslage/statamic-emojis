@@ -25,6 +25,17 @@ class EmojibaseController
             ? $emojibase->data($locale, $categories)
             : $emojibase->messages($locale);
 
+        return $this->json($request, $data);
+    }
+
+    /** Shortcodes for the suggestions while typing ":name" (Emojibase's "emojibase" preset). */
+    public function shortcodes(Request $request, Emojibase $emojibase): Response
+    {
+        return $this->json($request, $emojibase->shortcodes());
+    }
+
+    protected function json(Request $request, array $data): Response
+    {
         $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         // frimousse compares ETags (HEAD requests) to decide whether its browser cache is still valid.

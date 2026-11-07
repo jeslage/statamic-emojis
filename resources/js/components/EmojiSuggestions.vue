@@ -27,9 +27,8 @@ const emit = defineEmits(["select", "hover"]);
             @mousedown.prevent="emit('select', item)"
             @mouseenter="emit('hover', index)"
         >
-            <span class="emoji-picker-preview shrink-0 text-lg leading-none"><EmojiImage :emoji="item.emoji" :set="set" /></span>
-            <span class="min-w-0 flex-1 truncate">{{ item.label }}</span>
-            <span v-if="item.hint" class="shrink-0 font-mono text-xs text-gray-500 dark:text-gray-400">{{ item.hint }}</span>
+            <span class="emoji-picker-preview shrink-0 text-lg leading-none"><EmojiImage :emoji="item.emoji" /></span>
+            <span class="min-w-0 flex-1 truncate" :title="item.label">{{ item.shortcode ? `:${item.shortcode}:` : item.label }}</span>
         </li>
     </ul>
 </template>

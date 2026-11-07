@@ -251,8 +251,9 @@ can be changed in the config (`custom`) or with `STATAMIC_EMOJIS_CUSTOM`,
 ## Shortcode suggestions
 
 Typing `:` and at least two characters (e.g. `:rock`) in an Emoji Text field or in a Bard field
-with the emoji button lists matching emojis: custom emojis by shortcode first, then emojis by name
-and keywords. ↑/↓ choose, Enter or Tab insert, Escape closes. Turn it off with "Shortcode
+with the emoji button lists matching emojis with their shortcode: custom emojis first, then emojis
+by their [Emojibase shortcode](https://emojibase.dev/docs/shortcodes) (e.g. `:thumbsup:`), name and
+keywords. ↑/↓ choose, Enter or Tab insert, Escape closes. Turn it off with "Shortcode
 Suggestions" on the Emojis page.
 
 ## API (REST & GraphQL)

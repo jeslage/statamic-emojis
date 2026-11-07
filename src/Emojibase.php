@@ -110,6 +110,18 @@ class Emojibase
         return in_array($locale, self::LOCALES, true);
     }
 
+    /** Shortcode preset used for suggestions (English, like Slack/GitHub): emojibase. */
+    public const SHORTCODES = 'shortcodes/emojibase.json';
+
+    /**
+     * Shortcodes per hexcode, e.g. ['1F680' => 'rocket', '1F44D' => ['+1', 'thumbsup', 'yes']].
+     * English for every locale, as shortcodes are typed rather than read.
+     */
+    public function shortcodes(): array
+    {
+        return $this->fetch('en', self::SHORTCODES);
+    }
+
     /** Forget the cached data of all locales, so it's fetched again on next use. */
     public function clear(): void
     {
@@ -118,6 +130,8 @@ class Emojibase
                 Cache::forget($this->cacheKey($locale, $file));
             }
         }
+
+        Cache::forget($this->cacheKey('en', self::SHORTCODES));
     }
 
     protected function cacheKey(string $locale, string $file): string
