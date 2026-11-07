@@ -45,3 +45,21 @@
     vertical-align: -0.25em;
     object-fit: contain;
 }
+
+/* Unicode emojis in Bard shown in the emoji set: the set's image behind the transparent glyph, in a
+   square the size of custom emojis (the glyph's own width varies by font). -webkit-text-fill-color
+   (not color) keeps the caret visible. */
+.ProseMirror .bard-emoji-image {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    overflow: hidden;
+    vertical-align: -0.25em;
+    line-height: 1.25em;
+    text-align: center;
+    white-space: nowrap;
+    -webkit-text-fill-color: transparent;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
