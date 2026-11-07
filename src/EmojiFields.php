@@ -55,7 +55,6 @@ class EmojiFields
 
         return [
             'display' => $t('config.skin_tone'),
-            'instructions' => $t('config.skin_tone_instructions'),
             'type' => 'select',
             'options' => collect(Emojibase::SKIN_TONES)
                 ->mapWithKeys(fn ($tone) => [$tone => $t("skin_tones.{$tone}")])
@@ -97,7 +96,6 @@ class EmojiFields
 
         $field = [
             'display' => $t("config.{$key}"),
-            'instructions' => $t("config.{$key}_instructions"),
             'width' => 50,
         ];
 
