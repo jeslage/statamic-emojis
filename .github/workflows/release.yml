@@ -50,9 +50,11 @@ jobs:
       - run: npm ci
       - run: npm run build
 
+      # Composer strips the archive's single top-level folder when extracting into resources/dist,
+      # so the archive holds dist/build/… to end up as resources/dist/build/…
       - name: Attach dist.tar.gz to the release
         run: |
-          tar -czf dist.tar.gz -C resources/dist build
+          tar -czf dist.tar.gz -C resources dist
           gh release upload "${{ needs.release-please.outputs.tag_name }}" dist.tar.gz --clobber
         env:
           GH_TOKEN: ${{ github.token }}
