@@ -12,7 +12,9 @@ use StatamicEmojis\Values\EmojiTextValue;
 /**
  * A text field with an emoji picker attached.
  *
- * Inherits all config, processing and augmentation from the core Text fieldtype.
+ * Inherits config, processing and augmentation from the core Text fieldtype. The input is always
+ * a text input (it shows custom emojis as images), so the input type and browser autocomplete
+ * settings are left out.
  */
 class EmojiText extends Text
 {
@@ -31,10 +33,23 @@ class EmojiText extends Text
         return file_get_contents(__DIR__.'/../../resources/svg/smile-plus.svg');
     }
 
+    protected const UNSUPPORTED_CONFIG = ['input_type', 'autocomplete'];
+
     protected function configFieldItems(): array
     {
+        $sections = array_map(function (array $section) {
+            $section['fields'] = array_diff_key($section['fields'], array_flip(self::UNSUPPORTED_CONFIG));
+
+            // The character limit is left on its own in its row
+            if (isset($section['fields']['character_limit'])) {
+                $section['fields']['character_limit']['width'] = '100';
+            }
+
+            return $section;
+        }, parent::configFieldItems());
+
         return [
-            ...parent::configFieldItems(),
+            ...array_values(array_filter($sections, fn (array $section) => $section['fields'] !== [])),
             $this->emojiPickerConfigSection(),
         ];
     }

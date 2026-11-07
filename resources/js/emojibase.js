@@ -55,6 +55,10 @@ export function prepareFrimousseCache(locale, url) {
     }
 }
 
+/** Matches a single emoji: flags, keycaps, and (ZWJ) sequences with modifiers. Same as EmojiSets::EMOJI_PATTERN in PHP. */
+export const EMOJI_PATTERN =
+    /\p{Regional_Indicator}{2}|[#*0-9]\uFE0F?\u20E3|\p{Extended_Pictographic}(?:\uFE0F|\p{Emoji_Modifier})*(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\p{Emoji_Modifier})*)*|\u{1F3F4}[\u{E0061}-\u{E007A}]+\u{E007F}/gu;
+
 /** Lowercase hex codepoints of an emoji joined by "-", fully qualified. Same as EmojiSets::codepoints() in PHP. */
 export function codepoints(emoji) {
     return Array.from(emoji ?? "", (char) => char.codePointAt(0).toString(16)).join("-");

@@ -22,6 +22,18 @@ class EmojiFieldtypeTest extends TestCase
         $this->assertInstanceOf(Text::class, new EmojiText);
     }
 
+    public function test_emoji_text_is_always_a_text_input(): void
+    {
+        $handles = collect((new EmojiText)->configFields()->all())->keys();
+
+        $this->assertFalse($handles->contains('input_type'));
+        $this->assertFalse($handles->contains('autocomplete'));
+
+        foreach (['character_limit', 'placeholder', 'prepend', 'append', 'default', 'antlers'] as $handle) {
+            $this->assertTrue($handles->contains($handle), "Missing Text setting {$handle}");
+        }
+    }
+
     public function test_emoji_stores_a_trimmed_string_or_null(): void
     {
         $emoji = new Emoji;

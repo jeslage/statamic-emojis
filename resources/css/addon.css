@@ -25,3 +25,23 @@
     outline: 2px solid var(--color-focus-outline, #3b82f6);
     outline-offset: 1px;
 }
+
+/* Emoji Text with custom emojis: a contenteditable styled like Statamic's input */
+.emoji-text-input {
+    scrollbar-width: none;
+    cursor: text;
+}
+
+.emoji-text-input::-webkit-scrollbar {
+    display: none;
+}
+
+.emoji-text-input .emoji-text-input-emoji {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    max-width: none;
+    margin: 0 0.05em;
+    vertical-align: -0.25em;
+    object-fit: contain;
+}

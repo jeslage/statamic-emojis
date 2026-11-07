@@ -42,7 +42,9 @@ npm run build                            # production build -> resources/dist
 ## Usage
 
 - **Emoji** (`type: emoji`): stores a single emoji string, or `null` when removed.
-- **Emoji Text** (`type: emoji_text`): accepts all Text field settings (placeholder, character limit, prepend, …).
+- **Emoji Text** (`type: emoji_text`): accepts the Text field settings (placeholder, character limit,
+  prepend, …) except input type and autocomplete: it is always a text input, which shows custom
+  emojis as images and has the picker button inside.
 
 ## Emojis page
 
@@ -232,8 +234,8 @@ php please emojis:custom-setup   # once: creates the "statamic-emojis" asset con
   (defaults to the filename, e.g. `party-parrot.png` → `:party-parrot:`) and **Keywords** for search.
 - **Picker:** a "Custom" tab, and matching custom emojis above the regular search results. Fields can
   turn them off with the "Custom Emojis" setting.
-- **Values:** the Emoji field stores `:shortcode:`, Emoji Text inserts `:shortcode:` as text, and Bard
-  inserts an inline image node (shown as the image in the editor).
+- **Values:** the Emoji field stores `:shortcode:`, Emoji Text stores `:shortcode:` as text (shown as
+  the image in the editor), and Bard inserts an inline image node (shown as the image in the editor).
 - **Output:** Bard renders custom emojis as `<img class="emoji emoji-custom">` automatically. For Emoji
   and Emoji Text values, use the `emoji_images` modifier (in every emoji set, including `native`).
   Unknown shortcodes stay text.
