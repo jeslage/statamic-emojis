@@ -60,8 +60,6 @@ const props = defineProps({
     skinToneSelector: { type: Boolean, default: true },
     // Allowed category keys (field config `categories`), empty = all
     categories: { type: Array, default: () => [] },
-    // Emoji set (field config `emoji_set`), empty = site-wide set from config/statamic-emojis.php
-    set: { type: String, default: null },
     // Offer custom emojis (field config `custom_emojis`)
     customEmojis: { type: Boolean, default: true },
     // Recently used emojis above the list in the search tab (site-wide setting); not with a category limit
@@ -234,7 +232,6 @@ function onEmojiSelect({ emoji, label }) {
                 <EmojiGrid
                     :items="gridItems"
                     :columns="columns"
-                    :set="set"
                     @select="select($event.emoji, $event.label)"
                     @hover="hovered = $event"
                 />
@@ -242,7 +239,6 @@ function onEmojiSelect({ emoji, label }) {
             <PickerFooter
                 :emoji="hovered?.emoji"
                 :label="hovered?.label"
-                :set="set"
                 :skin-tone-selector="skinToneSelector"
                 :skin-tone="pickerSkinTone"
                 @update:skin-tone="onSkinToneChange"
@@ -274,7 +270,6 @@ function onEmojiSelect({ emoji, label }) {
                 <EmojiGrid
                     :items="customMatches"
                     :columns="columns"
-                    :set="set"
                     @select="select($event.emoji, $event.label)"
                     @hover="hovered = $event"
                 />
@@ -294,7 +289,7 @@ function onEmojiSelect({ emoji, label }) {
                 <!-- Only the cell's content is replaced; frimousse keeps click, hover and keyboard handling -->
                 <EmojiPicker.List class="select-none pb-1.5">
                     <template #emoji="{ emoji }">
-                        <EmojiImage :emoji="emoji.emoji" :set="set" />
+                        <EmojiImage :emoji="emoji.emoji" />
                     </template>
                 </EmojiPicker.List>
             </EmojiPicker.Viewport>
@@ -303,7 +298,6 @@ function onEmojiSelect({ emoji, label }) {
                 <PickerFooter
                     :emoji="hovered ? hovered.emoji : emoji?.emoji"
                     :label="hovered ? hovered.label : emoji?.label"
-                    :set="set"
                     :skin-tone-selector="skinToneSelector"
                     :skin-tone="pickerSkinTone"
                     @update:skin-tone="onSkinToneChange"

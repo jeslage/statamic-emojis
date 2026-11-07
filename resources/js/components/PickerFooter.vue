@@ -6,7 +6,6 @@ import SkinToneButton from "./SkinToneButton.vue";
 defineProps({
     emoji: { type: String, default: null },
     label: { type: String, default: null },
-    set: { type: String, default: null },
     skinToneSelector: { type: Boolean, default: true },
     skinTone: { type: String, default: "none" },
 });
@@ -21,7 +20,7 @@ const emit = defineEmits(["update:skinTone"]);
     >
         <template v-if="emoji">
             <span class="emoji-picker-preview shrink-0 text-3xl leading-none" aria-hidden="true">
-                <EmojiImage :emoji="emoji" :set="set" />
+                <EmojiImage :emoji="emoji" />
             </span>
             <span class="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-300" :title="label">
                 {{ label }}

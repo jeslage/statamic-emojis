@@ -6,7 +6,6 @@ import EmojiImage from "./EmojiImage.vue";
 defineProps({
     items: { type: Array, required: true },
     active: { type: Number, default: 0 },
-    set: { type: String, default: null },
 });
 
 const emit = defineEmits(["select", "hover"]);

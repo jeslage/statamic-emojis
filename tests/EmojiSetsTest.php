@@ -225,20 +225,11 @@ class EmojiSetsTest extends TestCase
         $this->assertSame('🎉', (string) Modify::value('🎉')->emoji_images('native'));
     }
 
-    private function emojiValue(string $emoji, ?string $set, string $type = 'emoji'): Value
+    private function emojiValue(string $emoji, string $type = 'emoji'): Value
     {
-        $field = new Field('field', array_filter(['type' => $type, 'emoji_set' => $set]));
+        $field = new Field('field', ['type' => $type]);
 
         return new Value($emoji, 'field', $field->fieldtype());
-    }
-
-    public function test_modifier_uses_the_fields_set_from_a_value(): void
-    {
-        config(['statamic-emojis.set' => 'native']);
-
-        $out = (string) Modify::value($this->emojiValue('🎉', 'openmoji'))->emoji_images();
-
-        $this->assertStringContainsString('/sets/openmoji/1f389.svg', $out);
     }
 
     /** Renders tests/views/emoji-images.antlers.html like a site template (Antlers::parse treats input as user content). */
@@ -249,30 +240,18 @@ class EmojiSetsTest extends TestCase
         return trim(view('emoji-images', $data + ['mood' => null, 'other' => null, 'a' => null])->render());
     }
 
-    public function test_modifier_finds_the_fields_set_in_antlers(): void
+    public function test_field_values_use_the_site_set(): void
     {
-        config(['statamic-emojis.set' => 'native']);
+        config(['statamic-emojis.set' => 'openmoji']);
+
+        $this->assertStringContainsString('/sets/openmoji/1f389.svg', (string) Modify::value($this->emojiValue('🎉'))->emoji_images());
 
         [$mood, $other] = explode('|', $this->renderAntlers([
-            'mood' => $this->emojiValue('🎉', 'openmoji'),
-            'other' => $this->emojiValue('👍', null, 'emoji_text'),
+            'mood' => $this->emojiValue('🎉'),
+            'other' => $this->emojiValue('👍', 'emoji_text'),
         ]));
 
         $this->assertStringContainsString('/sets/openmoji/1f389.svg', $mood);
-        $this->assertSame('👍', $other);
-    }
-
-    public function test_each_value_uses_its_own_fields_set(): void
-    {
-        config(['statamic-emojis.set' => 'fluent']);
-
-        // The same emoji in two fields with different sets: each value carries its field's set
-        [, , $a] = explode('|', $this->renderAntlers([
-            'a' => $this->emojiValue('🎉', 'openmoji'),
-            'b' => $this->emojiValue('🎉', 'noto'),
-        ]));
-
-        $this->assertStringContainsString('/sets/openmoji/1f389.svg', $a);
-        $this->assertStringContainsString('/sets/fluent/1f389.svg', (string) Modify::value('🎉')->emoji_images());
+        $this->assertStringContainsString('/sets/openmoji/1f44d.svg', $other);
     }
 }

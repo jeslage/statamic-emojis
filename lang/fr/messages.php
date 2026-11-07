@@ -98,7 +98,6 @@ return [
     'config' => [
         'section' => 'Sélecteur d’emojis',
         'emoji_set' => 'Jeu d’emojis',
-        'emoji_set_instructions' => 'Apparence des emojis dans le sélecteur et dans la sortie du modificateur emoji_images. Laisser vide pour utiliser le jeu du site.',
         'custom_emojis' => 'Emojis personnalisés',
         'custom_emojis_instructions' => 'Proposer les emojis personnalisés ci-dessous dans le sélecteur et les afficher dans la sortie.',
         'categories' => 'Catégories',

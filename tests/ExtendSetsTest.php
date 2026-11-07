@@ -4,7 +4,7 @@ namespace StatamicEmojis\Tests;
 
 use StatamicEmojis\Contracts\SetNaming;
 use StatamicEmojis\EmojiSets;
-use StatamicEmojis\Fieldtypes\Emoji;
+use StatamicEmojis\EmojiFields;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
@@ -69,7 +69,7 @@ class ExtendSetsTest extends TestCase
         EmojiSets::extend('twemoji', ['label' => 'Twemoji', 'url' => 'https://cdn.example.com/twemoji/svg']);
 
         $this->assertTrue($this->sets()->isImageSet('twemoji'));
-        $this->assertArrayHasKey('twemoji', collect((new Emoji)->configFields()->all())['emoji_set']->get('options'));
+        $this->assertArrayHasKey('twemoji', EmojiFields::emojiSet()['options']);
     }
 
     public function test_sets_can_be_disabled(): void

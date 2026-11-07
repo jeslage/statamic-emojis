@@ -17,7 +17,6 @@ export function pickerOptions(config = {}) {
     const site = siteSettings();
 
     return {
-        set: config.emoji_set || null,
         categories: config.categories?.length ? config.categories : (site.categories ?? []),
         skinTone: config.skin_tone || site.skinTone || "none",
         skinToneSelector: showHide(config.skin_tone_selector, site.skinToneSelector ?? true),

@@ -48,9 +48,12 @@ class EmojiFieldtypeTest extends TestCase
         foreach ([new Emoji, new EmojiText] as $fieldtype) {
             $handles = collect($fieldtype->configFields()->all())->keys();
 
-            foreach (['emoji_set', 'categories', 'skin_tone', 'skin_tone_selector'] as $handle) {
+            foreach (['categories', 'skin_tone', 'skin_tone_selector'] as $handle) {
                 $this->assertTrue($handles->contains($handle), get_class($fieldtype)." is missing {$handle}");
             }
+
+            // The emoji set is site-wide only
+            $this->assertFalse($handles->contains('emoji_set'));
         }
     }
 }

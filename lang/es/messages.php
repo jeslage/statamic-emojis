@@ -98,7 +98,6 @@ return [
     'config' => [
         'section' => 'Selector de emojis',
         'emoji_set' => 'Conjunto de emojis',
-        'emoji_set_instructions' => 'Cómo se ven los emojis en el selector y en la salida del modificador emoji_images. Déjalo vacío para usar el conjunto de todo el sitio.',
         'custom_emojis' => 'Emojis personalizados',
         'custom_emojis_instructions' => 'Ofrecer los emojis personalizados de abajo en el selector y mostrarlos en la salida.',
         'categories' => 'Categorías',

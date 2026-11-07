@@ -6,7 +6,6 @@ import EmojiImage from "./EmojiImage.vue";
 defineProps({
     items: { type: Array, required: true },
     columns: { type: Number, default: 9 },
-    set: { type: String, default: null },
 });
 
 const emit = defineEmits(["select", "hover"]);
@@ -28,7 +27,7 @@ const emit = defineEmits(["select", "hover"]);
             @focus="emit('hover', item)"
             @blur="emit('hover', null)"
         >
-            <EmojiImage :emoji="item.emoji" :set="set" />
+            <EmojiImage :emoji="item.emoji" />
         </button>
     </div>
 </template>

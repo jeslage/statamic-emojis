@@ -22,7 +22,7 @@ class SettingsBlueprint
                         [
                             'display' => $t('section_set'),
                             'fields' => [
-                                ['handle' => 'emoji_set', 'field' => EmojiFields::emojiSet(inherit: false)],
+                                ['handle' => 'emoji_set', 'field' => EmojiFields::emojiSet()],
                             ],
                         ],
                         [

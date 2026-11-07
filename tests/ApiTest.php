@@ -20,7 +20,7 @@ class ApiTest extends TestCase
         $app['config']->set('statamic.api.resources.collections', true);
         $app['config']->set('statamic.graphql.enabled', true);
         $app['config']->set('statamic.graphql.resources.collections', true);
-        $app['config']->set('statamic-emojis.set', 'native');
+        $app['config']->set('statamic-emojis.set', 'openmoji');
     }
 
     protected function setUp(): void
@@ -51,9 +51,9 @@ class ApiTest extends TestCase
         Collection::make('pages')->save();
         Blueprint::make('page')->setNamespace('collections.pages')->setContents(['fields' => [
             ['handle' => 'title', 'field' => ['type' => 'text']],
-            ['handle' => 'mood', 'field' => ['type' => 'emoji', 'emoji_set' => 'openmoji']],
+            ['handle' => 'mood', 'field' => ['type' => 'emoji']],
             ['handle' => 'plain', 'field' => ['type' => 'emoji']],
-            ['handle' => 'motto', 'field' => ['type' => 'emoji_text', 'emoji_set' => 'noto']],
+            ['handle' => 'motto', 'field' => ['type' => 'emoji_text']],
         ]])->save();
 
         return tap(Entry::make()->collection('pages')->blueprint('page')->slug('test')->data($data))->save();
@@ -117,7 +117,7 @@ class ApiTest extends TestCase
         $this->assertStringEndsWith('/!/statamic-emojis/sets/openmoji/1f389.svg', $data['mood']['url']);
         $this->assertNull($data['plain']);
         $this->assertSame('Done 👍', $data['motto']['value']);
-        $this->assertStringContainsString('/sets/noto/1f44d.svg', $data['motto']['html']);
+        $this->assertStringContainsString('/sets/openmoji/1f44d.svg', $data['motto']['html']);
     }
 
     public function test_graphql_returns_emoji_values(): void
@@ -146,6 +146,6 @@ class ApiTest extends TestCase
             'custom' => false,
             'shortcode' => null,
         ], $response->json('data.entry.mood'));
-        $this->assertSame('noto', $response->json('data.entry.motto.set'));
+        $this->assertSame('openmoji', $response->json('data.entry.motto.set'));
     }
 }

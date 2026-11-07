@@ -17,7 +17,7 @@
             <dd class="text-2xl">{{ emoji ?? '–' }}</dd><dd class="text-2xl">{{ emoji | emoji_images }}</dd>
             <dt class="font-mono text-sm">emoji_empty</dt>
             <dd class="text-2xl">{{ emoji_empty ?? '–' }}</dd><dd class="text-2xl">{{ emoji_empty | emoji_images }}</dd>
-            <dt class="font-mono text-sm">emoji_configured (openmoji)</dt>
+            <dt class="font-mono text-sm">emoji_configured</dt>
             <dd class="text-2xl">{{ emoji_configured ?? '–' }}</dd><dd class="text-2xl">{{ emoji_configured | emoji_images }}</dd>
             <dt class="font-mono text-sm">emoji_read_only</dt>
             <dd class="text-2xl">{{ emoji_read_only ?? '–' }}</dd><dd class="text-2xl">{{ emoji_read_only | emoji_images }}</dd>
@@ -49,7 +49,7 @@
         <dl class="grid grid-cols-[max-content_1fr_1fr] gap-x-6 gap-y-2">
             <dt class="font-mono text-sm">emoji_text</dt>
             <dd>{{ emoji_text ?? '–' }}</dd><dd>{{ emoji_text | emoji_images }}</dd>
-            <dt class="font-mono text-sm">emoji_text_configured (fluent)</dt>
+            <dt class="font-mono text-sm">emoji_text_configured</dt>
             <dd>{{ emoji_text_configured ?? '–' }}</dd><dd>{{ emoji_text_configured | emoji_images }}</dd>
             <dt class="font-mono text-sm">emoji_text_required</dt>
             <dd>{{ emoji_text_required ?? '–' }}</dd><dd>{{ emoji_text_required | emoji_images }}</dd>
@@ -79,7 +79,7 @@
     </section>
 
     <section class="space-y-3">
-        <h2 class="text-xl font-semibold">Grid <span class="font-mono text-sm">reactions (noto)</span></h2>
+        <h2 class="text-xl font-semibold">Grid <span class="font-mono text-sm">reactions</span></h2>
         <ul class="flex flex-wrap gap-2">
             {{ reactions }}
                 <li class="rounded-full bg-white px-3 py-1 dark:bg-zinc-800">{{ emoji | emoji_images }} {{ label }}</li>

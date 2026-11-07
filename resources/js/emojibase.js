@@ -69,16 +69,16 @@ function setsConfig() {
     return Statamic.$config.get("statamicEmojis") ?? { set: "native", imageUrl: "" };
 }
 
-/** A field's set if given, otherwise the site-wide set. */
-export function resolveSet(set) {
-    return set || setsConfig().set || "native";
+/** The site-wide emoji set. */
+export function siteSet() {
+    return setsConfig().set || "native";
 }
 
-/** Image URL of an emoji in an image set, or null for native. */
-export function emojiImageUrl(emoji, set) {
-    const resolved = resolveSet(set);
+/** Image URL of an emoji in the site-wide set, or null for native. */
+export function emojiImageUrl(emoji) {
+    const set = siteSet();
 
-    return resolved === "native" ? null : `${setsConfig().imageUrl}/${resolved}/${codepoints(emoji)}.svg`;
+    return set === "native" ? null : `${setsConfig().imageUrl}/${set}/${codepoints(emoji)}.svg`;
 }
 
 // Category index of the "Recently used" category injected into frimousse's data (real ones are >= 0)

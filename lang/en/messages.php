@@ -98,7 +98,6 @@ return [
     'config' => [
         'section' => 'Emoji Picker',
         'emoji_set' => 'Emoji Set',
-        'emoji_set_instructions' => 'How emojis look in the picker and in the output of the emoji_images modifier. Leave empty to use the site-wide set.',
         'custom_emojis' => 'Custom Emojis',
         'custom_emojis_instructions' => 'Offer the custom emojis below in the picker and render them in the output.',
         'categories' => 'Categories',

@@ -27,7 +27,7 @@ function remove() {
 
 <template>
     <div v-if="isReadOnly" class="text-xl leading-none">
-        <EmojiImage v-if="value" :emoji="value" :set="config.emoji_set" />
+        <EmojiImage v-if="value" :emoji="value" />
         <template v-else>–</template>
     </div>
 
@@ -48,7 +48,7 @@ function remove() {
                     @focus="$emit('focus')"
                     @blur="$emit('blur')"
                 >
-                    <span v-if="value" class="text-xl leading-none"><EmojiImage :emoji="value" :set="config.emoji_set" /></span>
+                    <span v-if="value" class="text-xl leading-none"><EmojiImage :emoji="value" /></span>
                     <template v-else>
                         <SmilePlus class="me-2 size-4" />
                         {{ __("statamic-emojis::messages.select_emoji") }}

@@ -7,7 +7,7 @@ use StatamicEmojis\EmojiSets;
 
 /**
  * Augmented value of the Emoji Text fieldtype: the text in templates, and in the API
- * {value, html, set} where html has the emojis (and custom ":shortcodes:") as images of the field's set.
+ * {value, html, set} where html has the emojis (and custom ":shortcodes:") as images of the site-wide set.
  */
 class EmojiTextValue extends ArrayableString
 {

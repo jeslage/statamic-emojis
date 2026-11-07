@@ -3,8 +3,6 @@
 namespace StatamicEmojis\Modifiers;
 
 use StatamicEmojis\EmojiSets;
-use StatamicEmojis\Values\EmojiTextValue;
-use StatamicEmojis\Values\EmojiValue;
 use Statamic\Fields\Value;
 use Statamic\Modifiers\Modifier;
 
@@ -14,7 +12,7 @@ use Statamic\Modifiers\Modifier;
  * Antlers: {{ emoji | emoji_images }}, {{ content | emoji_images('openmoji') }}
  * Blade:   {!! Statamic::modify($page->augmentedValue('emoji'))->emoji_images() !!}
  *
- * Set: modifier parameter, else the field's "emoji_set" setting, else the site-wide set.
+ * Set: modifier parameter, else the site-wide set.
  */
 class EmojiImages extends Modifier
 {
@@ -26,7 +24,7 @@ class EmojiImages extends Modifier
 
     public function index($value, $params)
     {
-        $set = $this->sets->resolve($params[0] ?? $this->fieldSet($value));
+        $set = $this->sets->resolve($params[0] ?? null);
 
         if ($value instanceof Value) {
             $value = $value->value();
@@ -37,18 +35,5 @@ class EmojiImages extends Modifier
         }
 
         return $this->sets->replace((string) $value, $set);
-    }
-
-    /**
-     * The "emoji_set" of the field the value belongs to: values of the Emoji and Emoji Text fieldtypes
-     * carry their set (in Antlers and Blade alike). Other values use the site-wide set.
-     */
-    protected function fieldSet($value): ?string
-    {
-        if ($value instanceof Value) {
-            $value = $value->value();
-        }
-
-        return $value instanceof EmojiValue || $value instanceof EmojiTextValue ? $value->set() : null;
     }
 }

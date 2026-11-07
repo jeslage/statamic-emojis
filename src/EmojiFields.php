@@ -15,22 +15,21 @@ namespace StatamicEmojis;
  */
 class EmojiFields
 {
-    public static function emojiSet(bool $inherit): array
+    /** The site-wide emoji set (settings page only: fields have no set of their own). */
+    public static function emojiSet(): array
     {
-        $t = self::translator($inherit);
+        $t = self::translator(false);
         $sets = app(EmojiSets::class);
 
         return [
             'display' => $t('config.emoji_set'),
-            'instructions' => $t($inherit ? 'config.emoji_set_instructions' : 'settings.emoji_set_instructions'),
+            'instructions' => $t('settings.emoji_set_instructions'),
             'type' => 'select',
             'options' => collect($sets->sets())
-                ->mapWithKeys(fn ($set) => [$set => $sets->label($set, translate: $inherit)])
+                ->mapWithKeys(fn ($set) => [$set => $sets->label($set, translate: false)])
                 ->all(),
             // The settings page must not read the settings (its blueprint is built while they load)
-            ...($inherit
-                ? self::inherit($sets->label($sets->default()))
-                : ['default' => config('statamic-emojis.set', EmojiSets::NATIVE)]),
+            'default' => config('statamic-emojis.set', EmojiSets::NATIVE),
         ];
     }
 

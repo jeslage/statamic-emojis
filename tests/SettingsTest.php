@@ -66,11 +66,10 @@ class SettingsTest extends TestCase
 
     public function test_fields_show_the_site_wide_values_as_defaults(): void
     {
-        $this->save(['emoji_set' => 'fluent', 'skin_tone' => 'medium', 'skin_tone_selector' => false]);
+        $this->save(['skin_tone' => 'medium', 'skin_tone_selector' => false]);
 
         $fields = collect((new Emoji)->configFields()->all());
 
-        $this->assertSame('Default (Fluent)', $fields['emoji_set']->get('placeholder'));
         $this->assertSame('Default (Medium)', $fields['skin_tone']->get('placeholder'));
         $this->assertSame('Default (Hide)', $fields['skin_tone_selector']->get('placeholder'));
         $this->assertSame(['show' => 'Show', 'hide' => 'Hide'], $fields['custom_emojis']->get('options'));

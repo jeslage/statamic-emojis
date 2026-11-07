@@ -31,8 +31,7 @@ tabs:
             field:
               type: emoji
               display: 'Emoji (configured)'
-              instructions: 'OpenMoji set, only Smileys & People and Animals, starts medium-dark.'
-              emoji_set: openmoji
+              instructions: 'Only Smileys & People and Animals, starts medium-dark.'
               skin_tone: medium-dark
               categories:
                 - smileys-people
@@ -68,11 +67,10 @@ tabs:
             field:
               type: emoji_text
               display: 'Emoji Text (configured)'
-              instructions: 'Inherited Text config: placeholder, character limit, prepend. Fluent set, only Smileys & People and Animals, starts medium-dark.'
+              instructions: 'Inherited Text config: placeholder, character limit, prepend. Only Smileys & People and Animals, starts medium-dark.'
               placeholder: 'Pick a mood…'
               character_limit: 20
               prepend: 'Mood:'
-              emoji_set: fluent
               skin_tone: medium-dark
               categories:
                 - smileys-people
@@ -149,7 +147,6 @@ tabs:
                   handle: emoji
                   field:
                     type: emoji
-                    emoji_set: noto
                 -
                   handle: label
                   field:

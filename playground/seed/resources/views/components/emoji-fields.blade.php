@@ -5,9 +5,7 @@
     $page->field returns the augmented value: emoji fields are strings, Bard is HTML,
     replicator and grid are arrays of Statamic\Fields\Values.
 
-    emoji_images: pass a Statamic\Fields\Value ($page->augmentedValue('handle'), or
-    $values->getProxiedInstance()->get('handle') in grids/replicators) so the modifier
-    can use the field's emoji_set; a plain string uses the site-wide set.
+    emoji_images uses the site-wide set unless a set is passed (emoji_images('noto')).
 --}}
 @props(['page'])
 
@@ -90,7 +88,7 @@
     </section>
 
     <section class="space-y-3">
-        <h2 class="text-xl font-semibold">Grid <span class="font-mono text-sm">reactions (noto)</span></h2>
+        <h2 class="text-xl font-semibold">Grid <span class="font-mono text-sm">reactions</span></h2>
         <ul class="flex flex-wrap gap-2">
             @forelse ($page->reactions ?? [] as $reaction)
                 <li class="rounded-full bg-white px-3 py-1 dark:bg-zinc-800">{!! $images($reaction->getProxiedInstance()->get('emoji')) !!} {{ $reaction->label }}</li>

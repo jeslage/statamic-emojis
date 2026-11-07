@@ -31,8 +31,8 @@ return [
     | "emoji_images" modifier. "native" uses each device's own emoji font;
     | the other sets are SVG images, fetched once by the server, cached in
     | "cache_path" and served from your own domain (no visitor IPs go to a CDN).
-    | "set" is the site-wide default (the Emojis page in the CP overrides it);
-    | fields can override it in their "Emoji Picker" settings.
+    | "set" is the site-wide set (the Emojis page in the CP overrides it);
+    | all fields use it.
     |
     | Built-in sets: noto, fluent, openmoji. Licenses: Noto (Apache 2.0),
     | Fluent (MIT), OpenMoji (CC BY-SA 4.0, attribution required:

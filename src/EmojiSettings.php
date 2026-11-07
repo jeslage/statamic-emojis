@@ -7,7 +7,7 @@ use Statamic\Facades\Addon;
 
 /**
  * Site-wide settings from the Emojis CP page (Statamic addon settings, resources/addons/statamic-emojis.yaml),
- * falling back to config/statamic-emojis.php. Fields can override each of them.
+ * falling back to config/statamic-emojis.php. Fields can override each of them except the emoji set.
  */
 class EmojiSettings
 {

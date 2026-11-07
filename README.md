@@ -60,7 +60,8 @@ the same settings are under Tools → Addons). Saved to `resources/addons/statam
 - **Image Cache:** cached images and disk size per emoji set, with buttons to fill (with progress) or
   clear a set's cache.
 
-**Which value applies:** a field's own setting, else the Emojis page, else `config/statamic-emojis.php`
+**Which value applies:** a field's own setting (except the emoji set, which is site-wide only), else the
+Emojis page, else `config/statamic-emojis.php`
 (and its `.env` variables). Values saved on the page take precedence over the config file.
 
 ## Field settings
@@ -73,7 +74,6 @@ page; the field shows them as "Default (…)":
 | `categories`         | all     | Category keys the picker offers, e.g. `[smileys-people, animals-nature]`   |
 | `skin_tone`          | `none`  | Starting skin tone: `none`, `light`, `medium-light`, `medium`, `medium-dark`, `dark` |
 | `skin_tone_selector` | `true`  | Show a skin tone button in the picker; the editor's choice is remembered per browser |
-| `emoji_set`          | site-wide | `native`, `noto`, `fluent` or `openmoji` (see [Emoji sets](#emoji-sets)) |
 | `custom_emojis`      | `true`  | Offer the uploaded custom emojis (see [Custom emojis](#custom-emojis)) |
 
 Category keys: `smileys-people` (smileys, emotion, people and body, merged like Slack), `animals-nature`, `food-drink`, `travel-places`, `activities`, `objects`, `symbols`, `flags`.
@@ -111,11 +111,11 @@ Emojis are always **stored as Unicode**. How they look is a setting, so it can c
 Apple's emoji artwork is proprietary and can't be used as an image set; visitors on Apple devices
 see it with `native`.
 
-- **Site-wide:** on the Emojis page, or `STATAMIC_EMOJIS_SET=noto` (`set` in the published config).
-  Default: `native`.
-- **Per field:** the "Emoji Set" setting in the field's "Emoji Picker" section overrides it.
+Set it on the Emojis page, or with `STATAMIC_EMOJIS_SET=noto` (`set` in the published config).
+Default: `native`. The set is site-wide, so all fields and the front end look the same.
 
-The set is used in the picker and by the `emoji_images` modifier. Image sets are SVGs that the
+The set is used in the picker, the Emoji, Emoji Text and Bard fields in the Control Panel, and by the
+`emoji_images` modifier. Image sets are SVGs that the
 server fetches once (pinned versions, see the config), caches in `storage/statamic-emojis/sets` and
 serves from `/!/statamic-emojis/sets/{set}/{codepoints}.svg`, so visitors' browsers never contact a
 CDN. Emojis a set doesn't have fall back to the native character.
@@ -189,7 +189,7 @@ In templates, values print as plain text (`{{ emoji }}` → 🎉). To render the
 replaced, attributes stay untouched):
 
 ```antlers
-{{ emoji | emoji_images }}                 {{# field's set, else the site-wide set #}}
+{{ emoji | emoji_images }}                 {{# site-wide set #}}
 {{ content | emoji_images }}               {{# Bard / Emoji Text #}}
 {{ content | emoji_images('openmoji') }}   {{# explicit set #}}
 ```
@@ -199,15 +199,12 @@ replaced, attributes stay untouched):
 {!! Statamic::modify($page->content)->emoji_images('noto') !!}
 ```
 
-Emoji and Emoji Text values carry their field's set, so the modifier uses it in Antlers and Blade
-alike; other values (e.g. Bard) use the site-wide set unless you pass one.
-
 The Emoji field also gives you the emoji's name and image directly:
 
 ```antlers
 {{ emoji }}          {{# 🎉 #}}
 {{ emoji:label }}    {{# party popper (Emojibase name in the site's language, or the custom emoji's name) #}}
-{{ emoji:url }}      {{# image of the field's set or custom emoji; empty for native #}}
+{{ emoji:url }}      {{# image in the site-wide set or custom emoji; empty for native #}}
 ```
 
 Images get `class="emoji"`; size them with your CSS, e.g.
@@ -215,8 +212,6 @@ Images get `class="emoji"`; size them with your CSS, e.g.
 
 ### Limitations
 
-- The Emoji Text input and the Bard editor show native characters in the Control Panel; images
-  appear in the picker, the Emoji field and the front-end output.
 - The picker hides emojis the *editor's* device can't render (e.g. flags in Chrome on Windows), even
   with an image set.
 
@@ -273,7 +268,7 @@ Emoji fields are objects in the API (in templates they still print as plain text
 }
 ```
 
-`url` is the image of the field's set (`null` for native) or the custom emoji's image; custom
+`url` is the image in the site-wide set (`null` for native) or the custom emoji's image; custom
 emojis have `"value": ":party-parrot:"`, `"custom": true` and their `shortcode`. Emoji Text fields
 are `{ "value": "Done 👍", "html": "Done <img class=\"emoji\" …>", "set": "noto" }`.
 

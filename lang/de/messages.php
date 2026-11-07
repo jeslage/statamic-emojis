@@ -98,7 +98,6 @@ return [
     'config' => [
         'section' => 'Emoji-Auswahl',
         'emoji_set' => 'Emoji-Set',
-        'emoji_set_instructions' => 'Wie Emojis in der Auswahl und in der Ausgabe des Modifiers emoji_images aussehen. Leer lassen, um das seitenweite Set zu verwenden.',
         'custom_emojis' => 'Eigene Emojis',
         'custom_emojis_instructions' => 'Die eigenen Emojis unten in der Auswahl anbieten und in der Ausgabe darstellen.',
         'categories' => 'Kategorien',

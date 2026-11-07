@@ -130,7 +130,7 @@ class EmojiSets
         return $this->isImageSet($set) ? $set : self::NATIVE;
     }
 
-    /** A field's set override if valid, otherwise the site-wide set. */
+    /** A set if valid (e.g. the emoji_images parameter), otherwise the site-wide set. */
     public function resolve(?string $set): string
     {
         if ($set === self::NATIVE || $this->isImageSet($set)) {

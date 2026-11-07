@@ -47,7 +47,7 @@ class Emoji extends Fieldtype
             return null;
         }
 
-        return new EmojiValue($value, app(EmojiSets::class)->resolve($this->config('emoji_set')));
+        return new EmojiValue($value, app(EmojiSets::class)->default());
     }
 
     public function toGqlType()
