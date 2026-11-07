@@ -4,6 +4,7 @@ import EmojiIndexFieldtype from "./components/fieldtypes/EmojiIndexFieldtype.vue
 import EmojiTextIndexFieldtype from "./components/fieldtypes/EmojiTextIndexFieldtype.vue";
 import CustomEmojiGridFieldtype from "./components/fieldtypes/CustomEmojiGridFieldtype.vue";
 import ImageCacheFieldtype from "./components/fieldtypes/ImageCacheFieldtype.vue";
+import EmojiSetFieldtype from "./components/fieldtypes/EmojiSetFieldtype.vue";
 import SkinToneFieldtype from "./components/fieldtypes/SkinToneFieldtype.vue";
 import EmojiToolbarButton from "./components/bard/EmojiToolbarButton.vue";
 import customEmojiNode from "./bard/custom-emoji-node.js";
@@ -32,7 +33,8 @@ Statamic.booting(() => {
     Statamic.component("statamic_emojis_custom_grid-fieldtype", CustomEmojiGridFieldtype);
     Statamic.component("statamic_emojis_image_cache-fieldtype", ImageCacheFieldtype);
 
-    // Settings: skin tone as 👋 in each tone
+    // Settings: emoji set with an example emoji per set, skin tone as 👋 in each tone
+    Statamic.component("statamic_emojis_set-fieldtype", EmojiSetFieldtype);
     Statamic.component("statamic_emojis_skin_tone-fieldtype", SkinToneFieldtype);
 
     // Bard: inline node for custom emojis (":shortcode:"), rendered as their image in the editor

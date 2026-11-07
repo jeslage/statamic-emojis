@@ -24,7 +24,7 @@ class EmojiFields
         return [
             'display' => $t('config.emoji_set'),
             'instructions' => $t('settings.emoji_set_instructions'),
-            'type' => 'select',
+            'type' => 'statamic_emojis_set',
             'options' => collect($sets->sets())
                 ->mapWithKeys(fn ($set) => [$set => $sets->label($set, translate: false)])
                 ->all(),

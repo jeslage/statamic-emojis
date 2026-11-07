@@ -7,6 +7,7 @@ use StatamicEmojis\EmojiFields;
 use StatamicEmojis\EmojiSets;
 use StatamicEmojis\EmojiSettings;
 use StatamicEmojis\Fieldtypes\Emoji;
+use StatamicEmojis\Fieldtypes\EmojiSet;
 use StatamicEmojis\Fieldtypes\SkinTone;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -88,6 +89,16 @@ class SettingsTest extends TestCase
         $this->assertSame('medium-dark', $fieldtype->process('medium-dark'));
         $this->assertNull($fieldtype->process('purple'));
         $this->assertNull($fieldtype->process(null));
+    }
+
+    public function test_the_emoji_set_field_keeps_only_known_sets(): void
+    {
+        $fieldtype = new EmojiSet;
+
+        $this->assertSame('statamic_emojis_set', EmojiFields::emojiSet()['type']);
+        $this->assertSame('noto', $fieldtype->process('noto'));
+        $this->assertSame('native', $fieldtype->process('native'));
+        $this->assertNull($fieldtype->process('comic-sans'));
     }
 
     public function test_fields_show_the_site_wide_values_as_defaults(): void

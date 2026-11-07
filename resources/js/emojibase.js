@@ -77,11 +77,9 @@ export function siteSet() {
     return setsConfig().set || "native";
 }
 
-/** Image URL of an emoji in the site-wide set, or null for native. */
-export function emojiImageUrl(emoji) {
-    const set = siteSet();
-
-    return set === "native" ? null : `${setsConfig().imageUrl}/${set}/${codepoints(emoji)}.svg`;
+/** Image URL of an emoji in the given set (default: the site-wide one), or null for native. */
+export function emojiImageUrl(emoji, set = siteSet()) {
+    return !set || set === "native" ? null : `${setsConfig().imageUrl}/${set}/${codepoints(emoji)}.svg`;
 }
 
 // Category index of the "Recently used" category injected into frimousse's data (real ones are >= 0)

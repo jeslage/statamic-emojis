@@ -8,6 +8,7 @@ use StatamicEmojis\Console\Commands\SetupCustomEmojis;
 use StatamicEmojis\Console\Commands\WarmEmojiSet;
 use StatamicEmojis\Fieldtypes\CustomEmojiGrid;
 use StatamicEmojis\Fieldtypes\Emoji;
+use StatamicEmojis\Fieldtypes\EmojiSet;
 use StatamicEmojis\Fieldtypes\EmojiText;
 use StatamicEmojis\Fieldtypes\ImageCache;
 use StatamicEmojis\Fieldtypes\SkinTone;
@@ -27,6 +28,7 @@ class ServiceProvider extends AddonServiceProvider
         Emoji::class,
         EmojiText::class,
         // Settings fieldtypes (Emojis page and fields' config)
+        EmojiSet::class,
         SkinTone::class,
         // Display-only fields of the Emojis page
         CustomEmojiGrid::class,
