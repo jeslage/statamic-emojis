@@ -23,7 +23,7 @@ class EmojiFields
 
         return [
             'display' => $t('config.emoji_set'),
-            'instructions' => $t(app(EmojiSettings::class)->pro() ? 'settings.emoji_set_instructions' : 'settings.emoji_set_free'),
+            'instructions' => $t('settings.emoji_set_instructions'),
             'type' => 'statamic_emojis_set',
             'options' => collect($sets->sets())
                 ->mapWithKeys(fn ($set) => [$set => $sets->label($set, translate: false)])

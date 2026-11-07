@@ -13,6 +13,9 @@ class EmojiSettings
 {
     public const PACKAGE = 'jeslage/statamic-emojis';
 
+    /** Where to buy Pro (Statamic Marketplace). */
+    public const PRO_URL = 'https://statamic.com/addons/jeslage/emojis';
+
     public function addon(): ?AddonInstance
     {
         return Addon::get(self::PACKAGE);

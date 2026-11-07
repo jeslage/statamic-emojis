@@ -4,6 +4,7 @@ import EmojiIndexFieldtype from "./components/fieldtypes/EmojiIndexFieldtype.vue
 import EmojiTextIndexFieldtype from "./components/fieldtypes/EmojiTextIndexFieldtype.vue";
 import CustomEmojiGridFieldtype from "./components/fieldtypes/CustomEmojiGridFieldtype.vue";
 import ImageCacheFieldtype from "./components/fieldtypes/ImageCacheFieldtype.vue";
+import EmojisPage from "./pages/EmojisPage.vue";
 import EmojiSetFieldtype from "./components/fieldtypes/EmojiSetFieldtype.vue";
 import SkinToneFieldtype from "./components/fieldtypes/SkinToneFieldtype.vue";
 import EmojiToolbarButton from "./components/bard/EmojiToolbarButton.vue";
@@ -21,6 +22,9 @@ function iconHtml(icon) {
 }
 
 Statamic.booting(() => {
+    // The Emojis CP page (Settings → Emojis): the settings form, with a Pro hint in the free edition
+    Statamic.$inertia.register("statamic-emojis::EmojisPage", EmojisPage);
+
     // Fieldtypes: Statamic resolves a PHP handle to the Vue component "{handle}-fieldtype"
     Statamic.component("emoji-fieldtype", EmojiFieldtype);
     Statamic.component("emoji_text-fieldtype", EmojiTextFieldtype);

@@ -45,7 +45,6 @@ return [
         'tab_general' => 'General',
         'section_set' => 'Emoji Set',
         'emoji_set_instructions' => 'How emojis look in the picker and on your site. OpenMoji requires attribution.',
-        'emoji_set_free' => 'Native in the free edition. Noto, Fluent and OpenMoji images are part of Pro.',
         'section_picker' => 'Picker Defaults',
         'section_picker_instructions' => 'Fields can override these.',
         'suggestions' => 'Shortcode Suggestions',
@@ -66,9 +65,9 @@ return [
         'cache_clear' => 'Clear',
         'cache_warming' => 'Fetching… :percent%',
         'cache_failed' => ':count not in this set (native fallback)',
-        'pro_title' => 'Statamic Emojis Pro',
-        'custom_pro' => 'Upload your own emoji images and use them as :shortcode: in the picker, Bard and your templates.',
-        'cache_pro' => 'Show emojis as Noto, Fluent or OpenMoji images, served from your own domain, in the Control Panel and on your site.',
+        'get_pro' => 'Get Pro',
+        'pro_alert_heading' => 'You\'re using Statamic Emojis Free',
+        'pro_alert_text' => 'Pro adds Noto, Fluent and OpenMoji image sets and custom emojis, in the Control Panel and on your site.',
     ],
 
     // Fields of the custom emoji asset blueprint (stored as translation keys, translated in the CP)

@@ -7,7 +7,9 @@ use StatamicEmojis\EmojiSets;
 use StatamicEmojis\EmojiSettings;
 use StatamicEmojis\Fieldtypes\Emoji;
 use StatamicEmojis\SettingsBlueprint;
+use Illuminate\Support\Facades\File;
 use Statamic\Facades\AssetContainer;
+use Statamic\Facades\User;
 use Statamic\Modifiers\Modify;
 
 /**
@@ -15,11 +17,21 @@ use Statamic\Modifiers\Modify;
  */
 class FreeEditionTest extends TestCase
 {
-    protected function setUp(): void
+    protected function getEnvironmentSetUp($app)
     {
-        parent::setUp();
+        parent::getEnvironmentSetUp($app);
 
-        config(['statamic.editions.addons.jeslage/statamic-emojis' => 'free']);
+        // Before the addon boots: its settings blueprint is built then
+        $app['config']->set('statamic.editions.addons.jeslage/statamic-emojis', 'free');
+    }
+
+    protected function tearDown(): void
+    {
+        // Don't leave saved settings behind for other tests
+        app(EmojiSettings::class)->addon()->settings()->set([])->save();
+        File::delete(resource_path('addons/statamic-emojis.yaml'));
+
+        parent::tearDown();
     }
 
     public function test_the_free_edition_is_the_default(): void
@@ -68,18 +80,45 @@ class FreeEditionTest extends TestCase
         $this->assertTrue($handles->contains('skin_tone'));
     }
 
-    public function test_the_settings_page_shows_pro_hints_instead_of_the_pro_tabs(): void
+    public function test_the_settings_page_has_only_the_picker_defaults(): void
     {
         $tabs = SettingsBlueprint::contents()['tabs'];
-        $handles = fn (string $tab) => collect($tabs[$tab]['sections'])->flatMap(fn ($s) => collect($s['fields'])->pluck('handle'))->all();
+        $handles = collect($tabs['general']['sections'])->flatMap(fn ($s) => collect($s['fields'])->pluck('handle'));
 
-        $this->assertSame(['custom_pro'], $handles('custom'));
-        $this->assertSame(['cache_pro'], $handles('cache'));
-        $this->assertSame('section', $tabs['custom']['sections'][0]['fields'][0]['field']['type']);
+        $this->assertSame(['general'], array_keys($tabs));
+        $this->assertSame('categories', $handles->first());
 
-        $emojiSet = $tabs['general']['sections'][0]['fields'][0]['field'];
-        $this->assertSame('statamic-emojis::messages.settings.emoji_set_free', $emojiSet['instructions']);
-        $this->assertSame(['native'], array_keys($emojiSet['options']));
+        // The Pro settings are only kept as hidden fields, so saving doesn't drop them
+        $fields = collect($tabs['general']['sections'])->flatMap(fn ($s) => $s['fields'])->keyBy('handle');
+        $this->assertSame('hidden', $fields['emoji_set']['field']['type']);
+        $this->assertSame('hidden', $fields['custom_emojis']['field']['type']);
+    }
+
+    public function test_the_settings_page_links_to_pro(): void
+    {
+        $this->actingAs(tap(User::make()->email('admin@example.com')->makeSuper())->save())
+            ->getJson(cp_route('statamic-emojis.index'))
+            ->assertOk()
+            ->assertJsonPath('proUrl', EmojiSettings::PRO_URL);
+    }
+
+    public function test_saving_in_the_free_edition_keeps_the_pro_settings(): void
+    {
+        $addon = app(EmojiSettings::class)->addon();
+        $addon->settings()->set(['emoji_set' => 'noto', 'custom_emojis' => false, 'skin_tone' => 'dark'])->save();
+
+        $user = tap(User::make()->email('admin@example.com')->makeSuper())->save();
+        $page = $this->actingAs($user)->getJson(cp_route('statamic-emojis.index'))->assertOk()->json();
+
+        // What the page's save button sends, with one picker setting changed
+        $this->actingAs($user)
+            ->patchJson($page['submitUrl'], [...$page['values'], 'skin_tone' => 'light'])
+            ->assertOk();
+
+        $saved = $addon->settings()->raw();
+        $this->assertSame('noto', $saved['emoji_set']);
+        $this->assertFalse($saved['custom_emojis']);
+        $this->assertSame('light', $saved['skin_tone']);
     }
 
     public function test_pro_commands_explain_that_they_need_pro(): void

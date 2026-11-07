@@ -9,6 +9,7 @@ use StatamicEmojis\EmojiSettings;
 use StatamicEmojis\Fieldtypes\Emoji;
 use StatamicEmojis\Fieldtypes\EmojiSet;
 use StatamicEmojis\Fieldtypes\SkinTone;
+use StatamicEmojis\SettingsBlueprint;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Statamic\Facades\User;
@@ -101,6 +102,14 @@ class SettingsTest extends TestCase
         $this->assertNull($fieldtype->process('comic-sans'));
     }
 
+    public function test_the_pro_settings_page_has_the_emoji_set_and_all_tabs(): void
+    {
+        $tabs = SettingsBlueprint::contents()['tabs'];
+
+        $this->assertSame(['general', 'custom', 'cache'], array_keys($tabs));
+        $this->assertSame('emoji_set', $tabs['general']['sections'][0]['fields'][0]['handle']);
+    }
+
     public function test_fields_show_the_site_wide_values_as_defaults(): void
     {
         $this->save(['skin_tone' => 'medium', 'skin_tone_selector' => false]);
@@ -138,6 +147,7 @@ class SettingsTest extends TestCase
             ->getJson(cp_route('statamic-emojis.index'))
             ->assertOk()
             ->assertJsonPath('title', 'Emojis')
+            ->assertJsonPath('proUrl', null)
             ->assertJsonPath('submitUrl', cp_route('addons.settings.update', 'statamic-emojis'))
             ->assertJsonPath('blueprint.tabs.0.handle', 'general');
     }
