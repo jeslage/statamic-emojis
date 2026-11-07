@@ -1,6 +1,6 @@
 {
     "name": "jeslage/statamic-emojis",
-    "description": "Emoji picker fieldtype and Bard toolbar button for Statamic",
+    "description": "Emoji picker for Statamic: Emoji and Emoji Text fieldtypes, a Bard button, shortcode suggestions, custom emojis and Noto, Fluent or OpenMoji sets",
     "type": "statamic-addon",
     "license": "MIT",
     "autoload": {
@@ -35,7 +35,7 @@
     "extra": {
         "statamic": {
             "name": "Emojis",
-            "description": "Emoji picker fieldtype and Bard toolbar button"
+            "description": "Emoji fieldtypes, a Bard button, shortcode suggestions, custom emojis and emoji sets"
         },
         "laravel": {
             "providers": [
