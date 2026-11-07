@@ -4,18 +4,8 @@
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import EmojiPicker from "vue-frimousse";
 import { Button } from "@statamic/cms/ui";
-import {
-    Flag,
-    Lightbulb,
-    Plane,
-    Hamburger,
-    Search,
-    Smile,
-    RugbyBall,
-    Pilcrow,
-    Leaf,
-    Sparkles,
-} from "@lucide/vue";
+import { Search, Sparkles } from "@lucide/vue";
+import { CATEGORY_ICONS } from "../category-icons.js";
 import { cpEmojibaseLocale, emojibaseLocale } from "../locale.js";
 import {
     CATEGORIES,
@@ -28,27 +18,9 @@ import PickerFooter from "./PickerFooter.vue";
 import EmojiGrid from "./EmojiGrid.vue";
 import { findCustom, isShortcode, searchCustom, useCustomEmojis } from "../custom-emojis.js";
 import { rememberEmoji, useRecentEmojis } from "../recent-emojis.js";
+import { SKIN_TONES } from "../skin-tones.js";
 
-const SKIN_TONES = [
-    "none",
-    "light",
-    "medium-light",
-    "medium",
-    "medium-dark",
-    "dark",
-];
 const STORAGE_KEY = "statamic-emojis/skin-tone";
-
-const CATEGORY_ICONS = {
-    "smileys-people": Smile,
-    "animals-nature": Leaf,
-    "food-drink": Hamburger,
-    "travel-places": Plane,
-    activities: RugbyBall,
-    objects: Lightbulb,
-    symbols: Pilcrow,
-    flags: Flag,
-};
 
 const props = defineProps({
     // Emojibase locale for category names, emoji labels and search. Defaults to the CP locale.
