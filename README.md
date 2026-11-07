@@ -344,5 +344,9 @@ version. The repository needs "Allow GitHub Actions to create and approve pull r
 ## Tests
 
 ```bash
-vendor/bin/phpunit
+vendor/bin/phpunit   # PHP: fieldtypes, sets, modifier, tag, API, settings
+npm test             # JS (Vitest + jsdom): emoji matching, search, the Emoji Text editor
 ```
+
+The JS tests replace Statamic's UI components with small stand-ins (`tests/js/stubs`), as the
+Control Panel provides the real ones at runtime. CI runs both.
