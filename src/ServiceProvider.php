@@ -10,6 +10,7 @@ use StatamicEmojis\Fieldtypes\CustomEmojiGrid;
 use StatamicEmojis\Fieldtypes\Emoji;
 use StatamicEmojis\Fieldtypes\EmojiText;
 use StatamicEmojis\Fieldtypes\ImageCache;
+use StatamicEmojis\Fieldtypes\SkinTone;
 use Illuminate\Support\Facades\Event;
 use Statamic\Events\AssetDeleted;
 use Statamic\Events\AssetReuploaded;
@@ -25,6 +26,8 @@ class ServiceProvider extends AddonServiceProvider
     protected $fieldtypes = [
         Emoji::class,
         EmojiText::class,
+        // Settings fieldtypes (Emojis page and fields' config)
+        SkinTone::class,
         // Display-only fields of the Emojis page
         CustomEmojiGrid::class,
         ImageCache::class,

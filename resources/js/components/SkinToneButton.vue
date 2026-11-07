@@ -2,17 +2,7 @@
 // Cycles through the skin tones (v-model). Independent of frimousse's store, so it can live outside <EmojiPicker.Root>.
 import { computed } from "vue";
 import { Button } from "@statamic/cms/ui";
-
-// Emoji modifiers per skin tone (Unicode Fitzpatrick scale)
-const MODIFIERS = {
-    none: "",
-    light: "\u{1F3FB}",
-    "medium-light": "\u{1F3FC}",
-    medium: "\u{1F3FD}",
-    "medium-dark": "\u{1F3FE}",
-    dark: "\u{1F3FF}",
-};
-const TONES = Object.keys(MODIFIERS);
+import { SKIN_TONE_MODIFIERS as MODIFIERS, SKIN_TONES as TONES } from "../skin-tones.js";
 
 const props = defineProps({
     modelValue: { type: String, default: "none" },

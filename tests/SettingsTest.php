@@ -7,6 +7,7 @@ use StatamicEmojis\EmojiFields;
 use StatamicEmojis\EmojiSets;
 use StatamicEmojis\EmojiSettings;
 use StatamicEmojis\Fieldtypes\Emoji;
+use StatamicEmojis\Fieldtypes\SkinTone;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Statamic\Facades\User;
@@ -80,13 +81,22 @@ class SettingsTest extends TestCase
         $this->assertSame(['objects', 'flags'], $this->settings()->categories());
     }
 
+    public function test_the_skin_tone_field_keeps_only_known_tones(): void
+    {
+        $fieldtype = new SkinTone;
+
+        $this->assertSame('medium-dark', $fieldtype->process('medium-dark'));
+        $this->assertNull($fieldtype->process('purple'));
+        $this->assertNull($fieldtype->process(null));
+    }
+
     public function test_fields_show_the_site_wide_values_as_defaults(): void
     {
         $this->save(['skin_tone' => 'medium', 'skin_tone_selector' => false]);
 
         $fields = collect((new Emoji)->configFields()->all());
 
-        $this->assertSame('Default (Medium)', $fields['skin_tone']->get('placeholder'));
+        $this->assertSame('Default (Medium)', $fields['skin_tone']->get('default_label'));
         $this->assertSame('Default (Hide)', $fields['skin_tone_selector']->get('placeholder'));
         $this->assertSame(['show' => 'Show', 'hide' => 'Hide'], $fields['custom_emojis']->get('options'));
     }

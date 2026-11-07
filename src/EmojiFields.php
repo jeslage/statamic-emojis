@@ -58,13 +58,12 @@ class EmojiFields
 
         return [
             'display' => $t('config.skin_tone'),
-            'type' => 'select',
-            'options' => collect(Emojibase::SKIN_TONES)
-                ->mapWithKeys(fn ($tone) => [$tone => $t("skin_tones.{$tone}")])
-                ->all(),
+            'type' => 'statamic_emojis_skin_tone',
             'width' => 50,
             ...($inherit
-                ? self::inherit(__('statamic-emojis::messages.skin_tones.'.app(EmojiSettings::class)->skinTone()))
+                ? ['default_label' => __('statamic-emojis::messages.options.default', [
+                    'value' => __('statamic-emojis::messages.skin_tones.'.app(EmojiSettings::class)->skinTone()),
+                ])]
                 : ['default' => 'none']),
         ];
     }
@@ -117,11 +116,5 @@ class EmojiFields
                 'hide' => $t('options.hide'),
             ],
         ];
-    }
-
-    /** Fields: clearable with a "Default (…)" placeholder showing the site-wide value. */
-    protected static function inherit(string $defaultLabel): array
-    {
-        return ['clearable' => true, 'placeholder' => __('statamic-emojis::messages.options.default', ['value' => $defaultLabel])];
     }
 }
