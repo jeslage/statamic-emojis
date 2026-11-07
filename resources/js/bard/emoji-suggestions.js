@@ -15,7 +15,21 @@ let editors = 0;
 function sharedDropdown() {
     if (dropdown) return dropdown;
 
-    dropdown = reactive({ visible: false, owner: null, items: [], active: 0, top: 0, left: 0, onSelect: null });
+    dropdown = reactive({
+        visible: false,
+        owner: null,
+        items: [],
+        active: 0,
+        top: 0,
+        left: 0,
+        onSelect: null,
+        reposition: null,
+    });
+
+    // Keep the list at the cursor while the page or a stack scrolls (fixed position follows the viewport)
+    const reposition = () => dropdown.visible && dropdown.reposition?.();
+    window.addEventListener("scroll", reposition, true);
+    window.addEventListener("resize", reposition);
 
     const el = document.createElement("div");
     el.className = "statamic-emojis-bard-suggestions";
@@ -82,6 +96,13 @@ export default function emojiSuggestions({ bard, tiptap }) {
                 close();
             };
 
+            const position = (view) => {
+                if (!range || list.owner !== owner) return;
+                const coords = view.coordsAtPos(range.from);
+                list.top = coords.bottom + 4;
+                list.left = coords.left;
+            };
+
             const update = (view) => {
                 const { selection } = view.state;
 
@@ -104,17 +125,16 @@ export default function emojiSuggestions({ bard, tiptap }) {
                     const items = searchEmojis(trigger.query, { customEmojis: pickerOptions(bard.config ?? {}).customEmojis });
                     if (!items.length) return close();
 
-                    const coords = view.coordsAtPos(from);
                     range = { from, to };
                     Object.assign(list, {
                         owner,
                         items,
                         active: 0,
-                        top: coords.bottom + 4,
-                        left: coords.left,
                         visible: true,
                         onSelect: (item) => select(view, item),
+                        reposition: () => position(view),
                     });
+                    position(view);
                 });
             };
 
