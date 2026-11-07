@@ -23,11 +23,14 @@ class EmojiSets
 
     public const VARIATION_SELECTOR = 'fe0f';
 
-    /** Matches a single emoji: flags, keycaps, and (ZWJ) sequences with modifiers. */
+    /**
+     * Matches a single emoji: flags, keycaps, and (ZWJ) sequences with modifiers. Subdivision flags
+     * (🏴 + tag characters) come before the general case, which would match the 🏴 alone.
+     */
     public const EMOJI_PATTERN = '/\p{Regional_Indicator}{2}'
         .'|[#*0-9]\x{FE0F}?\x{20E3}'
-        .'|\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})*(?:\x{200D}\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})*)*'
-        .'|\x{1F3F4}[\x{E0061}-\x{E007A}]+\x{E007F}/u';
+        .'|\x{1F3F4}[\x{E0061}-\x{E007A}]+\x{E007F}'
+        .'|\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})*(?:\x{200D}\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})*)*/u';
 
     /** Built-in image sets (pinned versions). Config entries with the same name override single keys. */
     public const BUILT_IN = [

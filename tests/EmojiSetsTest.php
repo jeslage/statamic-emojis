@@ -95,6 +95,15 @@ class EmojiSetsTest extends TestCase
         $this->assertStringStartsWith('Hi <img', $html);
     }
 
+    public function test_replace_keeps_subdivision_flags_whole(): void
+    {
+        $html = $this->sets()->replace('🏴󠁧󠁢󠁳󠁣󠁴󠁿!', 'noto');
+
+        $this->assertSame(1, substr_count($html, '<img'));
+        $this->assertStringContainsString('/sets/noto/1f3f4-e0067-e0062-e0073-e0063-e0074-e007f.svg', $html);
+        $this->assertStringEndsWith('>!', $html);
+    }
+
     public function test_replace_leaves_tags_and_attributes_alone(): void
     {
         $html = '<p title="Party 🎉"><a href="/x">Party 🎉</a></p>';
