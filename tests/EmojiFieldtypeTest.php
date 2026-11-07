@@ -52,7 +52,6 @@ class EmojiFieldtypeTest extends TestCase
                 $this->assertTrue($handles->contains($handle), get_class($fieldtype)." is missing {$handle}");
             }
 
-            // The emoji set is site-wide only
             $this->assertFalse($handles->contains('emoji_set'));
         }
     }

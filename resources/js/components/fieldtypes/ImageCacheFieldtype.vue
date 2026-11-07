@@ -1,5 +1,4 @@
 <script setup>
-// Emojis page: cached images per emoji set, with buttons to fill (in chunks, with progress) and clear.
 import { reactive, ref } from "vue";
 import { Fieldtype } from "@statamic/cms";
 import { Button } from "@statamic/cms/ui";
@@ -87,9 +86,16 @@ function size(bytes) {
 
             <div class="min-w-0 flex-1 text-sm text-gray-600 dark:text-gray-400">
                 <template v-if="busy[item.set]?.action === 'warm'">
-                    <div>{{ __("statamic-emojis::messages.settings.cache_warming", { percent: busy[item.set].percent }) }}</div>
+                    <div>
+                        {{
+                            __("statamic-emojis::messages.settings.cache_warming", { percent: busy[item.set].percent })
+                        }}
+                    </div>
                     <div class="mt-1 h-1.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                        <div class="h-full bg-blue-500 transition-all" :style="{ width: `${busy[item.set].percent}%` }" />
+                        <div
+                            class="h-full bg-blue-500 transition-all"
+                            :style="{ width: `${busy[item.set].percent}%` }"
+                        />
                     </div>
                 </template>
                 <template v-else>
@@ -104,7 +110,12 @@ function size(bytes) {
             </div>
 
             <div class="flex gap-2">
-                <Button size="sm" :disabled="!!busy[item.set]" :loading="busy[item.set]?.action === 'warm'" @click="warm(item.set)">
+                <Button
+                    size="sm"
+                    :disabled="!!busy[item.set]"
+                    :loading="busy[item.set]?.action === 'warm'"
+                    @click="warm(item.set)"
+                >
                     {{ __("statamic-emojis::messages.settings.cache_warm") }}
                 </Button>
                 <Button

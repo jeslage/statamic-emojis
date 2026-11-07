@@ -5,9 +5,6 @@ namespace StatamicEmojis\Http\Controllers;
 use StatamicEmojis\EmojiSets;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Serves emoji images of a set from the addon's cache (fetched from upstream on first use).
- */
 class EmojiImageController
 {
     public function __invoke(EmojiSets $sets, string $set, string $codes): Response
@@ -16,8 +13,7 @@ class EmojiImageController
 
         $svg = $sets->svg($set, $codes);
 
-        // Emojis the set doesn't have (or a failed fetch) fall back to the native character, so there's
-        // no broken image. Browsers only keep the fallback briefly, in case it was a network error.
+        // Missing emojis fall back to the native character; browsers keep it only briefly, in case it was a network error.
         $cacheControl = $svg === null ? 'public, max-age=3600' : 'public, max-age=2592000';
         $svg ??= $sets->fallbackSvg($codes);
 

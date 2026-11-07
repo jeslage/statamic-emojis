@@ -1,6 +1,4 @@
 <script setup>
-// The Emojis CP page: the same form as Statamic's PublishForm (header with Save, publish tabs, save
-// pipeline, Cmd/Ctrl+S), plus in the free edition a hint above the form with a "Get Pro" button.
 import { onMounted, onUnmounted, ref, useTemplateRef } from "vue";
 import { Alert, Button, Header, PublishContainer, PublishTabs } from "@statamic/cms/ui";
 import { Pipeline, Request } from "@statamic/cms/save-pipeline";
@@ -14,7 +12,6 @@ const props = defineProps({
     meta: { type: Object, default: () => ({}) },
     submitUrl: { type: String, required: true },
     submitMethod: { type: String, default: "PATCH" },
-    // Free edition only: where to buy Pro
     proUrl: { type: String, default: null },
 });
 

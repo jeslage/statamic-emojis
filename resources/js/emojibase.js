@@ -1,10 +1,4 @@
-// Emoji data is served by the addon's Control Panel route (routes/cp.php), filtered by category.
-// vue-frimousse requests "{emojibaseUrl}/{locale}/data.json" and ".../messages.json".
-
-/**
- * Picker categories in Emojibase order. "smileys-people" merges the "smileys & emotion" and
- * "people & body" groups (like Slack). Keep in sync with src/Emojibase.php.
- */
+// Keep in sync with src/Emojibase.php.
 export const CATEGORIES = [
     "smileys-people",
     "animals-nature",
@@ -16,24 +10,16 @@ export const CATEGORIES = [
     "flags",
 ];
 
-/**
- * Base URL for the picker's Emojibase data, limited to the given category keys (empty = all).
- */
 export function emojibaseUrl(categories = []) {
     const key = categories?.length ? [...categories].sort().join(",") : "all";
 
     return `${Statamic.$config.get("cpUrl")}/statamic-emojis/emojibase/${key}`;
 }
 
-// Processed frimousse data per "locale|url", kept for this page view so switching tabs/fields is instant.
 const stash = new Map();
 
-/**
- * vue-frimousse caches its processed data in localStorage per locale only ("frimousse/data/{locale}"),
- * regardless of the URL it came from. Before a picker mounts with another data URL (other categories,
- * another tab), stash the cached data under its URL and restore the new URL's data, or drop it so
- * frimousse fetches it (the responses are HTTP-cached, so that stays cheap too).
- */
+// frimousse caches its data in localStorage per locale only, regardless of the URL: stash it per URL
+// and restore the new URL's data (or drop it so frimousse fetches it) before a picker mounts.
 export function prepareFrimousseCache(locale, url) {
     try {
         const dataKey = `frimousse/data/${locale}`;
@@ -51,47 +37,35 @@ export function prepareFrimousseCache(locale, url) {
 
         localStorage.setItem(markerKey, url);
     } catch {
-        // Storage unavailable: frimousse can't cache either, so there's nothing to prepare
+        // Storage unavailable
     }
 }
 
-/**
- * Matches a single emoji: flags, keycaps, and (ZWJ) sequences with modifiers. Same as EmojiSets::EMOJI_PATTERN in PHP.
- * Subdivision flags (🏴 + tag characters) come before the general case, which would match the 🏴 alone.
- */
+// Same as EmojiSets::EMOJI_PATTERN. Subdivision flags must come before the general case, which would match the 🏴 alone.
 export const EMOJI_PATTERN =
     /\p{Regional_Indicator}{2}|[#*0-9]\uFE0F?\u20E3|\u{1F3F4}[\u{E0061}-\u{E007A}]+\u{E007F}|\p{Extended_Pictographic}(?:\uFE0F|\p{Emoji_Modifier})*(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\p{Emoji_Modifier})*)*/gu;
 
-/** Lowercase hex codepoints of an emoji joined by "-", fully qualified. Same as EmojiSets::codepoints() in PHP. */
+// Same as EmojiSets::codepoints() in PHP.
 export function codepoints(emoji) {
     return Array.from(emoji ?? "", (char) => char.codePointAt(0).toString(16)).join("-");
 }
 
-/** Site-wide emoji set and the image route, provided by the ServiceProvider. */
 function setsConfig() {
     return Statamic.$config.get("statamicEmojis") ?? { set: "native", imageUrl: "" };
 }
 
-/** The site-wide emoji set. */
 export function siteSet() {
     return setsConfig().set || "native";
 }
 
-/** Image URL of an emoji in the given set (default: the site-wide one), or null for native. */
 export function emojiImageUrl(emoji, set = siteSet()) {
     return !set || set === "native" ? null : `${setsConfig().imageUrl}/${set}/${codepoints(emoji)}.svg`;
 }
 
-// Category index of the "Recently used" category injected into frimousse's data (real ones are >= 0)
+// Real category indexes are >= 0
 const RECENT_CATEGORY = -1;
 
-/**
- * Put the recently used emojis into frimousse's cached data as the first category, so they're part of
- * its scrollable, virtualized list (sticky header, keyboard navigation, footer preview).
- * Always removes a previously injected category first; pass no items to only remove it.
- * Takes effect when the picker mounts; on a picker's very first load (nothing cached yet) it shows
- * from the next opening on.
- */
+// Takes effect when the picker mounts, so on a picker's very first load (nothing cached yet) only from the next opening on.
 export function applyRecentToFrimousseCache(locale, items, label) {
     try {
         const key = `frimousse/data/${locale}`;
@@ -109,12 +83,18 @@ export function applyRecentToFrimousseCache(locale, items, label) {
             data.categories.unshift({ index: RECENT_CATEGORY, label });
             data.emojis.unshift(
                 // version 0: always supported; no skins: the stored emoji already has its skin tone
-                ...items.map((item) => ({ emoji: item.emoji, category: RECENT_CATEGORY, label: item.label, version: 0, tags: [] })),
+                ...items.map((item) => ({
+                    emoji: item.emoji,
+                    category: RECENT_CATEGORY,
+                    label: item.label,
+                    version: 0,
+                    tags: [],
+                })),
             );
         }
 
         localStorage.setItem(key, JSON.stringify(cache));
     } catch {
-        // Storage unavailable or unexpected data: the picker works without the recent category
+        // Storage unavailable or unexpected data
     }
 }

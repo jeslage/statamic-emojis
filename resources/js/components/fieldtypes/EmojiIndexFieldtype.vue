@@ -1,5 +1,4 @@
 <script setup>
-// Emoji field in entry listings: the emoji as it looks in the field (custom image or site-wide set).
 import EmojiImage from "../EmojiImage.vue";
 
 defineProps({

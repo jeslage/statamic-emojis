@@ -8,10 +8,6 @@ use StatamicEmojis\EmojiSettings;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 
-/**
- * Empties the image cache of emoji sets, e.g. after changing a set's URL in the config.
- * Images are fetched again on next use (or with emojis:warm).
- */
 class ClearEmojiSet extends Command
 {
     use RunsInPlease;
@@ -24,7 +20,6 @@ class ClearEmojiSet extends Command
 
     public function handle(EmojiSets $sets, Emojibase $emojibase): int
     {
-        // Image sets are part of Pro; the Emojibase data (--data) is cached in every edition
         if (! app(EmojiSettings::class)->pro()) {
             if (! $this->option('data') || $this->argument('set') !== null) {
                 $this->components->error('Image sets are part of Statamic Emojis Pro.');

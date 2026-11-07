@@ -12,9 +12,6 @@ use Statamic\Facades\AssetContainer;
 use Statamic\Facades\User;
 use Statamic\Modifiers\Modify;
 
-/**
- * The free edition: native emojis only, no image sets and no custom emojis (both part of Pro).
- */
 class FreeEditionTest extends TestCase
 {
     protected function getEnvironmentSetUp($app)
@@ -27,7 +24,6 @@ class FreeEditionTest extends TestCase
 
     protected function tearDown(): void
     {
-        // Don't leave saved settings behind for other tests
         app(EmojiSettings::class)->addon()->settings()->set([])->save();
         File::delete(resource_path('addons/statamic-emojis.yaml'));
 
@@ -88,7 +84,6 @@ class FreeEditionTest extends TestCase
         $this->assertSame(['general'], array_keys($tabs));
         $this->assertSame('categories', $handles->first());
 
-        // The Pro settings are only kept as hidden fields, so saving doesn't drop them
         $fields = collect($tabs['general']['sections'])->flatMap(fn ($s) => $s['fields'])->keyBy('handle');
         $this->assertSame('hidden', $fields['emoji_set']['field']['type']);
         $this->assertSame('hidden', $fields['custom_emojis']['field']['type']);
@@ -110,7 +105,6 @@ class FreeEditionTest extends TestCase
         $user = tap(User::make()->email('admin@example.com')->makeSuper())->save();
         $page = $this->actingAs($user)->getJson(cp_route('statamic-emojis.index'))->assertOk()->json();
 
-        // What the page's save button sends, with one picker setting changed
         $this->actingAs($user)
             ->patchJson($page['submitUrl'], [...$page['values'], 'skin_tone' => 'light'])
             ->assertOk();
@@ -136,7 +130,6 @@ class FreeEditionTest extends TestCase
             ->expectsOutputToContain('Image sets are part of Statamic Emojis Pro.')
             ->assertFailed();
 
-        // The Emojibase data is cached in every edition
         $this->artisan('emojis:clear --data')
             ->expectsOutputToContain('Cleared the cached Emojibase data.')
             ->assertSuccessful();

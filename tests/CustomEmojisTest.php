@@ -64,7 +64,6 @@ class CustomEmojisTest extends TestCase
         $blueprint = Blueprint::find('assets/statamic-emojis');
         $this->assertSame(['alt', 'shortcode', 'keywords'], $blueprint->fields()->all()->keys()->all());
 
-        // Labels are translation keys, translated by the Control Panel in the editor's language
         $shortcode = $blueprint->field('shortcode');
         $this->assertSame('statamic-emojis::messages.blueprint.shortcode', $shortcode->display());
         $this->assertSame('Shortcode', __($shortcode->display()));
@@ -127,7 +126,7 @@ class CustomEmojisTest extends TestCase
         $this->upload('one.svg');
         $this->assertSame(['one'], $this->custom()->all()->keys()->all());
 
-        $this->upload('two.svg'); // AssetSaved clears the cache
+        $this->upload('two.svg');
         $this->assertSame(['one', 'two'], $this->custom()->all()->keys()->all());
     }
 

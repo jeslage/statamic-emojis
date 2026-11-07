@@ -1,9 +1,5 @@
 <script setup>
-// Single-line text input that shows custom emojis (":shortcode:") as their images, and Unicode emojis
-// as images of the site-wide emoji set (native characters for the native set).
-// A native <input> can only show text, so this is a contenteditable element styled like Statamic's Input.
-// The value stays a plain string: images are serialized back to ":shortcode:" and caret positions are
-// offsets in that string, so callers can work with it like with an input's value and selectionStart.
+// A contenteditable, as a native <input> can't show images. The value stays a plain string (images as ":shortcode:").
 import { nextTick, onBeforeUnmount, onMounted, ref, useSlots, useTemplateRef, watch } from "vue";
 import { CharacterCounter, InputGroup, InputGroupAppend, InputGroupPrepend } from "@statamic/cms/ui";
 import { useCustomEmojis } from "../custom-emojis.js";
@@ -27,7 +23,6 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue"]);
 
 const root = useTemplateRef("root");
-// Content of the "end" slot (e.g. the picker button) sits inside the input at its end
 const hasEnd = !!useSlots().end;
 const customEmojis = useCustomEmojis();
 
@@ -37,7 +32,6 @@ const emitted = new Set();
 // The selection survives the blur caused by opening the picker
 let lastSelection = null;
 let composing = false;
-// Emojis the set has no image for: shown as native characters
 const missing = new Set();
 
 function parse(value) {
@@ -48,12 +42,10 @@ function isEmoji(node) {
     return node.nodeName === "IMG" && !!(node.dataset.shortcode || node.dataset.emoji);
 }
 
-/** What an image stands for in the value */
 function emojiText(node) {
     return node.dataset.shortcode ? `:${node.dataset.shortcode}:` : node.dataset.emoji;
 }
 
-/** Text of a node or fragment, images as ":shortcode:". Line breaks become spaces (single line). */
 function serialize(node) {
     let out = "";
     for (const child of node.childNodes) {
@@ -64,7 +56,6 @@ function serialize(node) {
     return out;
 }
 
-/** Whether the element's children already are exactly what the value renders to (plain text nodes and images). */
 function rendered(value) {
     const current = [];
     for (const child of root.value.childNodes) {
@@ -95,11 +86,14 @@ function render(value) {
             img.src = part.url;
             img.alt = part.emoji;
             img.dataset.emoji = part.emoji;
-            // No image in the set: show the native character instead
-            img.addEventListener("error", () => {
-                missing.add(part.emoji);
-                if (root.value) normalize(serialize(root.value));
-            }, { once: true });
+            img.addEventListener(
+                "error",
+                () => {
+                    missing.add(part.emoji);
+                    if (root.value) normalize(serialize(root.value));
+                },
+                { once: true },
+            );
             return img;
         }
 
@@ -114,7 +108,6 @@ function render(value) {
     empty.value = value === "";
 }
 
-/** Offset in the value of a DOM position inside the element. */
 function offsetOf(container, offset) {
     const range = document.createRange();
     range.selectNodeContents(root.value);
@@ -122,14 +115,14 @@ function offsetOf(container, offset) {
     return serialize(range.cloneContents()).length;
 }
 
-/** The DOM position of an offset in the value; never inside an image's shortcode. */
 function positionOf(offset) {
     const el = root.value;
     let rest = offset;
 
     for (let i = 0; i < el.childNodes.length; i++) {
         const child = el.childNodes[i];
-        const length = child.nodeType === Node.TEXT_NODE ? child.data.length : serialize({ childNodes: [child] }).length;
+        const length =
+            child.nodeType === Node.TEXT_NODE ? child.data.length : serialize({ childNodes: [child] }).length;
 
         if (child.nodeType === Node.TEXT_NODE && rest <= length) return [child, rest];
         if (child.nodeType !== Node.TEXT_NODE && rest <= 0) return [el, i];
@@ -144,7 +137,6 @@ function hasFocus() {
     return !!root.value && document.activeElement === root.value;
 }
 
-/** { start, end } as offsets in the value; the last selection while the element doesn't have focus. */
 function selection() {
     const sel = window.getSelection();
     if (hasFocus() && sel?.rangeCount && root.value.contains(sel.anchorNode)) {
@@ -174,13 +166,12 @@ function keepCaretVisible() {
 
     const caret = sel.getRangeAt(0).getBoundingClientRect();
     const box = root.value.getBoundingClientRect();
-    if (!caret.width && !caret.height && !caret.left) return; // empty element: nothing to scroll
+    if (!caret.width && !caret.height && !caret.left) return;
 
     if (caret.right > box.right - 12) root.value.scrollLeft += caret.right - box.right + 12;
     else if (caret.left < box.left + 12) root.value.scrollLeft -= box.left + 12 - caret.left;
 }
 
-/** Re-renders when the DOM differs from what the value should look like (e.g. a shortcode was completed). */
 function normalize(value) {
     if (rendered(value)) return;
 
@@ -206,7 +197,6 @@ function onCompositionEnd() {
     onInput();
 }
 
-// Single line: no paragraphs or line breaks
 function onBeforeInput(event) {
     if (["insertParagraph", "insertLineBreak"].includes(event.inputType)) event.preventDefault();
 }
@@ -215,7 +205,6 @@ function onKeydown(event) {
     if (event.key === "Enter") event.preventDefault();
 }
 
-// Paste and drop plain text only; shortcodes in it become images on the following input event
 function insertPlainText(text) {
     document.execCommand("insertText", false, text.replace(/\r?\n/g, " "));
 }
@@ -229,7 +218,6 @@ function onDrop(event) {
     event.preventDefault();
 }
 
-// Copy and cut the text with ":shortcode:" for images
 function onCopy(event, cut = false) {
     const sel = window.getSelection();
     if (!sel?.rangeCount) return;
@@ -262,7 +250,6 @@ watch(
     },
 );
 
-// Shortcodes become images once the custom emojis are loaded
 watch(
     () => customEmojis.list,
     () => root.value && normalize(serialize(root.value)),

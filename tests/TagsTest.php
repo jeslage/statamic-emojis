@@ -43,7 +43,6 @@ class TagsTest extends TestCase
     {
         [$text, $noto, $url, $label, $customUrl, $custom] = explode('|', trim(view('emojis-tag')->render()));
 
-        // Native set: Unicode emojis stay characters, custom emojis become images
         $this->assertStringStartsWith('Hi 🎉 <img class="emoji emoji-custom" src="/statamic-emojis/party.svg"', $text);
         $this->assertStringContainsString('/sets/noto/1f389.svg', $noto);
         $this->assertStringEndsWith('/!/statamic-emojis/sets/noto/1f389.svg', $url);

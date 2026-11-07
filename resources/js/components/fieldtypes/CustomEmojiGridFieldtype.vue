@@ -1,5 +1,4 @@
 <script setup>
-// Emojis page: the uploaded custom emojis as a grid, with a link to the asset container.
 import { Fieldtype } from "@statamic/cms";
 import { Button } from "@statamic/cms/ui";
 import { Upload } from "@lucide/vue";
@@ -29,7 +28,10 @@ defineExpose(expose);
                     class="flex flex-col items-center gap-1.5 rounded-lg border border-gray-200 px-2 py-3 text-center dark:border-gray-700"
                 >
                     <img :src="emoji.url" :alt="emoji.label" class="size-10 object-contain" draggable="false" />
-                    <span class="w-full truncate text-xs font-medium text-gray-800 dark:text-gray-200" :title="emoji.label">
+                    <span
+                        class="w-full truncate text-xs font-medium text-gray-800 dark:text-gray-200"
+                        :title="emoji.label"
+                    >
                         {{ emoji.label }}
                     </span>
                     <!-- Plain span: <code> gets the CP's global code styling (tinted box, colored text) -->

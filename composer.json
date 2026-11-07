@@ -36,7 +36,10 @@
         "statamic": {
             "name": "Emojis",
             "description": "Emoji fieldtypes, a Bard button, shortcode suggestions, custom emojis and emoji sets",
-            "editions": ["free", "pro"]
+            "editions": [
+                "free",
+                "pro"
+            ]
         },
         "laravel": {
             "providers": [

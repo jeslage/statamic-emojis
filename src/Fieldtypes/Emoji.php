@@ -9,9 +9,6 @@ use StatamicEmojis\EmojiSets;
 use StatamicEmojis\GraphQL\EmojiValueType;
 use StatamicEmojis\Values\EmojiValue;
 
-/**
- * A single emoji, chosen with the emoji picker.
- */
 class Emoji extends Fieldtype
 {
     use HasEmojiPickerConfig;
@@ -22,7 +19,6 @@ class Emoji extends Fieldtype
 
     protected $categories = ['controls'];
 
-    /** Icon in the fieldtype selector (raw SVG): Lucide "smile". */
     public function icon()
     {
         return file_get_contents(__DIR__.'/../../resources/svg/smile.svg');
@@ -40,7 +36,6 @@ class Emoji extends Fieldtype
         return $data === '' ? null : $data;
     }
 
-    /** A string in templates, an object with name, image and set in the API (see EmojiValue). */
     public function augment($value)
     {
         if (! is_string($value) || $value === '') {

@@ -8,10 +8,6 @@ use StatamicEmojis\EmojiSettings;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 
-/**
- * Fetches every emoji (including skin tone variants) of an image set into the cache,
- * so editors and visitors never wait for the first upstream fetch.
- */
 class WarmEmojiSet extends Command
 {
     use RunsInPlease;

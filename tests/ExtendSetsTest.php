@@ -51,7 +51,7 @@ class ExtendSetsTest extends TestCase
 
         $this->assertSame(['native', 'noto', 'fluent', 'openmoji', 'twemoji'], $this->sets()->sets());
         $this->assertSame('Twemoji', $this->sets()->label('twemoji'));
-        $this->assertContains('2764.svg', $this->sets()->candidates('twemoji', '2764-fe0f')); // default naming "fluent"
+        $this->assertContains('2764.svg', $this->sets()->candidates('twemoji', '2764-fe0f'));
     }
 
     public function test_config_entries_override_single_keys_of_built_in_sets(): void

@@ -5,10 +5,6 @@ namespace StatamicEmojis\Fieldtypes\Concerns;
 use StatamicEmojis\EmojiFields;
 use StatamicEmojis\EmojiSettings;
 
-/**
- * The "Emoji Picker" config section shared by the Emoji and Emoji Text fieldtypes.
- * Empty values use the site-wide settings from the Emojis CP page. The emoji set is site-wide only.
- */
 trait HasEmojiPickerConfig
 {
     protected function emojiPickerConfigSection(): array
@@ -16,7 +12,6 @@ trait HasEmojiPickerConfig
         return [
             'display' => __('statamic-emojis::messages.config.section'),
             'fields' => [
-                // Custom emojis are part of Pro
                 ...(app(EmojiSettings::class)->pro() ? ['custom_emojis' => EmojiFields::customEmojis(inherit: true)] : []),
                 'categories' => EmojiFields::categories(inherit: true),
                 'skin_tone' => EmojiFields::skinTone(inherit: true),

@@ -1,11 +1,8 @@
-// Splits text into plain text, custom emojis (":shortcode:") and Unicode emojis, for showing it with images:
-// the Emoji Text editor and the Emoji Text listing column.
 import { findCustom } from "./custom-emojis.js";
 import { EMOJI_PATTERN, emojiImageUrl } from "./emojibase.js";
 
 const SHORTCODE = /:([a-z0-9_+-]+):/gi;
 
-/** Custom emojis split out of text: [{ text } | { shortcode, url, label }] */
 function parseCustom(value) {
     const parts = [];
     let last = 0;
@@ -28,7 +25,6 @@ function parseCustom(value) {
     return parts;
 }
 
-/** Unicode emojis split out as images of the site-wide set (none for native): [{ text } | { emoji, url }] */
 function parseUnicode(text, missing) {
     if (!emojiImageUrl("😀")) return [{ text }];
 
@@ -45,15 +41,10 @@ function parseUnicode(text, missing) {
     return parts;
 }
 
-/**
- * Text as [{ text } | { shortcode, url, label } | { emoji, url }]. Unknown shortcodes stay text,
- * and so do emojis in `missing` (a Set of emojis the set has no image for).
- */
 export function parseEmojiText(value, { missing = null } = {}) {
     return parseCustom(value ?? "").flatMap((part) => ("text" in part ? parseUnicode(part.text, missing) : [part]));
 }
 
-/** What a part stands for in the text */
 export function partText(part) {
     return part.text ?? part.emoji ?? `:${part.shortcode}:`;
 }

@@ -15,7 +15,6 @@ Route::get('statamic-emojis/emojibase/{categories}/{locale}/{file}', EmojibaseCo
 
 Route::get('statamic-emojis/custom', CustomEmojisController::class)->name('statamic-emojis.custom');
 
-// Emojis page (settings, custom emoji grid, image cache tools)
 Route::get('statamic-emojis', EmojisPageController::class)->name('statamic-emojis.index');
 Route::get('statamic-emojis/cache', [ImageCacheController::class, 'status'])->name('statamic-emojis.cache.status');
 Route::post('statamic-emojis/cache/{set}/warm', [ImageCacheController::class, 'warm'])->where('set', '[a-z]+')->name('statamic-emojis.cache.warm');

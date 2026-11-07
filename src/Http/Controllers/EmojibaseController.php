@@ -6,12 +6,7 @@ use StatamicEmojis\Emojibase;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Serves Emojibase data to the picker, filtered by the field's allowed categories.
- *
- * vue-frimousse requests "{emojibaseUrl}/{locale}/data.json" and ".../messages.json",
- * so the categories are part of the base URL: "all" or a comma-separated list of keys.
- */
+// frimousse requests "{url}/{locale}/data.json", so the categories are part of the base URL.
 class EmojibaseController
 {
     public function __invoke(Request $request, Emojibase $emojibase, string $categories, string $locale, string $file): Response
@@ -28,7 +23,6 @@ class EmojibaseController
         return $this->json($request, $data);
     }
 
-    /** Shortcodes for the suggestions while typing ":name" (Emojibase's "emojibase" preset). */
     public function shortcodes(Request $request, Emojibase $emojibase): Response
     {
         return $this->json($request, $emojibase->shortcodes());

@@ -15,10 +15,7 @@ const props = defineProps({
 });
 
 function insert(emoji) {
-    // Custom emojis become an inline image node, Unicode emojis plain text
-    const content = isShortcode(emoji)
-        ? { type: "customEmoji", attrs: { shortcode: emoji.slice(1, -1) } }
-        : emoji;
+    const content = isShortcode(emoji) ? { type: "customEmoji", attrs: { shortcode: emoji.slice(1, -1) } } : emoji;
 
     props.editor.chain().focus().insertContent(content).run();
 }

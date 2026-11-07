@@ -7,12 +7,6 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Statamic\Http\Controllers\CP\CpController;
 
-/**
- * The Emojis CP page: the addon's settings form (saved through Statamic's addon settings route).
- *
- * Rendered with the addon's own Inertia page (resources/js/pages/EmojisPage.vue), the same form as
- * Statamic's PublishForm plus, in the free edition, a hint above the form with a "Get Pro" button.
- */
 class EmojisPageController extends CpController
 {
     public function __invoke(Request $request, EmojiSettings $settings)
@@ -32,7 +26,6 @@ class EmojisPageController extends CpController
             'meta' => $fields->meta(),
             'submitUrl' => cp_route('addons.settings.update', $addon->slug()),
             'submitMethod' => 'PATCH',
-            // Free edition: link to buy Pro next to the Save button
             'proUrl' => $settings->pro() ? null : EmojiSettings::PRO_URL,
         ];
 

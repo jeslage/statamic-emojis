@@ -1,5 +1,3 @@
-// Custom emojis (editor-uploaded images, referenced as ":shortcode:"), loaded once from the CP route
-// /cp/statamic-emojis/custom and shared by all pickers, fields and Bard editors on the page.
 import { reactive } from "vue";
 
 const state = reactive({ list: [], loaded: false });
@@ -11,7 +9,6 @@ export function customEmojisEnabled() {
     return !!Statamic.$config.get("statamicEmojis")?.custom;
 }
 
-/** Loads the list once; resolves with the array of {shortcode, label, keywords, url}. */
 export function loadCustomEmojis() {
     if (!customEmojisEnabled()) {
         state.loaded = true;
@@ -33,7 +30,6 @@ export function loadCustomEmojis() {
     return request;
 }
 
-/** Reactive state: { list, loaded }. Starts loading on first use. */
 export function useCustomEmojis() {
     loadCustomEmojis();
     return state;
@@ -43,15 +39,15 @@ export function isShortcode(value) {
     return typeof value === "string" && SHORTCODE.test(value);
 }
 
-/** The custom emoji for ":shortcode:" or "shortcode", or null. */
 export function findCustom(code) {
     const shortcode = String(code ?? "").replace(/^:|:$/g, "");
     return state.list.find((emoji) => emoji.shortcode === shortcode) ?? null;
 }
 
-/** Custom emojis matching a search in shortcode, label or keywords. */
 export function searchCustom(query) {
-    const q = String(query ?? "").trim().toLowerCase();
+    const q = String(query ?? "")
+        .trim()
+        .toLowerCase();
     if (!q) return [];
 
     return state.list.filter((emoji) =>

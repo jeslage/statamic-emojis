@@ -1,5 +1,3 @@
-// Bard inline node for custom emojis: {"type": "customEmoji", "attrs": {"shortcode": "party-parrot"}}.
-// The PHP counterpart (src/Bard/CustomEmojiNode.php) renders it on the front end.
 import { findCustom, loadCustomEmojis } from "../custom-emojis.js";
 
 export default function customEmojiNode({ tiptap }) {
@@ -44,7 +42,6 @@ export default function customEmojiNode({ tiptap }) {
             return `:${node.attrs.shortcode}:`;
         },
 
-        // In the editor: show the image as soon as the custom emoji list has loaded
         addNodeView() {
             return ({ node }) => {
                 const dom = document.createElement("span");
@@ -55,7 +52,7 @@ export default function customEmojiNode({ tiptap }) {
 
                 loadCustomEmojis().then(() => {
                     const emoji = findCustom(node.attrs.shortcode);
-                    if (!emoji) return; // deleted: keep showing the shortcode
+                    if (!emoji) return;
 
                     const img = document.createElement("img");
                     img.src = emoji.url;

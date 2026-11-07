@@ -5,9 +5,6 @@ namespace StatamicEmojis\Fieldtypes;
 use StatamicEmojis\CustomEmojis;
 use Statamic\Fields\Fieldtype;
 
-/**
- * Display-only field on the Emojis page: the uploaded custom emojis as a grid.
- */
 class CustomEmojiGrid extends Fieldtype
 {
     protected static $handle = 'statamic_emojis_custom_grid';

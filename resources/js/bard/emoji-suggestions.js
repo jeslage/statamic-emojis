@@ -1,6 +1,3 @@
-// Bard: shortcode suggestions while typing ":rock" (only in Bard fields with the emoji button).
-// A ProseMirror plugin finds the trigger before the cursor; a single suggestions list is mounted in
-// <body> (its own small Vue app) and positioned at the cursor. ↑/↓ choose, Enter/Tab insert, Escape closes.
 import { createApp, h, reactive } from "vue";
 import EmojiSuggestions from "../components/EmojiSuggestions.vue";
 import { findTrigger, loadEmojiIndex, searchEmojis } from "../emoji-search.js";
@@ -11,7 +8,6 @@ import { rememberEmoji } from "../recent-emojis.js";
 let dropdown = null;
 let editors = 0;
 
-/** The shared suggestions list; only one Bard editor has focus at a time. */
 function sharedDropdown() {
     if (dropdown) return dropdown;
 
@@ -26,7 +22,6 @@ function sharedDropdown() {
         reposition: null,
     });
 
-    // Keep the list at the cursor while the page or a stack scrolls (fixed position follows the viewport)
     const reposition = () => dropdown.visible && dropdown.reposition?.();
     window.addEventListener("scroll", reposition, true);
     window.addEventListener("resize", reposition);
@@ -40,7 +35,14 @@ function sharedDropdown() {
             dropdown.visible
                 ? h(
                       "div",
-                      { style: { position: "fixed", top: `${dropdown.top}px`, left: `${dropdown.left}px`, zIndex: 9999 } },
+                      {
+                          style: {
+                              position: "fixed",
+                              top: `${dropdown.top}px`,
+                              left: `${dropdown.left}px`,
+                              zIndex: 9999,
+                          },
+                      },
                       [
                           h(EmojiSuggestions, {
                               items: dropdown.items,
@@ -69,8 +71,7 @@ export default function emojiSuggestions({ bard, tiptap }) {
 
         addProseMirrorPlugins() {
             const list = sharedDropdown();
-            // This editor's id; only the editor showing the list may hide it. A number, not an object:
-            // objects stored in the reactive list become proxies and would never compare equal.
+            // A number, not an object: objects in the reactive list become proxies and would never compare equal.
             const owner = ++editors;
             let range = null;
             let request = 0;
@@ -86,9 +87,14 @@ export default function emojiSuggestions({ bard, tiptap }) {
 
                 const { from, to } = range;
                 const { state } = view;
-                const tr = isShortcode(item.emoji) && state.schema.nodes.customEmoji
-                    ? state.tr.replaceWith(from, to, state.schema.nodes.customEmoji.create({ shortcode: item.emoji.slice(1, -1) }))
-                    : state.tr.insertText(item.emoji, from, to);
+                const tr =
+                    isShortcode(item.emoji) && state.schema.nodes.customEmoji
+                        ? state.tr.replaceWith(
+                              from,
+                              to,
+                              state.schema.nodes.customEmoji.create({ shortcode: item.emoji.slice(1, -1) }),
+                          )
+                        : state.tr.insertText(item.emoji, from, to);
 
                 view.dispatch(tr.scrollIntoView());
                 view.focus();
@@ -111,7 +117,12 @@ export default function emojiSuggestions({ bard, tiptap }) {
                 const $from = selection.$from;
                 if (!$from.parent.isTextblock) return close();
 
-                const before = $from.parent.textBetween(Math.max(0, $from.parentOffset - 50), $from.parentOffset, null, "￼");
+                const before = $from.parent.textBetween(
+                    Math.max(0, $from.parentOffset - 50),
+                    $from.parentOffset,
+                    null,
+                    "￼",
+                );
                 const trigger = findTrigger(before);
                 if (!trigger) return close();
 
@@ -122,7 +133,9 @@ export default function emojiSuggestions({ bard, tiptap }) {
                 loadEmojiIndex().then(() => {
                     if (current !== request) return;
 
-                    const items = searchEmojis(trigger.query, { customEmojis: pickerOptions(bard.config ?? {}).customEmojis });
+                    const items = searchEmojis(trigger.query, {
+                        customEmojis: pickerOptions(bard.config ?? {}).customEmojis,
+                    });
                     if (!items.length) return close();
 
                     range = { from, to };
@@ -138,8 +151,7 @@ export default function emojiSuggestions({ bard, tiptap }) {
                 });
             };
 
-            // Keys while the list is open. Listened to in the capture phase on the editor element: Bard's own
-            // editor-level key handling runs before plugin props and would otherwise take Enter and Tab.
+            // Capture phase on the editor element: Bard's own key handling runs before plugin props and would take Enter and Tab.
             const handleKey = (view, event) => {
                 if (!list.visible || !range || list.owner !== owner) return false;
 

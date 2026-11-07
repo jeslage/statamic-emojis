@@ -1,5 +1,4 @@
-// Locales with Emojibase data (category names, emoji labels and search keywords).
-// Keep in sync with vue-frimousse's EMOJIBASE_LOCALES.
+// Keep in sync with vue-frimousse's EMOJIBASE_LOCALES and src/Emojibase.php.
 const EMOJIBASE_LOCALES = [
     "bn",
     "da",
@@ -31,12 +30,8 @@ const EMOJIBASE_LOCALES = [
     "zh",
 ];
 
-// Traditional Chinese regions
 const ZH_HANT = ["zh-tw", "zh-hk", "zh-mo", "zh-hant"];
 
-/**
- * Map a Laravel/Statamic locale (e.g. "de", "de_CH", "pt_BR", "zh_TW") to an Emojibase locale.
- */
 export function emojibaseLocale(locale) {
     const normalized = String(locale || "en")
         .toLowerCase()
@@ -51,7 +46,6 @@ export function emojibaseLocale(locale) {
     return EMOJIBASE_LOCALES.includes(language) ? language : "en";
 }
 
-/** The Control Panel's current locale as an Emojibase locale. */
 export function cpEmojibaseLocale() {
     return emojibaseLocale(Statamic.$config.get("locale"));
 }

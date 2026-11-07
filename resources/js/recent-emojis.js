@@ -1,4 +1,3 @@
-// Recently picked emojis per editor, stored in their browser.
 import { ref } from "vue";
 
 const STORAGE_KEY = "statamic-emojis/recent";
@@ -15,17 +14,19 @@ function read() {
 
 const recent = ref(read());
 
-/** Reactive list of { emoji, label }, most recent first. Custom emojis are stored as ":shortcode:". */
 export function useRecentEmojis() {
     return recent;
 }
 
 export function rememberEmoji(emoji, label) {
-    recent.value = [{ emoji, label: label ?? emoji }, ...recent.value.filter((item) => item.emoji !== emoji)].slice(0, MAX);
+    recent.value = [{ emoji, label: label ?? emoji }, ...recent.value.filter((item) => item.emoji !== emoji)].slice(
+        0,
+        MAX,
+    );
 
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(recent.value));
     } catch {
-        // Storage unavailable: keep the list for this page view only
+        // Storage unavailable
     }
 }

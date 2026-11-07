@@ -1,4 +1,3 @@
-// Lucide icons of the picker categories (picker tabs and the categories setting)
 import { Flag, Hamburger, Leaf, Lightbulb, Pilcrow, Plane, RugbyBall, Smile } from "@lucide/vue";
 
 export const CATEGORY_ICONS = {

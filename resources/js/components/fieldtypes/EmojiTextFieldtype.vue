@@ -16,7 +16,6 @@ defineExpose(expose);
 
 const { direction: contentDirection } = useContentDirection();
 
-// Same autofocus behaviour as the core Text fieldtype
 const shouldFocus = computed(() => {
     if (props.config.focus === false || props.config.focus === true) {
         return props.config.focus;
@@ -36,7 +35,6 @@ const input = useTemplateRef("input");
 // Until the input has been focused, its caret position is meaningless, so emojis are appended.
 const hasCaret = ref(false);
 
-/** The editor (EmojiTextInput: shows custom emojis as images); offsets are positions in the value. */
 function field() {
     const editor = input.value;
     if (!editor?.el) return null;
@@ -62,7 +60,6 @@ function onFocus() {
     emit("focus");
 }
 
-// The caret position survives the blur caused by opening the picker.
 function insert(emoji) {
     const target = field();
     const value = target?.text() ?? props.value ?? "";
@@ -72,12 +69,10 @@ function insert(emoji) {
 
     update(value.slice(0, start) + emoji + value.slice(end));
 
-    // Put the caret right after the inserted emoji
     focusAt(target, start + emoji.length);
 }
 
-// Shortcode suggestions: typing ":rock" lists matching emojis; ↑/↓ choose, Enter/Tab insert, Escape closes.
-// The list is teleported to <body> (so following sections can't cover it) and fixed below the input.
+// Teleported to <body> so following sections can't cover it.
 const suggest = reactive({ items: [], active: 0, start: 0, end: 0, top: 0, left: 0 });
 let suggestRequest = 0;
 
@@ -176,8 +171,7 @@ onBeforeUnmount(() => {
 
 <template>
     <div>
-        <!-- Same config as the core Text fieldtype (without input type and autocomplete).
-             focusin/focusout, as focus and blur don't bubble from the editable element. -->
+        <!-- focusin/focusout, as focus and blur don't bubble from the editable element. -->
         <EmojiTextInput
             ref="input"
             :model-value="value"

@@ -1,5 +1,5 @@
 <script setup>
-// Shortcode suggestions list (Emoji Text and Bard). Uses no Statamic globals, as Bard mounts it in its own app.
+// No Statamic globals: Bard mounts this in its own app.
 // mousedown (not click) selects, so the input or editor keeps its focus.
 import EmojiImage from "./EmojiImage.vue";
 
@@ -27,7 +27,9 @@ const emit = defineEmits(["select", "hover"]);
             @mouseenter="emit('hover', index)"
         >
             <span class="emoji-picker-preview shrink-0 text-lg leading-none"><EmojiImage :emoji="item.emoji" /></span>
-            <span class="min-w-0 flex-1 truncate" :title="item.label">{{ item.shortcode ? `:${item.shortcode}:` : item.label }}</span>
+            <span class="min-w-0 flex-1 truncate" :title="item.label">{{
+                item.shortcode ? `:${item.shortcode}:` : item.label
+            }}</span>
         </li>
     </ul>
 </template>

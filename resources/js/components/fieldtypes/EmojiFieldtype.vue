@@ -1,5 +1,4 @@
 <script setup>
-// A single emoji, chosen with the picker. Empty: "Select emoji" button. Filled: the emoji (click to change) + remove button.
 import { ref } from "vue";
 import { Fieldtype } from "@statamic/cms";
 import { Button, Popover } from "@statamic/cms/ui";
@@ -32,12 +31,7 @@ function remove() {
     </div>
 
     <div v-else class="flex items-center gap-2">
-        <Popover
-            v-model:open="open"
-            inset
-            class="w-fit! overflow-hidden"
-            align="start"
-        >
+        <Popover v-model:open="open" inset class="w-fit! overflow-hidden" align="start">
             <template #trigger>
                 <!-- One button for both states: swapping the trigger element would leave
                      the popover anchored to the removed one, misplacing it on the next open. -->
@@ -55,10 +49,7 @@ function remove() {
                     </template>
                 </Button>
             </template>
-            <EmojiPicker
-                v-bind="pickerOptions(config)"
-                @select="select"
-            />
+            <EmojiPicker v-bind="pickerOptions(config)" @select="select" />
         </Popover>
         <Button
             v-if="value"

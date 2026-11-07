@@ -8,10 +8,7 @@ use StatamicEmojis\EmojiSettings;
 use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
 
-/**
- * Image cache tools on the Emojis page. Warming runs in chunks driven by the browser,
- * so it works without a queue worker and never hits request timeouts.
- */
+// Warming runs in chunks driven by the browser: no queue worker needed, no request timeouts.
 class ImageCacheController extends CpController
 {
     public function status(EmojiSettings $settings, EmojiSets $sets)

@@ -7,20 +7,15 @@ use Illuminate\Support\Facades\Http;
 
 class Emojibase
 {
-    /** Locales with Emojibase data. Keep in sync with resources/js/locale.js. */
+    // Keep in sync with resources/js/locale.js.
     public const LOCALES = [
         'bn', 'da', 'de', 'en-gb', 'en', 'es-mx', 'es', 'et', 'fi', 'fr', 'hi', 'hu', 'it', 'ja',
         'ko', 'lt', 'ms', 'nb', 'nl', 'pl', 'pt', 'ru', 'sv', 'th', 'uk', 'vi', 'zh-hant', 'zh',
     ];
 
-    /** Skin tones supported by Emojibase / vue-frimousse. */
     public const SKIN_TONES = ['none', 'light', 'medium-light', 'medium', 'medium-dark', 'dark'];
 
-    /**
-     * Picker categories (key => Emojibase group indexes in data.json).
-     * Like Slack, "smileys & emotion" and "people & body" are merged into one category.
-     * Group 2 ("component", skin tone and hair modifiers) is never shown.
-     */
+    // Emojibase group indexes; group 2 (skin tone and hair components) is never shown.
     public const CATEGORIES = [
         'smileys-people' => [0, 1],
         'animals-nature' => [3],
@@ -32,16 +27,9 @@ class Emojibase
         'flags' => [9],
     ];
 
-    /**
-     * Emoji data, limited to the given category keys (empty = all categories).
-     */
-    /** Emoji names per locale, including skin tone variants (emoji => label). */
     protected array $labels = [];
 
-    /**
-     * Emojibase locale for a Laravel/Statamic locale (e.g. "de_CH" -> "de", "zh_TW" -> "zh-hant").
-     * Same as emojibaseLocale() in resources/js/locale.js.
-     */
+    // Same as emojibaseLocale() in resources/js/locale.js.
     public static function locale(?string $locale): string
     {
         $normalized = str_replace('_', '-', strtolower((string) ($locale ?: 'en')));
@@ -63,7 +51,6 @@ class Emojibase
         return self::isLocale($language) ? $language : 'en';
     }
 
-    /** Names of all emojis and their skin tone variants in a locale, e.g. ['👍🏻' => 'thumbs up: light skin tone']. */
     public function labels(string $locale): array
     {
         $locale = self::locale($locale);
@@ -97,9 +84,6 @@ class Emojibase
         ));
     }
 
-    /**
-     * Translated group, subgroup and skin tone names.
-     */
     public function messages(string $locale): array
     {
         return $this->fetch($locale, 'messages.json');
@@ -110,19 +94,14 @@ class Emojibase
         return in_array($locale, self::LOCALES, true);
     }
 
-    /** Shortcode preset used for suggestions (English, like Slack/GitHub): emojibase. */
     public const SHORTCODES = 'shortcodes/emojibase.json';
 
-    /**
-     * Shortcodes per hexcode, e.g. ['1F680' => 'rocket', '1F44D' => ['+1', 'thumbsup', 'yes']].
-     * English for every locale, as shortcodes are typed rather than read.
-     */
+    // English for every locale, as shortcodes are typed rather than read.
     public function shortcodes(): array
     {
         return $this->fetch('en', self::SHORTCODES);
     }
 
-    /** Forget the cached data of all locales, so it's fetched again on next use. */
     public function clear(): void
     {
         foreach (self::LOCALES as $locale) {

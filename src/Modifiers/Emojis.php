@@ -6,14 +6,6 @@ use StatamicEmojis\EmojiSets;
 use Statamic\Fields\Value;
 use Statamic\Modifiers\Modifier;
 
-/**
- * Replaces emojis in a value (single emoji, text or Bard HTML) with images of an emoji set.
- *
- * Antlers: {{ emoji | emojis }}, {{ content | emojis('openmoji') }}
- * Blade:   {!! Statamic::modify($page->augmentedValue('emoji'))->emojis() !!}
- *
- * Set: modifier parameter, else the site-wide set.
- */
 class Emojis extends Modifier
 {
     protected static $handle = 'emojis';

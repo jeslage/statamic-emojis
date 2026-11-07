@@ -5,7 +5,6 @@ namespace StatamicEmojis\GraphQL;
 use Rebing\GraphQL\Support\Type;
 use Statamic\Facades\GraphQL;
 
-/** GraphQL type of the Emoji Text fieldtype (see StatamicEmojis\Values\EmojiTextValue). */
 class EmojiTextValueType extends Type
 {
     public const NAME = 'EmojiTextValue';

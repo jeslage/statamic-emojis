@@ -5,10 +5,6 @@ namespace StatamicEmojis\Bard;
 use StatamicEmojis\CustomEmojis;
 use Tiptap\Core\Node;
 
-/**
- * Bard inline node for custom emojis: {"type": "customEmoji", "attrs": {"shortcode": "party-parrot"}}.
- * Renders an <img> on the front end, or ":shortcode:" as text if the emoji no longer exists.
- */
 class CustomEmojiNode extends Node
 {
     public static $name = 'customEmoji';

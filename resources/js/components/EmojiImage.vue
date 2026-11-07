@@ -1,24 +1,17 @@
 <script setup>
-// An emoji for display: custom emojis (":shortcode:") as their uploaded image,
-// Unicode emojis as an <img> of the image set, or the plain character for native.
 import { computed } from "vue";
 import { emojiImageUrl } from "../emojibase.js";
 import { findCustom, isShortcode, useCustomEmojis } from "../custom-emojis.js";
 
 const props = defineProps({
     emoji: { type: String, required: true },
-    // Emoji set for Unicode emojis (default: the site-wide set)
     set: { type: String, default: null },
 });
 
 const customEmojis = useCustomEmojis();
 
-const custom = computed(() =>
-    isShortcode(props.emoji) && customEmojis.loaded ? findCustom(props.emoji) : null,
-);
-const src = computed(() =>
-    isShortcode(props.emoji) ? null : emojiImageUrl(props.emoji, props.set ?? undefined),
-);
+const custom = computed(() => (isShortcode(props.emoji) && customEmojis.loaded ? findCustom(props.emoji) : null));
+const src = computed(() => (isShortcode(props.emoji) ? null : emojiImageUrl(props.emoji, props.set ?? undefined)));
 </script>
 
 <template>

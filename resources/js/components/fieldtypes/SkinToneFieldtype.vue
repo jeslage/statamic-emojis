@@ -1,6 +1,4 @@
 <script setup>
-// Skin tone setting: a button with 👋 in the current tone, opening a popover with one button per tone.
-// In fields' config (`default_label` set), "Default (…)" stands for no value, i.e. the site-wide setting.
 import { computed, ref } from "vue";
 import { Fieldtype } from "@statamic/cms";
 import { Button, Popover } from "@statamic/cms/ui";
@@ -16,11 +14,7 @@ defineExpose(expose);
 const open = ref(false);
 const inherits = computed(() => !!props.config.default_label);
 
-// Selected tone, null = default (fields only)
-const current = computed(() =>
-    SKIN_TONES.includes(props.value) ? props.value : inherits.value ? null : "none",
-);
-// Tone shown on the trigger: the selected one, or the site-wide one for "Default"
+const current = computed(() => (SKIN_TONES.includes(props.value) ? props.value : inherits.value ? null : "none"));
 const shown = computed(() => current.value ?? siteSettings().skinTone ?? "none");
 
 const hand = (tone) => `👋${SKIN_TONE_MODIFIERS[tone] ?? ""}`;

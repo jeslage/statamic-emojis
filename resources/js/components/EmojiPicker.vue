@@ -1,18 +1,11 @@
 <script setup>
-// Shared emoji picker used by both the fieldtype and the Bard toolbar button.
-// Built on vue-frimousse (https://vue-frimousse.robertshaw.id), which is unstyled and composable.
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import EmojiPicker from "vue-frimousse";
 import { Button } from "@statamic/cms/ui";
 import { Search, Sparkles } from "@lucide/vue";
 import { CATEGORY_ICONS } from "../category-icons.js";
 import { cpEmojibaseLocale, emojibaseLocale } from "../locale.js";
-import {
-    CATEGORIES,
-    applyRecentToFrimousseCache,
-    emojibaseUrl,
-    prepareFrimousseCache,
-} from "../emojibase.js";
+import { CATEGORIES, applyRecentToFrimousseCache, emojibaseUrl, prepareFrimousseCache } from "../emojibase.js";
 import EmojiImage from "./EmojiImage.vue";
 import PickerFooter from "./PickerFooter.vue";
 import EmojiGrid from "./EmojiGrid.vue";
@@ -23,24 +16,17 @@ import { SKIN_TONES } from "../skin-tones.js";
 const STORAGE_KEY = "statamic-emojis/skin-tone";
 
 const props = defineProps({
-    // Emojibase locale for category names, emoji labels and search. Defaults to the CP locale.
     locale: { type: String, default: null },
     columns: { type: Number, default: 9 },
-    // Default skin tone (field config `skin_tone`)
     skinTone: { type: String, default: "none" },
-    // Show a button to change the skin tone (field config `skin_tone_selector`)
     skinToneSelector: { type: Boolean, default: true },
-    // Allowed category keys (field config `categories`), empty = all
     categories: { type: Array, default: () => [] },
-    // Offer custom emojis (field config `custom_emojis`)
     customEmojis: { type: Boolean, default: true },
-    // Recently used emojis above the list in the search tab (site-wide setting); not with a category limit
     recentEmojis: { type: Boolean, default: true },
 });
 
 const emit = defineEmits(["select"]);
 
-// With the selector, the editor's last choice (per browser) wins over the configured default.
 function rememberedSkinTone() {
     try {
         const tone = localStorage.getItem(STORAGE_KEY);
@@ -50,13 +36,9 @@ function rememberedSkinTone() {
     }
 }
 
-const chosenSkinTone = ref(
-    props.skinToneSelector ? rememberedSkinTone() : null,
-);
+const chosenSkinTone = ref(props.skinToneSelector ? rememberedSkinTone() : null);
 const pickerSkinTone = computed(
-    () =>
-        chosenSkinTone.value ??
-        (SKIN_TONES.includes(props.skinTone) ? props.skinTone : "none"),
+    () => chosenSkinTone.value ?? (SKIN_TONES.includes(props.skinTone) ? props.skinTone : "none"),
 );
 
 function onSkinToneChange(tone) {
@@ -64,42 +46,31 @@ function onSkinToneChange(tone) {
     try {
         localStorage.setItem(STORAGE_KEY, tone);
     } catch {
-        // Storage unavailable (private mode etc.): keep the choice for this picker only
+        // Storage unavailable
     }
 }
 
-const pickerLocale = computed(() =>
-    props.locale ? emojibaseLocale(props.locale) : cpEmojibaseLocale(),
-);
+const pickerLocale = computed(() => (props.locale ? emojibaseLocale(props.locale) : cpEmojibaseLocale()));
 
-// Tabs: "search" (all allowed categories, with search) + one per allowed category (only that category)
 const allowedCategories = computed(() =>
-    props.categories?.length
-        ? CATEGORIES.filter((key) => props.categories.includes(key))
-        : CATEGORIES,
+    props.categories?.length ? CATEGORIES.filter((key) => props.categories.includes(key)) : CATEGORIES,
 );
 const tab = ref("search");
 
-// Custom emojis: own tab (if there are any) and matches above the search results
 const custom = useCustomEmojis();
 const customList = computed(() => (props.customEmojis ? custom.list : []));
 const asItem = (emoji) => ({ emoji: `:${emoji.shortcode}:`, label: emoji.label });
 
-// Recent emojis (per browser). Hidden with a category limit, as their categories aren't known.
-// Custom emojis in the list are dropped if they're disabled for this field or were deleted.
 const recent = useRecentEmojis();
 const recentItems = computed(() =>
     recent.value.filter((item) =>
-        // Custom emojis: only if allowed here and (once the list is loaded) not deleted
         isShortcode(item.emoji) ? props.customEmojis && (!custom.loaded || findCustom(item.emoji)) : true,
     ),
 );
-// First category of the search tab's list, at most two rows
 const recentRow = computed(() =>
     props.recentEmojis && !props.categories?.length ? recentItems.value.slice(0, props.columns * 2) : [],
 );
 
-// Item hovered in one of our own grids (custom tab, custom matches); frimousse's own hover is handled by ActiveEmoji
 const hovered = ref(null);
 
 const tabs = computed(() => [
@@ -121,19 +92,17 @@ const tabs = computed(() => [
 // Kept outside frimousse, so the search survives switching tabs (the picker remounts per tab)
 const search = ref("");
 
-// Custom emojis matching the search; ones in "Recently used" already show up there (frimousse searches it too)
+// Ones in "Recently used" are skipped: frimousse searches that category too
 const customMatches = computed(() => {
     if (!props.customEmojis) return [];
     const inRecent = new Set(recentRow.value.map((item) => item.emoji));
-    return searchCustom(search.value).map(asItem).filter((item) => !inRecent.has(item.emoji));
+    return searchCustom(search.value)
+        .map(asItem)
+        .filter((item) => !inRecent.has(item.emoji));
 });
 
-// Tabs rendered by our own grid instead of frimousse
-const gridItems = computed(() =>
-    tab.value === "custom" ? customList.value.map(asItem) : null,
-);
+const gridItems = computed(() => (tab.value === "custom" ? customList.value.map(asItem) : null));
 
-// Data comes from the addon's CP route, filtered by category (see config/statamic-emojis.php)
 const dataUrl = computed(() =>
     emojibaseUrl(
         // The custom tab doesn't use frimousse; keep the search tab's data so its cache stays put
@@ -156,7 +125,7 @@ watch(
     { immediate: true, flush: "sync" },
 );
 
-// Focus the search when the picker opens. The popover focuses its content first, so wait a tick.
+// The popover focuses its content first, so wait a tick.
 const pickerRoot = useTemplateRef("pickerRoot");
 
 onMounted(() => {
@@ -198,7 +167,6 @@ function onEmojiSelect({ emoji, label }) {
             </Button>
         </div>
 
-        <!-- Custom tab: our own grid -->
         <div v-if="gridItems" class="flex min-h-0 flex-1 flex-col">
             <div class="st-custom-scrollbar min-h-0 flex-1 overflow-y-auto pt-2 pb-1.5">
                 <EmojiGrid
@@ -236,7 +204,6 @@ function onEmojiSelect({ emoji, label }) {
                 @input="search = $event.target.value"
             />
 
-            <!-- Custom emojis matching the search, above the regular results -->
             <div v-if="tab === 'search' && customMatches.length" class="mt-2 shrink-0">
                 <div class="custom-emoji-header">{{ __("statamic-emojis::messages.custom.tab") }}</div>
                 <EmojiGrid
@@ -280,8 +247,6 @@ function onEmojiSelect({ emoji, label }) {
 </template>
 
 <style>
-/* vue-frimousse exposes [frimousse-*] attributes on every part for styling.
-   Colors use Statamic's UI tokens (--color-* -> --theme-color-*), so they follow the CP theme. */
 .emoji-picker [frimousse-search]::-webkit-search-cancel-button {
     cursor: pointer;
 }
@@ -296,13 +261,7 @@ function onEmojiSelect({ emoji, label }) {
 }
 
 .emoji-picker-preview {
-    font-family: var(
-        --frimousse-emoji-font,
-        "Apple Color Emoji",
-        "Segoe UI Emoji",
-        "Noto Color Emoji",
-        sans-serif
-    );
+    font-family: var(--frimousse-emoji-font, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif);
 }
 
 .emoji-picker [frimousse-viewport] > [aria-live] {
@@ -344,7 +303,6 @@ function onEmojiSelect({ emoji, label }) {
 }
 
 .emoji-picker [frimousse-emoji] .emoji-image {
-    /* Image sets: same visual size as the native characters */
     width: 1.375rem;
     height: 1.375rem;
 }

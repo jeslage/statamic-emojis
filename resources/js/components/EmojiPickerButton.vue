@@ -1,13 +1,10 @@
 <script setup>
-// The "Insert emoji" button with the picker popover, used next to or inside the Emoji Text input.
 import { Button, Popover } from "@statamic/cms/ui";
 import { SmilePlus } from "@lucide/vue";
 import EmojiPicker from "./EmojiPicker.vue";
 
 defineProps({
-    /** Picker options (pickerOptions(config)) */
     options: { type: Object, default: () => ({}) },
-    /** Inside the input: a small ghost button */
     inset: { type: Boolean, default: false },
 });
 

@@ -73,7 +73,6 @@ class ApiTest extends TestCase
             'shortcode' => null,
         ], $value->jsonSerialize());
 
-        // Native set: no image; FE0F differences don't matter for the name
         $native = (new EmojiValue('❤', 'native'))->toArray();
         $this->assertNull($native['url']);
         $this->assertSame('red heart', $native['label']);

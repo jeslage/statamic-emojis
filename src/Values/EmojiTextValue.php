@@ -5,10 +5,6 @@ namespace StatamicEmojis\Values;
 use Statamic\Fields\ArrayableString;
 use StatamicEmojis\EmojiSets;
 
-/**
- * Augmented value of the Emoji Text fieldtype: the text in templates, and in the API
- * {value, html, set} where html has the emojis (and custom ":shortcodes:") as images of the site-wide set.
- */
 class EmojiTextValue extends ArrayableString
 {
     protected ?array $resolved = null;

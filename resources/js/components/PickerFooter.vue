@@ -1,5 +1,4 @@
 <script setup>
-// Footer of the picker: the hovered emoji in large with its name, and the skin tone toggle.
 import EmojiImage from "./EmojiImage.vue";
 import SkinToneButton from "./SkinToneButton.vue";
 

@@ -11,29 +11,18 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Statamic\Fields\Value;
 
-/**
- * Emoji image sets besides the device's native emoji font: the built-in Noto, Fluent and OpenMoji,
- * plus sets added in config/statamic-emojis.php ("sets") or with EmojiSets::extend().
- *
- * Images are fetched once from the set's upstream, stored in the cache path and
- * served by the addon (see EmojiImageController), so browsers never talk to the CDN.
- */
 class EmojiSets
 {
     public const NATIVE = 'native';
 
     public const VARIATION_SELECTOR = 'fe0f';
 
-    /**
-     * Matches a single emoji: flags, keycaps, and (ZWJ) sequences with modifiers. Subdivision flags
-     * (🏴 + tag characters) come before the general case, which would match the 🏴 alone.
-     */
+    // Subdivision flags (🏴 + tag characters) must come before the general case, which would match the 🏴 alone.
     public const EMOJI_PATTERN = '/\p{Regional_Indicator}{2}'
         .'|[#*0-9]\x{FE0F}?\x{20E3}'
         .'|\x{1F3F4}[\x{E0061}-\x{E007A}]+\x{E007F}'
         .'|\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})*(?:\x{200D}\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})*)*/u';
 
-    /** Built-in image sets (pinned versions). Config entries with the same name override single keys. */
     public const BUILT_IN = [
         'noto' => [
             'label' => 'statamic-emojis::messages.sets.noto',
@@ -52,34 +41,21 @@ class EmojiSets
         ],
     ];
 
-    /** Set names: lowercase letters only (used in URLs and cache paths). */
     public const NAME_PATTERN = '/^[a-z]+$/';
 
-    /** Sets registered in code with extend(). */
     protected static array $extended = [];
 
-    /**
-     * Add an image set in code, e.g. in a service provider:
-     * EmojiSets::extend('twemoji', ['label' => 'Twemoji', 'url' => 'https://…/svg', 'naming' => 'fluent']).
-     */
     public static function extend(string $name, array $definition): void
     {
         static::$extended[$name] = array_merge(static::$extended[$name] ?? [], $definition);
     }
 
-    /** Forget sets registered with extend() (tests). */
     public static function flushExtended(): void
     {
         static::$extended = [];
     }
 
-    /**
-     * All image sets: built-in, then config "sets" and extend() (adding sets or overriding single keys
-     * of existing ones), minus config "disabled_sets". Entries need a valid name and a url.
-     * Image sets are part of Pro: without it there are none, so everything uses native emojis.
-     *
-     * @return array<string, array{label?: string, url: string, naming?: string}>
-     */
+    /** @return array<string, array{label?: string, url: string, naming?: string}> */
     public function definitions(): array
     {
         if (! app(EmojiSettings::class)->pro()) {
@@ -107,7 +83,6 @@ class EmojiSets
         return $this->definitions()[$set] ?? null;
     }
 
-    /** All selectable sets: native plus the image sets. */
     public function sets(): array
     {
         return [self::NATIVE, ...array_keys($this->definitions())];
@@ -118,10 +93,7 @@ class EmojiSets
         return $set !== null && $set !== self::NATIVE && $this->definition($set) !== null;
     }
 
-    /**
-     * Label of a set: translated text, or (translate: false) the translation key / label as given,
-     * for blueprints built before the user's locale is known (the CP translates them).
-     */
+    // $translate = false for blueprints built before the user's locale is known (the CP translates them)
     public function label(string $set, bool $translate = true): string
     {
         $label = $set === self::NATIVE
@@ -131,7 +103,6 @@ class EmojiSets
         return $translate ? __($label) : $label;
     }
 
-    /** The site-wide set from the config, "native" if it isn't a known set. */
     public function default(): string
     {
         $set = app(EmojiSettings::class)->set();
@@ -139,7 +110,6 @@ class EmojiSets
         return $this->isImageSet($set) ? $set : self::NATIVE;
     }
 
-    /** A set if valid (e.g. the emojis parameter), otherwise the site-wide set. */
     public function resolve(?string $set): string
     {
         if ($set === self::NATIVE || $this->isImageSet($set)) {
@@ -149,7 +119,6 @@ class EmojiSets
         return $this->default();
     }
 
-    /** Lowercase hex codepoints of an emoji joined by "-", fully qualified (keeps FE0F). */
     public function codepoints(string $emoji): string
     {
         return collect(mb_str_split($emoji))
@@ -157,10 +126,7 @@ class EmojiSets
             ->implode('-');
     }
 
-    /**
-     * Upstream file paths to try for an emoji, in order. The sets name their files differently,
-     * so try the fully qualified form, then without a trailing FE0F, then without any FE0F.
-     */
+    // Sets name their files differently: try fully qualified, then without a trailing FE0F, then without any FE0F.
     public function candidates(string $set, string $codes): array
     {
         $parts = explode('-', strtolower($codes));
@@ -179,11 +145,10 @@ class EmojiSets
                 ? ['third_party/region-flags/waved-svg/emoji_u'.implode('_', $p).'.svg']
                 : ['2D/svg/emoji_u'.implode('_', $p).'.svg'],
             $naming === 'openmoji' => [strtoupper(implode('-', $p)).'.svg'],
-            default => [implode('-', $p).'.svg'], // "fluent": lowercase, joined by "-"
+            default => [implode('-', $p).'.svg'],
         })->unique()->values()->all();
     }
 
-    /** The SVG of an emoji in a set, or null if the set has none. */
     public function svg(string $set, string $codes): ?string
     {
         if (! $this->isImageSet($set)) {
@@ -225,7 +190,6 @@ class EmojiSets
         return null;
     }
 
-    /** Whether an emoji's image is in the cache already. */
     public function isCached(string $set, string $codes): bool
     {
         return File::exists($this->cachePath($set, strtolower($codes)));
@@ -237,11 +201,6 @@ class EmojiSets
         File::put($path, $svg);
     }
 
-    /**
-     * Fetch several emojis at once (used by the emojis:warm command). Tries each emoji's first
-     * candidate concurrently, then the remaining candidates one by one.
-     * Returns the codes that couldn't be fetched (not in the set, or a network error).
-     */
     public function warm(string $set, array $codesList): array
     {
         $base = rtrim($this->definition($set)['url'], '/');
@@ -267,7 +226,6 @@ class EmojiSets
         })->values()->all();
     }
 
-    /** Fallback SVG for emojis a set doesn't have: the native character as text. */
     public function fallbackSvg(string $codes): string
     {
         $emoji = collect(explode('-', $codes))->map(fn ($hex) => mb_chr(hexdec($hex)))->implode('');
@@ -277,23 +235,16 @@ class EmojiSets
             .e($emoji).'</text></svg>';
     }
 
-    /** Public URL of an emoji's image in a set. */
     public function url(string $set, string $emoji): string
     {
         return $this->baseUrl()."/{$set}/".$this->codepoints($emoji).'.svg';
     }
 
-    /** Base URL of the image route, without trailing slash: "{baseUrl}/{set}/{codes}.svg". */
     public function baseUrl(): string
     {
         return rtrim(url('/!/statamic-emojis/sets'), '/');
     }
 
-    /**
-     * Replace every emoji in text or HTML with an <img> of the set, and custom ":shortcode:" emojis with
-     * their image. Only text between tags is touched, so attributes stay intact. Native leaves Unicode
-     * emojis as they are, but still replaces custom emojis.
-     */
     public function replace(?string $html, string $set): string
     {
         $html = (string) $html;
@@ -311,7 +262,6 @@ class EmojiSets
                 return $part;
             }
 
-            // Custom emojis (":shortcode:") are images in every set, native included
             $part = $custom->replace($part);
 
             if (! $imageSet) {
@@ -327,10 +277,6 @@ class EmojiSets
         })->implode('');
     }
 
-    /**
-     * A value (emoji, text or HTML; also field values) with its emojis as images: the given set, else the
-     * site-wide set. Used by the emojis modifier and the emojis tag.
-     */
     public function html(mixed $value, ?string $set = null): string
     {
         if ($value instanceof Value) {
@@ -359,9 +305,6 @@ class EmojiSets
             && collect($parts)->every(fn ($p) => hexdec($p) >= 0x1F1E6 && hexdec($p) <= 0x1F1FF);
     }
 
-    /**
-     * Codepoints of every emoji including skin tone variants (from the Emojibase data), e.g. for warming.
-     */
     public function allCodes(Emojibase $emojibase): array
     {
         return collect($emojibase->data('en'))
@@ -373,13 +316,12 @@ class EmojiSets
             ->all();
     }
 
-    /** Per image set: number of cached images, their size in bytes and the total number of emojis. */
     public function cacheStatus(): array
     {
         try {
             $total = count($this->allCodes(app(Emojibase::class)));
         } catch (\Throwable) {
-            $total = null; // Emojibase data unreachable
+            $total = null;
         }
 
         return collect($this->sets())
@@ -400,10 +342,6 @@ class EmojiSets
             ->all();
     }
 
-    /**
-     * Delete a set's cached images and forget which emojis it was missing.
-     * Returns the number of deleted images.
-     */
     public function clear(string $set): int
     {
         $directory = rtrim(config('statamic-emojis.images.cache_path'), '/')."/{$set}";

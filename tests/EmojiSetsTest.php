@@ -134,7 +134,6 @@ class EmojiSetsTest extends TestCase
         $this->assertStringContainsString("default-src 'none'", $response->headers->get('Content-Security-Policy'));
         $this->assertFileExists($this->cachePath().'/openmoji/2764-fe0f.svg');
 
-        // Second request comes from the disk cache, no new upstream calls
         Http::assertSentCount(2);
         $this->get('/!/statamic-emojis/sets/openmoji/2764-fe0f.svg')->assertOk();
         Http::assertSentCount(2);
@@ -167,7 +166,6 @@ class EmojiSetsTest extends TestCase
         $this->assertStringContainsString('<text', $response->getContent());
         $this->assertStringContainsString('max-age=3600', $response->headers->get('Cache-Control'));
 
-        // Not remembered as a miss: the next request tries upstream again
         $this->assertSame('<svg id="grin"></svg>', $this->get('/!/statamic-emojis/sets/noto/1f600.svg')->getContent());
     }
 
@@ -192,7 +190,7 @@ class EmojiSetsTest extends TestCase
         ]);
 
         $this->sets()->svg('fluent', '1f600');
-        $this->assertNull($this->sets()->svg('fluent', '1f9ff')); // remembered as missing
+        $this->assertNull($this->sets()->svg('fluent', '1f9ff'));
         $this->assertTrue($this->sets()->isCached('fluent', '1f600'));
 
         $this->artisan('emojis:clear', ['set' => 'fluent'])
@@ -201,7 +199,6 @@ class EmojiSetsTest extends TestCase
 
         $this->assertFalse($this->sets()->isCached('fluent', '1f600'));
 
-        // The miss note is gone too: the next request asks upstream again
         Http::fake(['*' => Http::response('<svg id="nazar"></svg>')]);
         $sent = count(Http::recorded());
         $this->sets()->svg('fluent', '1f9ff');
@@ -241,7 +238,7 @@ class EmojiSetsTest extends TestCase
         return new Value($emoji, 'field', $field->fieldtype());
     }
 
-    /** Renders tests/views/emojis-modifier.antlers.html like a site template (Antlers::parse treats input as user content). */
+    // Rendered like a site template, as Antlers::parse treats input as user content
     private function renderAntlers(array $data): string
     {
         View::addLocation(__DIR__.'/views');

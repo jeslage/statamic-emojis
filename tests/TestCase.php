@@ -24,7 +24,6 @@ abstract class TestCase extends AddonTestCase
         $json = json_decode(file_get_contents(__DIR__.'/../composer.json'), true);
         $manifest->manifest[$package]['editions'] = $json['extra']['statamic']['editions'] ?? [];
 
-        // Most tests cover image sets and custom emojis, which are part of the Pro edition
         $app['config']->set("statamic.editions.addons.{$package}", 'pro');
     }
 

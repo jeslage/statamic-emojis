@@ -123,7 +123,6 @@ class SettingsTest extends TestCase
 
     public function test_settings_page_uses_translation_keys(): void
     {
-        // Built while the addon boots (before the user's locale is set), so the CP translates the keys
         $blueprint = $this->settings()->addon()->settingsBlueprint();
         $emojiSet = $blueprint->field('emoji_set');
 

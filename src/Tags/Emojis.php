@@ -8,16 +8,7 @@ use StatamicEmojis\CustomEmojis;
 use StatamicEmojis\EmojiSets;
 use StatamicEmojis\Values\EmojiValue;
 
-/**
- * {{ emojis :value="mood" }}                 the value with its emojis as images (emoji, text or HTML)
- * {{ emojis value="Hi 🎉" set="noto" }}      in a given set instead of the site-wide one
- * {{ emojis:url value="🎉" }}                image URL of one emoji (empty for native) or custom emoji
- * {{ emojis:label value="🎉" }}              its name (Emojibase, in the site's language) or the custom emoji's name
- * {{ emojis:custom }}…{{ /emojis:custom }}   loop over the custom emojis: shortcode, emoji, label, url, keywords
- *
- * In Blade (Statamic's tag syntax): <s:emojis :value="$page->mood" />, <s:emojis:custom> … </s:emojis:custom>.
- * Named "emojis" (not "emoji") so it doesn't clash with fields named "emoji" ({{ emoji:url }}).
- */
+// Named "emojis" (not "emoji") so it doesn't clash with fields named "emoji" ({{ emoji:url }}).
 class Emojis extends Tags
 {
     protected static $handle = 'emojis';
@@ -54,7 +45,6 @@ class Emojis extends Tags
         return $emojis ?: $this->parseNoResults();
     }
 
-    /** Name and image of the single emoji in "value" (the same data as an Emoji field in the API). */
     protected function info(): array
     {
         $value = $this->params->get('value');

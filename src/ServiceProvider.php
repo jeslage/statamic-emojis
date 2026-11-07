@@ -27,10 +27,8 @@ class ServiceProvider extends AddonServiceProvider
     protected $fieldtypes = [
         Emoji::class,
         EmojiText::class,
-        // Settings fieldtypes (Emojis page and fields' config)
         EmojiSet::class,
         SkinTone::class,
-        // Display-only fields of the Emojis page
         CustomEmojiGrid::class,
         ImageCache::class,
     ];
@@ -65,22 +63,17 @@ class ServiceProvider extends AddonServiceProvider
         $custom = app(CustomEmojis::class);
         $settings = app(EmojiSettings::class);
 
-        // Settings of the Emojis CP page (also listed under Addons); built in PHP for translated labels
         $this->registerSettingsBlueprint(fn () => SettingsBlueprint::contents());
 
-        // Site-wide emoji set, image route and custom emojis for the CP (Statamic.$config.get('statamicEmojis'))
         Statamic::provideToScript([
             'statamicEmojis' => [
                 'set' => app(EmojiSets::class)->default(),
                 'imageUrl' => app(EmojiSets::class)->baseUrl(),
-                // The picker loads them from the CP route statamic-emojis.custom (cp/statamic-emojis/custom)
                 'custom' => $custom->isEnabled(),
-                // Site-wide picker defaults; fields override them
                 ...$settings->toScript(),
             ],
         ]);
 
-        // Custom emojis in Bard render as images on the front end
         Augmentor::addExtension('customEmoji', new CustomEmojiNode);
 
         Event::listen(
@@ -100,9 +93,6 @@ class ServiceProvider extends AddonServiceProvider
         });
     }
 
-    /**
-     * Public disk for custom emoji uploads (public/statamic-emojis), unless the site defines a disk with that name.
-     */
     protected function registerCustomEmojiDisk(): void
     {
         $disk = config('statamic-emojis.custom.disk', 'statamic-emojis');

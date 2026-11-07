@@ -1,0 +1,11 @@
+vendor
+playground
+resources/dist
+tests/__fixtures__
+composer.lock
+package-lock.json
+CHANGELOG.md
+.release-please-manifest.json
+*.md
+*.php
+*.antlers.html

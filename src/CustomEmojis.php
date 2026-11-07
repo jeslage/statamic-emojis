@@ -9,12 +9,8 @@ use Statamic\Contracts\Assets\Asset;
 use Statamic\Contracts\Assets\AssetContainer;
 use Statamic\Facades\AssetContainer as AssetContainers;
 
-/**
- * Editor-uploaded emoji images, stored in an asset container and referenced by shortcode (":name:").
- */
 class CustomEmojis
 {
-    /** Matches ":shortcode:" with the allowed characters. */
     public const SHORTCODE_PATTERN = '/:([a-z0-9_+-]+):/';
 
     protected const CACHE_KEY = 'statamic-emojis:custom';
@@ -34,11 +30,7 @@ class CustomEmojis
         return AssetContainers::find($this->containerHandle());
     }
 
-    /**
-     * All custom emojis: shortcode, label, keywords and url. Cached; cleared when assets of the container change.
-     *
-     * @return Collection<string, array>
-     */
+    /** @return Collection<string, array> */
     public function all(): Collection
     {
         if (! $this->isEnabled()) {
@@ -58,13 +50,11 @@ class CustomEmojis
         Cache::forget(self::CACHE_KEY);
     }
 
-    /** Whether an asset belongs to the custom emoji container. */
     public function owns(Asset $asset): bool
     {
         return $asset->container()?->handle() === $this->containerHandle();
     }
 
-    /** Shortcode of an asset: its "shortcode" field, else the slugged filename. */
     public static function shortcodeFor(Asset $asset): string
     {
         return static::normalize($asset->get('shortcode') ?: $asset->filename());
@@ -75,7 +65,6 @@ class CustomEmojis
         return trim(preg_replace('/[^a-z0-9_+-]+/', '-', Str::lower(Str::ascii(trim($value, ': ')))), '-');
     }
 
-    /** Replace known ":shortcode:" occurrences in a text (not HTML) with images. Unknown ones stay text. */
     public function replace(string $text): string
     {
         if (! str_contains($text, ':') || ! $this->isEnabled()) {
@@ -113,7 +102,7 @@ class CustomEmojis
                 'url' => $asset->url(),
             ])
             ->filter(fn ($emoji) => $emoji['shortcode'] !== '')
-            ->unique('shortcode') // first one wins
+            ->unique('shortcode')
             ->keyBy('shortcode')
             ->all();
     }

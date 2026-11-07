@@ -9,9 +9,6 @@ use Statamic\Console\RunsInPlease;
 use Statamic\Facades\AssetContainer;
 use Statamic\Facades\Blueprint;
 
-/**
- * Creates the asset container and blueprint for custom emojis. Safe to run again.
- */
 class SetupCustomEmojis extends Command
 {
     use RunsInPlease;
@@ -46,7 +43,7 @@ class SetupCustomEmojis extends Command
         if (Blueprint::find("assets/{$handle}")) {
             $this->components->info("Blueprint [assets/{$handle}] already exists.");
         } else {
-            // Labels are translation keys: the Control Panel translates field display and instructions
+            // Translation keys: the Control Panel translates them
             $key = fn (string $name) => "statamic-emojis::messages.blueprint.{$name}";
 
             Blueprint::make($handle)->setNamespace('assets')->setContents([

@@ -1,10 +1,7 @@
-@import '@statamic/cms/tailwind.css';
+@import "@statamic/cms/tailwind.css";
 @source '../js';
 
-/** Your custom styles go here */
-
-/* Custom emojis in the Bard editor: inline, text-sized (Bard's prose styles would make images full width) */
-/* The image is a block, so the span has no baseline gap below it; -0.25em centers it like a native emoji */
+/* Bard's prose styles would make images full width */
 .ProseMirror .bard-custom-emoji {
     display: inline-block;
     vertical-align: -0.25em;
@@ -26,7 +23,6 @@
     outline-offset: 1px;
 }
 
-/* Emoji Text with custom emojis: a contenteditable styled like Statamic's input */
 .emoji-text-input {
     scrollbar-width: none;
     cursor: text;
@@ -46,9 +42,7 @@
     object-fit: contain;
 }
 
-/* Unicode emojis in Bard shown in the emoji set: the set's image behind the transparent glyph, in a
-   square the size of custom emojis (the glyph's own width varies by font). -webkit-text-fill-color
-   (not color) keeps the caret visible. */
+/* Set image behind a transparent glyph; -webkit-text-fill-color (not color) keeps the caret visible */
 .ProseMirror .bard-emoji-image {
     display: inline-block;
     width: 1.25em;
@@ -64,7 +58,6 @@
     background-size: contain;
 }
 
-/* Emoji Text in entry listings: emojis as images, sized like the text */
 .emoji-index-image {
     display: inline-block;
     width: 1.25em;

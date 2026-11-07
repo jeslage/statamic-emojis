@@ -3,19 +3,11 @@
 namespace StatamicEmojis;
 
 /**
- * Field definitions for the picker settings, shared by the fieldtypes' config ("Emoji Picker" section)
- * and the site-wide settings on the Emojis CP page.
- *
- * In fields, empty values mean "use the site-wide setting"; on the settings page they have real defaults.
- *
- * Texts: fields are built during the request (in the user's locale) and get translated texts, as their
- * "Default (…)" placeholders need the site-wide value filled in. The settings page blueprint is built while
- * the addon boots, before Statamic switches to the user's locale, so it gets translation keys instead;
- * the Control Panel translates displays, instructions, placeholders and option labels when rendering.
+ * The settings page blueprint is built before Statamic switches to the user's locale, so it gets
+ * translation keys (translated by the CP); fields get translated texts.
  */
 class EmojiFields
 {
-    /** The site-wide emoji set (settings page only: fields have no set of their own). */
     public static function emojiSet(): array
     {
         $t = self::translator(false);
@@ -45,7 +37,6 @@ class EmojiFields
                 ->keys()
                 ->mapWithKeys(fn ($key) => [$key => $t("categories.{$key}")])
                 ->all(),
-            // Fields: empty = site-wide setting. Settings page: all selected by default, at least one required.
             ...($inherit
                 ? ['instructions' => $t('config.categories_instructions')]
                 : ['default' => array_keys(Emojibase::CATEGORIES), 'validate' => ['required']]),
@@ -83,7 +74,6 @@ class EmojiFields
         );
     }
 
-    /** A translation key of this addon: the translated text for fields, the key itself for the settings page. */
     public static function translator(bool $translate): \Closure
     {
         return fn (string $key) => $translate
@@ -91,7 +81,6 @@ class EmojiFields
             : "statamic-emojis::messages.{$key}";
     }
 
-    /** On the settings page a toggle; in fields a select with "Default (…)", "Show" and "Hide". */
     protected static function showHide(bool $inherit, string $key, \Closure $siteDefault, bool $configDefault): array
     {
         $t = self::translator($inherit);

@@ -8,14 +8,6 @@ use StatamicEmojis\CustomEmojis;
 use StatamicEmojis\Emojibase;
 use StatamicEmojis\EmojiSets;
 
-/**
- * Augmented value of the Emoji fieldtype, like Statamic's Link value:
- * a string in templates ({{ emoji }}, {{ $page->emoji }}), an object in the REST and GraphQL API,
- * and {{ emoji:label }}, {{ emoji:url }} etc. in Antlers.
- *
- * Value: the stored emoji ("🎉") or custom emoji (":party-parrot:"). The extras are resolved lazily,
- * so plain template output costs nothing.
- */
 class EmojiValue extends ArrayableString
 {
     protected ?array $resolved = null;
@@ -36,7 +28,6 @@ class EmojiValue extends ArrayableString
             && str_starts_with((string) $this->value, ':');
     }
 
-    /** {value, label, url, set, custom, shortcode} */
     public function toArray()
     {
         return $this->resolved ??= $this->resolve();
@@ -83,7 +74,7 @@ class EmojiValue extends ArrayableString
         try {
             $labels = app(Emojibase::class)->labels(Site::current()?->lang() ?? 'en');
         } catch (\Throwable) {
-            return null; // Emojibase data unreachable
+            return null;
         }
 
         // Stored emojis may lack the variation selector FE0F the data has (or the other way round)

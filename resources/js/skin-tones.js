@@ -1,4 +1,3 @@
-// Emoji modifiers per skin tone (Unicode Fitzpatrick scale), in picker order
 export const SKIN_TONE_MODIFIERS = {
     none: "",
     light: "\u{1F3FB}",

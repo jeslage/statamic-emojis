@@ -1,6 +1,4 @@
 <script setup>
-// Emoji Text field in entry listings: the text (with prepend/append, shortened like Statamic's default
-// column) with custom emojis and Unicode emojis as images, like in the field.
 import { computed, reactive } from "vue";
 import { useCustomEmojis } from "../../custom-emojis.js";
 import { parseEmojiText, partText } from "../../emoji-text.js";
@@ -13,14 +11,12 @@ const props = defineProps({
 
 const TRUNCATE_AT = 50;
 const customEmojis = useCustomEmojis();
-// Emojis the set has no image for: shown as native characters
 const missing = reactive(new Set());
 
 const parts = computed(() => {
     customEmojis.list; // re-render once custom emojis are loaded
     const all = parseEmojiText(props.value ?? "", { missing });
 
-    // Shorten to TRUNCATE_AT characters of the text without cutting an emoji
     const shown = [];
     let budget = TRUNCATE_AT;
     for (const part of all) {

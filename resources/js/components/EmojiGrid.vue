@@ -1,6 +1,4 @@
 <script setup>
-// A simple emoji grid styled like frimousse's cells (custom emojis, recent emojis).
-// Items: { emoji, label } where emoji is a Unicode emoji or ":shortcode:". Emits the emoji on select.
 import EmojiImage from "./EmojiImage.vue";
 
 defineProps({

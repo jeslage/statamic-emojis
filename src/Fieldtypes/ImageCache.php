@@ -5,9 +5,6 @@ namespace StatamicEmojis\Fieldtypes;
 use StatamicEmojis\EmojiSets;
 use Statamic\Fields\Fieldtype;
 
-/**
- * Display-only field on the Emojis page: cached images per emoji set, with warm and clear buttons.
- */
 class ImageCache extends Fieldtype
 {
     protected static $handle = 'statamic_emojis_image_cache';

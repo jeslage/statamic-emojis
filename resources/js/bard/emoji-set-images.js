@@ -1,7 +1,4 @@
-// Bard: Unicode emojis shown as images of the site-wide emoji set (like the front-end output).
-// Inline decorations put the image behind the emoji and make its glyph transparent, so the document,
-// the caret, selection, copy and the saved value keep the real characters.
-// An emoji is shown as an image once its image has loaded; emojis the set has no image for stay native.
+// Decorations put the image behind a transparent glyph, so caret, selection, copy and the saved value keep the real characters.
 import { EMOJI_PATTERN, emojiImageUrl } from "../emojibase.js";
 
 const images = new Map(); // emoji → "loading" | "loaded" | "missing"
@@ -27,7 +24,6 @@ export default function emojiSetImages({ tiptap }) {
     const { Decoration, DecorationSet } = tiptap.pm.view;
     const key = new PluginKey("statamicEmojisSetImages");
 
-    // Re-decorate the open editors once images have loaded (batched)
     let pending = false;
     const refresh = () => {
         if (pending) return;
