@@ -76,11 +76,16 @@ class EmojiSets
     /**
      * All image sets: built-in, then config "sets" and extend() (adding sets or overriding single keys
      * of existing ones), minus config "disabled_sets". Entries need a valid name and a url.
+     * Image sets are part of Pro: without it there are none, so everything uses native emojis.
      *
      * @return array<string, array{label?: string, url: string, naming?: string}>
      */
     public function definitions(): array
     {
+        if (! app(EmojiSettings::class)->pro()) {
+            return [];
+        }
+
         $definitions = self::BUILT_IN;
 
         foreach ([config('statamic-emojis.sets', []), static::$extended] as $additions) {

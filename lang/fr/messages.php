@@ -45,6 +45,7 @@ return [
         'tab_general' => 'Général',
         'section_set' => 'Jeu d’emojis',
         'emoji_set_instructions' => 'Apparence des emojis dans le sélecteur et sur votre site. OpenMoji exige une attribution.',
+        'emoji_set_free' => 'Natifs dans l’édition gratuite. Les images Noto, Fluent et OpenMoji font partie de Pro.',
         'section_picker' => 'Valeurs par défaut du sélecteur',
         'section_picker_instructions' => 'Les champs peuvent les remplacer.',
         'suggestions' => 'Suggestions de codes courts',
@@ -65,6 +66,9 @@ return [
         'cache_clear' => 'Vider',
         'cache_warming' => 'Téléchargement… :percent %',
         'cache_failed' => ':count absents de ce jeu (affichage natif)',
+        'pro_title' => 'Statamic Emojis Pro',
+        'custom_pro' => 'Importez vos propres images d’emojis et utilisez-les comme :shortcode: dans le sélecteur, dans Bard et dans vos templates.',
+        'cache_pro' => 'Affichez les emojis sous forme d’images Noto, Fluent ou OpenMoji, servies depuis votre propre domaine, dans le panneau de contrôle et sur votre site.',
     ],
 
     // Fields of the custom emoji asset blueprint (stored as translation keys, translated in the CP)

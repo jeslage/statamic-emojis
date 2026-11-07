@@ -13,6 +13,18 @@ class SettingsBlueprint
         // Translation keys, not texts: this blueprint is built while the addon boots, before Statamic
         // switches to the user's locale. The Control Panel translates them when rendering the page.
         $t = fn (string $key) => "statamic-emojis::messages.settings.{$key}";
+        $pro = app(EmojiSettings::class)->pro();
+
+        // Free edition: a hint in place of the Pro-only tabs' fields
+        $proHint = fn (string $handle, string $text) => [[
+            'fields' => [
+                ['handle' => $handle, 'field' => [
+                    'type' => 'section',
+                    'display' => $t('pro_title'),
+                    'instructions' => $t($text),
+                ]],
+            ],
+        ]];
 
         return [
             'tabs' => [
@@ -52,7 +64,7 @@ class SettingsBlueprint
                 ],
                 'custom' => [
                     'display' => $t('tab_custom'),
-                    'sections' => [
+                    'sections' => ! $pro ? $proHint('custom_pro', 'custom_pro') : [
                         [
                             'fields' => [
                                 ['handle' => 'custom_emojis', 'field' => EmojiFields::customEmojis(inherit: false)],
@@ -68,7 +80,7 @@ class SettingsBlueprint
                 ],
                 'cache' => [
                     'display' => $t('tab_cache'),
-                    'sections' => [
+                    'sections' => ! $pro ? $proHint('cache_pro', 'cache_pro') : [
                         [
                             'display' => $t('cache'),
                             'instructions' => $t('cache_instructions'),

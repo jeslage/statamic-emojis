@@ -4,6 +4,7 @@ namespace StatamicEmojis\Console\Commands;
 
 use StatamicEmojis\Emojibase;
 use StatamicEmojis\EmojiSets;
+use StatamicEmojis\EmojiSettings;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 
@@ -23,6 +24,20 @@ class ClearEmojiSet extends Command
 
     public function handle(EmojiSets $sets, Emojibase $emojibase): int
     {
+        // Image sets are part of Pro; the Emojibase data (--data) is cached in every edition
+        if (! app(EmojiSettings::class)->pro()) {
+            if (! $this->option('data') || $this->argument('set') !== null) {
+                $this->components->error('Image sets are part of Statamic Emojis Pro.');
+
+                return self::FAILURE;
+            }
+
+            $emojibase->clear();
+            $this->components->info('Cleared the cached Emojibase data.');
+
+            return self::SUCCESS;
+        }
+
         $imageSets = array_values(array_diff($sets->sets(), [EmojiSets::NATIVE]));
         $set = $this->argument('set');
 

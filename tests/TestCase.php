@@ -3,6 +3,7 @@
 namespace StatamicEmojis\Tests;
 
 use StatamicEmojis\ServiceProvider;
+use Statamic\Addons\Manifest;
 use Statamic\Facades\User;
 use Statamic\Testing\AddonTestCase;
 
@@ -16,6 +17,15 @@ abstract class TestCase extends AddonTestCase
 
         // Tests create several CP users; Statamic Pro is free for local development
         $app['config']->set('statamic.editions.pro', true);
+
+        // AddonTestCase's manifest leaves out the editions from composer.json ("free", then "pro")
+        $manifest = $app->make(Manifest::class);
+        $package = array_key_first($manifest->manifest);
+        $json = json_decode(file_get_contents(__DIR__.'/../composer.json'), true);
+        $manifest->manifest[$package]['editions'] = $json['extra']['statamic']['editions'] ?? [];
+
+        // Most tests cover image sets and custom emojis, which are part of the Pro edition
+        $app['config']->set("statamic.editions.addons.{$package}", 'pro');
     }
 
     protected function tearDown(): void

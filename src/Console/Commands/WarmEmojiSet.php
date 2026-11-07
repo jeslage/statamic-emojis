@@ -4,6 +4,7 @@ namespace StatamicEmojis\Console\Commands;
 
 use StatamicEmojis\Emojibase;
 use StatamicEmojis\EmojiSets;
+use StatamicEmojis\EmojiSettings;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 
@@ -21,6 +22,12 @@ class WarmEmojiSet extends Command
 
     public function handle(EmojiSets $sets, Emojibase $emojibase): int
     {
+        if (! app(EmojiSettings::class)->pro()) {
+            $this->components->error('Image sets are part of Statamic Emojis Pro.');
+
+            return self::FAILURE;
+        }
+
         $set = $this->argument('set') ?? $sets->default();
 
         if (! $sets->isImageSet($set)) {

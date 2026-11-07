@@ -3,6 +3,7 @@
 namespace StatamicEmojis\Console\Commands;
 
 use StatamicEmojis\CustomEmojis;
+use StatamicEmojis\EmojiSettings;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Facades\AssetContainer;
@@ -21,6 +22,12 @@ class SetupCustomEmojis extends Command
 
     public function handle(CustomEmojis $custom): int
     {
+        if (! app(EmojiSettings::class)->pro()) {
+            $this->components->error('Custom emojis are part of Statamic Emojis Pro.');
+
+            return self::FAILURE;
+        }
+
         $handle = $custom->containerHandle();
 
         if ($container = AssetContainer::find($handle)) {

@@ -18,6 +18,15 @@ class EmojiSettings
         return Addon::get(self::PACKAGE);
     }
 
+    /**
+     * Pro edition (config/statamic/editions.php: 'addons' => ['jeslage/statamic-emojis' => 'pro']).
+     * Pro adds image sets (Noto, Fluent, OpenMoji and custom sets) and custom emojis.
+     */
+    public function pro(): bool
+    {
+        return $this->addon()?->edition() === 'pro';
+    }
+
     public function get(string $key, $default = null)
     {
         // Only values saved on the Emojis page; unsaved ones fall back to the config (not the blueprint defaults)
@@ -32,9 +41,10 @@ class EmojiSettings
         return (string) $this->get('emoji_set', config('statamic-emojis.set', EmojiSets::NATIVE));
     }
 
+    /** Custom emojis are part of Pro. */
     public function customEmojis(): bool
     {
-        return $this->bool($this->get('custom_emojis'), (bool) config('statamic-emojis.custom.enabled', true));
+        return $this->pro() && $this->bool($this->get('custom_emojis'), (bool) config('statamic-emojis.custom.enabled', true));
     }
 
     public function recentEmojis(): bool
