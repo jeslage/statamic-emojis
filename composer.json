@@ -2,7 +2,7 @@
     "name": "jeslage/statamic-emojis",
     "description": "Emoji picker for Statamic: Emoji and Emoji Text fieldtypes, a Bard button, shortcode suggestions, custom emojis and Noto, Fluent or OpenMoji sets",
     "type": "statamic-addon",
-    "license": "MIT",
+    "license": "proprietary",
     "autoload": {
         "psr-4": {
             "StatamicEmojis\\": "src"
