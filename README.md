@@ -1,4 +1,4 @@
-# Statamic Emojis
+# 😀 Statamic Emojis
 
 A Statamic 6 addon that adds an emoji picker to the Control Panel: emoji fieldtypes, a Bard button,
 shortcode suggestions and custom emoji uploads. Emojis are **stored as Unicode** and can be shown as
