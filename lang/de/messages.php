@@ -47,7 +47,6 @@ return [
         'emoji_set_instructions' => 'Wie Emojis in der Auswahl und auf deiner Website aussehen. OpenMoji verlangt eine Namensnennung.',
         'section_picker' => 'Standards der Auswahl',
         'section_picker_instructions' => 'Felder können sie überschreiben.',
-        'categories_instructions' => 'Leer lassen für alle.',
         'suggestions' => 'Shortcode-Vorschläge',
         'suggestions_instructions' => 'Schlägt beim Tippen von :name Emojis vor, in Emoji-Text und Bard.',
         'recent_emojis' => 'Zuletzt verwendet',

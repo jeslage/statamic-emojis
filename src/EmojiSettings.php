@@ -48,10 +48,13 @@ class EmojiSettings
         return $this->bool($this->get('suggestions'), true);
     }
 
-    /** Default allowed categories, empty = all. */
+    /** Default allowed categories; empty = all (also when all are selected, so the picker has no category limit). */
     public function categories(): array
     {
-        return array_values(array_intersect((array) $this->get('categories', []), array_keys(Emojibase::CATEGORIES)));
+        $all = array_keys(Emojibase::CATEGORIES);
+        $categories = array_values(array_intersect($all, (array) $this->get('categories', [])));
+
+        return count($categories) === count($all) ? [] : $categories;
     }
 
     public function skinTone(): string

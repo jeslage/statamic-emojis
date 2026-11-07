@@ -47,7 +47,6 @@ return [
         'emoji_set_instructions' => 'Apparence des emojis dans le sélecteur et sur votre site. OpenMoji exige une attribution.',
         'section_picker' => 'Valeurs par défaut du sélecteur',
         'section_picker_instructions' => 'Les champs peuvent les remplacer.',
-        'categories_instructions' => 'Laisser vide pour toutes.',
         'suggestions' => 'Suggestions de codes courts',
         'suggestions_instructions' => 'Propose des emojis en tapant :nom dans Texte avec emoji et Bard.',
         'recent_emojis' => 'Utilisés récemment',

@@ -39,13 +39,16 @@ class EmojiFields
 
         return [
             'display' => $t('config.categories'),
-            'instructions' => $t($inherit ? 'config.categories_instructions' : 'settings.categories_instructions'),
             'type' => 'checkboxes',
             'inline' => true,
             'options' => collect(Emojibase::CATEGORIES)
                 ->keys()
                 ->mapWithKeys(fn ($key) => [$key => $t("categories.{$key}")])
                 ->all(),
+            // Fields: empty = site-wide setting. Settings page: all selected by default, at least one required.
+            ...($inherit
+                ? ['instructions' => $t('config.categories_instructions')]
+                : ['default' => array_keys(Emojibase::CATEGORIES), 'validate' => ['required']]),
         ];
     }
 

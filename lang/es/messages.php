@@ -47,7 +47,6 @@ return [
         'emoji_set_instructions' => 'Cómo se ven los emojis en el selector y en tu sitio. OpenMoji requiere atribución.',
         'section_picker' => 'Valores predeterminados del selector',
         'section_picker_instructions' => 'Los campos pueden sobrescribirlos.',
-        'categories_instructions' => 'Déjalo vacío para todas.',
         'suggestions' => 'Sugerencias de códigos cortos',
         'suggestions_instructions' => 'Sugiere emojis al escribir :nombre en Texto con emoji y Bard.',
         'recent_emojis' => 'Usados recientemente',

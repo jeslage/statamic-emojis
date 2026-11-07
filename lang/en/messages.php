@@ -47,7 +47,6 @@ return [
         'emoji_set_instructions' => 'How emojis look in the picker and on your site. OpenMoji requires attribution.',
         'section_picker' => 'Picker Defaults',
         'section_picker_instructions' => 'Fields can override these.',
-        'categories_instructions' => 'Leave empty for all.',
         'suggestions' => 'Shortcode Suggestions',
         'suggestions_instructions' => 'Suggest emojis while typing :name in Emoji Text and Bard.',
         'recent_emojis' => 'Recently Used',

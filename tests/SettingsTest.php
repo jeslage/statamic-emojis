@@ -2,6 +2,8 @@
 
 namespace StatamicEmojis\Tests;
 
+use StatamicEmojis\Emojibase;
+use StatamicEmojis\EmojiFields;
 use StatamicEmojis\EmojiSets;
 use StatamicEmojis\EmojiSettings;
 use StatamicEmojis\Fieldtypes\Emoji;
@@ -62,6 +64,20 @@ class SettingsTest extends TestCase
         $this->assertSame(['flags'], $this->settings()->categories());
         $this->assertSame('dark', $this->settings()->skinTone());
         $this->assertTrue($this->settings()->skinToneSelector());
+    }
+
+    public function test_all_categories_are_selected_by_default_and_mean_no_limit(): void
+    {
+        $field = EmojiFields::categories(inherit: false);
+
+        $this->assertSame(array_keys(Emojibase::CATEGORIES), $field['default']);
+        $this->assertSame(['required'], $field['validate']);
+
+        $this->save(['categories' => array_keys(Emojibase::CATEGORIES)]);
+        $this->assertSame([], $this->settings()->categories());
+
+        $this->save(['categories' => ['flags', 'objects']]);
+        $this->assertSame(['objects', 'flags'], $this->settings()->categories());
     }
 
     public function test_fields_show_the_site_wide_values_as_defaults(): void
