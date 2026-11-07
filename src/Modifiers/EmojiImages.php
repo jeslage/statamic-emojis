@@ -24,16 +24,12 @@ class EmojiImages extends Modifier
 
     public function index($value, $params)
     {
-        $set = $this->sets->resolve($params[0] ?? null);
+        $raw = $value instanceof Value ? $value->value() : $value;
 
-        if ($value instanceof Value) {
-            $value = $value->value();
-        }
-
-        if (! is_string($value) && ! (is_object($value) && method_exists($value, '__toString'))) {
+        if (! is_string($raw) && ! (is_object($raw) && method_exists($raw, '__toString'))) {
             return $value;
         }
 
-        return $this->sets->replace((string) $value, $set);
+        return $this->sets->html($raw, $params[0] ?? null);
     }
 }

@@ -200,6 +200,7 @@ replaced, attributes stay untouched):
 ```blade
 {!! Statamic::modify($page->emoji)->emoji_images() !!}
 {!! Statamic::modify($page->content)->emoji_images('noto') !!}
+<s:emojis :value="$page->content" />   {{-- the same with the emojis tag, see below --}}
 ```
 
 The Emoji field also gives you the emoji's name and image directly:
@@ -209,6 +210,31 @@ The Emoji field also gives you the emoji's name and image directly:
 {{ emoji:label }}    {{# party popper (Emojibase name in the site's language, or the custom emoji's name) #}}
 {{ emoji:url }}      {{# image in the site-wide set or custom emoji; empty for native #}}
 ```
+
+### The `emojis` tag
+
+The same in tag form, for any value or emoji, plus a loop over the custom emojis:
+
+```antlers
+{{ emojis :value="content" }}                   {{# emojis as images, site-wide set #}}
+{{ emojis value="Hi 🎉" set="noto" }}           {{# explicit set #}}
+{{ emojis:url value="🎉" }}                     {{# image URL (empty for native) #}}
+{{ emojis:label value="🎉" }}                   {{# party popper #}}
+
+{{ emojis:custom }}
+    <img src="{{ url }}" alt="{{ label }}"> {{ emoji }} {{# :party-parrot: #}}
+{{ /emojis:custom }}
+```
+
+In Blade, use Statamic's tag syntax:
+
+```blade
+<s:emojis :value="$page->content" />
+<s:emojis:custom>{{ $label }}: {{ $emoji }}</s:emojis:custom>
+```
+
+The loop provides `shortcode`, `emoji` (`:shortcode:`), `label`, `url` and `keywords`. The tag is named
+`emojis` so it doesn't clash with fields named `emoji`.
 
 Images get `class="emoji"`; size them with your CSS, e.g.
 `img.emoji { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }`.

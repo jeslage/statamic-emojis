@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Statamic\Fields\Value;
 
 /**
  * Emoji image sets besides the device's native emoji font: the built-in Noto, Fluent and OpenMoji,
@@ -319,6 +320,23 @@ class EmojiSets
                     : preg_replace_callback(self::EMOJI_PATTERN, fn ($m) => $this->img($set, $m[0]), $text))
                 ->implode('');
         })->implode('');
+    }
+
+    /**
+     * A value (emoji, text or HTML; also field values) with its emojis as images: the given set, else the
+     * site-wide set. Used by the emoji_images modifier and the emojis tag.
+     */
+    public function html(mixed $value, ?string $set = null): string
+    {
+        if ($value instanceof Value) {
+            $value = $value->value();
+        }
+
+        if (! is_string($value) && ! (is_object($value) && method_exists($value, '__toString'))) {
+            return '';
+        }
+
+        return $this->replace((string) $value, $this->resolve($set));
     }
 
     public function img(string $set, string $emoji): string

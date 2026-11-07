@@ -70,7 +70,7 @@ class EmojiSetsTest extends TestCase
         );
     }
 
-    public function test_resolve_uses_field_set_then_site_set(): void
+    public function test_resolve_uses_given_set_then_site_set(): void
     {
         config(['statamic-emojis.set' => 'noto']);
 
