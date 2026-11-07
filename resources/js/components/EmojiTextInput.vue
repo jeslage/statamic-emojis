@@ -6,8 +6,8 @@
 // offsets in that string, so callers can work with it like with an input's value and selectionStart.
 import { nextTick, onBeforeUnmount, onMounted, ref, useSlots, useTemplateRef, watch } from "vue";
 import { CharacterCounter, InputGroup, InputGroupAppend, InputGroupPrepend } from "@statamic/cms/ui";
-import { findCustom, useCustomEmojis } from "../custom-emojis.js";
-import { EMOJI_PATTERN, emojiImageUrl } from "../emojibase.js";
+import { useCustomEmojis } from "../custom-emojis.js";
+import { parseEmojiText } from "../emoji-text.js";
 
 defineOptions({ inheritAttrs: false });
 
@@ -30,7 +30,6 @@ const root = useTemplateRef("root");
 // Content of the "end" slot (e.g. the picker button) sits inside the input at its end
 const hasEnd = !!useSlots().end;
 const customEmojis = useCustomEmojis();
-const SHORTCODE = /:([a-z0-9_+-]+):/gi;
 
 // Values this input emitted itself. With a debounced field the model lags behind the typing,
 // and re-rendering an older emitted value would undo what was typed since.
@@ -41,48 +40,8 @@ let composing = false;
 // Emojis the set has no image for: shown as native characters
 const missing = new Set();
 
-/** Text with Unicode emojis split out as images of the set: [{ text } | { emoji, url }] */
-function parseUnicode(text) {
-    if (!emojiImageUrl("😀")) return [{ text }]; // native set
-
-    const parts = [];
-    let last = 0;
-    for (const match of text.matchAll(EMOJI_PATTERN)) {
-        if (missing.has(match[0])) continue;
-        if (match.index > last) parts.push({ text: text.slice(last, match.index) });
-        parts.push({ emoji: match[0], url: emojiImageUrl(match[0]) });
-        last = match.index + match[0].length;
-    }
-    if (last < text.length) parts.push({ text: text.slice(last) });
-
-    return parts;
-}
-
-/** The value as text, custom emoji and Unicode emoji parts: [{ text } | { shortcode, url, label } | { emoji, url }] */
 function parse(value) {
-    return parseCustom(value).flatMap((part) => ("text" in part ? parseUnicode(part.text) : [part]));
-}
-
-function parseCustom(value) {
-    const parts = [];
-    let last = 0;
-    let match;
-    SHORTCODE.lastIndex = 0;
-
-    while ((match = SHORTCODE.exec(value))) {
-        const custom = findCustom(match[1]);
-        if (!custom) {
-            // ":a:approved:": the closing colon may start the next shortcode
-            SHORTCODE.lastIndex = match.index + 1;
-            continue;
-        }
-        if (match.index > last) parts.push({ text: value.slice(last, match.index) });
-        parts.push({ shortcode: custom.shortcode, url: custom.url, label: custom.label });
-        last = match.index + match[0].length;
-    }
-    if (last < value.length) parts.push({ text: value.slice(last) });
-
-    return parts;
+    return parseEmojiText(value, { missing });
 }
 
 function isEmoji(node) {

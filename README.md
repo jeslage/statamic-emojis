@@ -46,6 +46,9 @@ npm run build                            # production build -> resources/dist
   prepend, …) except input type and autocomplete: it is always a text input, which shows custom
   emojis as images and has the picker button inside.
 
+As columns in entry listings (fields marked "listable"), both show their emojis like the field:
+custom emojis as their image, Unicode emojis in the site-wide set.
+
 ## Emojis page
 
 **Settings → Emojis** in the Control Panel (users with the "edit Statamic Emojis settings" permission;

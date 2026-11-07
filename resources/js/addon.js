@@ -1,5 +1,7 @@
 import EmojiFieldtype from "./components/fieldtypes/EmojiFieldtype.vue";
 import EmojiTextFieldtype from "./components/fieldtypes/EmojiTextFieldtype.vue";
+import EmojiIndexFieldtype from "./components/fieldtypes/EmojiIndexFieldtype.vue";
+import EmojiTextIndexFieldtype from "./components/fieldtypes/EmojiTextIndexFieldtype.vue";
 import CustomEmojiGridFieldtype from "./components/fieldtypes/CustomEmojiGridFieldtype.vue";
 import ImageCacheFieldtype from "./components/fieldtypes/ImageCacheFieldtype.vue";
 import EmojiToolbarButton from "./components/bard/EmojiToolbarButton.vue";
@@ -20,6 +22,10 @@ Statamic.booting(() => {
     // Fieldtypes: Statamic resolves a PHP handle to the Vue component "{handle}-fieldtype"
     Statamic.component("emoji-fieldtype", EmojiFieldtype);
     Statamic.component("emoji_text-fieldtype", EmojiTextFieldtype);
+
+    // Entry listing columns: emojis as they look in the fields (custom images, site-wide set)
+    Statamic.component("emoji-fieldtype-index", EmojiIndexFieldtype);
+    Statamic.component("emoji_text-fieldtype-index", EmojiTextIndexFieldtype);
 
     // Display-only fields of the Emojis page
     Statamic.component("statamic_emojis_custom_grid-fieldtype", CustomEmojiGridFieldtype);

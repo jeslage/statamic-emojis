@@ -63,3 +63,13 @@
     background-repeat: no-repeat;
     background-size: contain;
 }
+
+/* Emoji Text in entry listings: emojis as images, sized like the text */
+.emoji-index-image {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    margin: 0 0.05em;
+    vertical-align: -0.25em;
+    object-fit: contain;
+}
