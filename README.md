@@ -21,7 +21,7 @@ and on the front end.
 
 Features marked **(Pro)** need a license, see [Editions](#editions).
 
-The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.id) and uses
+The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.me) and uses
 [Emojibase](https://emojibase.dev) data, with category tabs, search, skin tones and recently used emojis.
 
 ## Table of contents
