@@ -28,7 +28,7 @@ export default defineConfig({
     },
 
     themeConfig: {
-        logo: { src: "/favicon.svg", alt: "" },
+        logo: { src: "/logo.png", alt: "" },
 
         nav: [
             { text: "Guide", link: "/guide/getting-started", activeMatch: "/guide/" },

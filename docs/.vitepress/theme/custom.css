@@ -1,0 +1,4 @@
+/* The Marketplace icon is a full square; round it like an app icon */
+.VPNavBarTitle .logo {
+    border-radius: 6px;
+}
