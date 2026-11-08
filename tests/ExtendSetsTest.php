@@ -104,6 +104,22 @@ class ExtendSetsTest extends TestCase
             ['u_1f9d1_200d_1f680.svg'],
             $this->sets()->candidates('named', '1f9d1-200d-1f680'),
         );
+
+        // Custom namings get the codepoints unpadded, as before
+        $this->assertSame(['u_31_20e3.svg'], $this->sets()->candidates('named', '31-fe0f-20e3'));
+    }
+
+    public function test_added_sets_with_a_built_in_naming_still_find_unpadded_files(): void
+    {
+        config(['statamic-emojis.sets' => ['twemoji' => ['url' => 'https://cdn.example.com/twemoji/svg']]]);
+        Http::fake([
+            'cdn.example.com/twemoji/svg/31-20e3.svg' => Http::response('<svg id="one"></svg>'),
+            '*' => Http::response('', 404),
+        ]);
+
+        $this->get('/!/statamic-emojis/sets/twemoji/31-fe0f-20e3.svg')
+            ->assertOk()
+            ->assertSee('<svg id="one"></svg>', false);
     }
 
     public function test_added_sets_are_served_like_built_in_ones(): void
