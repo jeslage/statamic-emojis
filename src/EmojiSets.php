@@ -139,12 +139,19 @@ class EmojiSets
         $naming = $this->definition($set)['naming'] ?? 'fluent';
         $custom = class_exists($naming) && is_subclass_of($naming, SetNaming::class) ? app($naming) : null;
 
-        return $variants->flatMap(fn ($p) => match (true) {
-            $custom !== null => $custom->files($p),
-            $naming === 'noto' => $this->isFlag($p)
+        if ($custom !== null) {
+            return $variants->flatMap(fn ($p) => $custom->files($p))->unique()->values()->all();
+        }
+
+        // The built-in sets pad codepoints to at least four digits (1️⃣ = 0031-fe0f-20e3). Sets added with the
+        // same naming may not (Twemoji: 31-20e3), so the unpadded names follow as a fallback.
+        $padded = $variants->map(fn ($p) => array_map(fn ($code) => str_pad($code, 4, '0', STR_PAD_LEFT), $p));
+
+        return $padded->concat($variants)->flatMap(fn ($p) => match ($naming) {
+            'noto' => $this->isFlag($p)
                 ? ['third_party/region-flags/waved-svg/emoji_u'.implode('_', $p).'.svg']
                 : ['2D/svg/emoji_u'.implode('_', $p).'.svg'],
-            $naming === 'openmoji' => [strtoupper(implode('-', $p)).'.svg'],
+            'openmoji' => [strtoupper(implode('-', $p)).'.svg'],
             default => [implode('-', $p).'.svg'],
         })->unique()->values()->all();
     }
@@ -299,8 +306,13 @@ class EmojiSets
         );
     }
 
+    // Country flags (two regional indicators) and subdivision flags (🏴 + tag characters)
     protected function isFlag(array $parts): bool
     {
+        if (($parts[0] ?? null) === '1f3f4' && count($parts) > 2 && end($parts) === 'e007f') {
+            return true;
+        }
+
         return count($parts) === 2
             && collect($parts)->every(fn ($p) => hexdec($p) >= 0x1F1E6 && hexdec($p) <= 0x1F1FF);
     }

@@ -54,7 +54,7 @@ class EmojiSetsTest extends TestCase
             'noto zwj' => ['noto', '1f3f3-fe0f-200d-1f308', '2D/svg/emoji_u1f3f3_200d_1f308.svg'],
             'noto flag' => ['noto', '1f1e9-1f1ea', 'third_party/region-flags/waved-svg/emoji_u1f1e9_1f1ea.svg'],
             'fluent heart' => ['fluent', '2764-fe0f', '2764-fe0f.svg'],
-            'fluent keycap' => ['fluent', '2a-fe0f-20e3', '2a-fe0f-20e3.svg'],
+            'fluent keycap' => ['fluent', '2a-fe0f-20e3', '002a-fe0f-20e3.svg'],
             'openmoji heart' => ['openmoji', '2764-fe0f', '2764.svg'],
             'openmoji smiling face' => ['openmoji', '263a-fe0f', '263A.svg'],
             'openmoji zwj keeps inner fe0f' => ['openmoji', '1f3f3-fe0f-200d-1f308', '1F3F3-FE0F-200D-1F308.svg'],
@@ -68,6 +68,42 @@ class EmojiSetsTest extends TestCase
             strtolower($expected),
             array_map('strtolower', $this->sets()->candidates($set, $codes)),
         );
+    }
+
+    public static function exactCandidates(): array
+    {
+        return [
+            'fluent keycap' => ['fluent', '31-fe0f-20e3', [
+                '0031-fe0f-20e3.svg', '0031-20e3.svg', '31-fe0f-20e3.svg', '31-20e3.svg',
+            ]],
+            'openmoji keycap' => ['openmoji', '31-fe0f-20e3', [
+                '0031-FE0F-20E3.svg', '0031-20E3.svg', '31-FE0F-20E3.svg', '31-20E3.svg',
+            ]],
+            'noto subdivision flag' => ['noto', '1f3f4-e0067-e0062-e0073-e0063-e0074-e007f', [
+                'third_party/region-flags/waved-svg/emoji_u1f3f4_e0067_e0062_e0073_e0063_e0074_e007f.svg',
+            ]],
+            'noto zwj (unchanged)' => ['noto', '1f3f3-fe0f-200d-1f308', [
+                '2D/svg/emoji_u1f3f3_fe0f_200d_1f308.svg',
+                '2D/svg/emoji_u1f3f3_200d_1f308.svg',
+            ]],
+        ];
+    }
+
+    #[DataProvider('exactCandidates')]
+    public function test_candidates_pad_codepoints_then_fall_back_to_unpadded(string $set, string $codes, array $expected): void
+    {
+        $this->assertSame($expected, $this->sets()->candidates($set, $codes));
+    }
+
+    public function test_keycaps_are_fetched_with_padded_codepoints(): void
+    {
+        Http::fake([
+            'cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/0031-FE0F-20E3.svg' => Http::response('<svg id="one"></svg>'),
+            '*' => Http::response('', 404),
+        ]);
+
+        $this->assertSame('<svg id="one"></svg>', $this->sets()->svg('openmoji', '31-fe0f-20e3'));
+        $this->assertFileExists($this->cachePath().'/openmoji/31-fe0f-20e3.svg');
     }
 
     public function test_resolve_uses_given_set_then_site_set(): void
