@@ -9,3 +9,6 @@ composer.lock
 .idea
 .vscode
 /tests/__fixtures__
+/docs/node_modules
+/docs/.vitepress/cache
+/docs/.vitepress/dist

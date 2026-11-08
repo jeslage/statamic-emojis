@@ -5,6 +5,8 @@ shortcode suggestions and, with **Pro**, custom emoji uploads. Emojis are **stor
 shown as native characters or, with **Pro**, as **Noto, Fluent or OpenMoji images**, in the Control Panel
 and on the front end.
 
+**📖 Documentation: [jeslage.github.io/statamic-emojis](https://jeslage.github.io/statamic-emojis/)**
+
 ![Two Control Panel screenshots: an entry with the emoji picker open on an Emoji Text field, and shortcode suggestions for ":sunrise" in a Bard field](.github/demo.png)
 
 ## Features
@@ -26,6 +28,7 @@ The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.id) and 
 
 ## Table of contents
 
+- **Docs site:** [jeslage.github.io/statamic-emojis](https://jeslage.github.io/statamic-emojis/)
 - **Getting started:** [Installation](#installation)
 - **Usage:** [Fieldtypes](#fieldtypes) · [Settings](#settings) · [Emoji sets](#emoji-sets) · [Templates](#templates) ·
   [Custom emojis](#custom-emojis) · [Shortcode suggestions](#shortcode-suggestions) ·
