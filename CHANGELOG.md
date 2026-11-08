@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/jeslage/statamic-emojis/compare/1.0.0...1.0.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* zero-pad codepoints and find Noto subdivision flags. Existing installs remember these emojis as misses for up to a day; run `php please emojis:clear` to refetch them right away ([d24b03e](https://github.com/jeslage/statamic-emojis/commit/d24b03e46adeb8facdb6d0caf8df5e33a9addd59))
+
 ## 1.0.0 (2026-11-07)
 
 
