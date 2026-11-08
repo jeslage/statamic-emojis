@@ -46,7 +46,7 @@ export default defineConfig({
         sidebar: [
             {
                 text: "Getting started",
-                items: [{ text: "Editions & installation", link: "/guide/getting-started" }],
+                items: [{ text: "Installation", link: "/guide/getting-started" }],
             },
             {
                 text: "Usage",
@@ -74,6 +74,7 @@ export default defineConfig({
                 items: [
                     { text: "Notes", link: "/more/notes" },
                     { text: "Roadmap", link: "/more/roadmap" },
+                    { text: "Editions", link: "/more/editions" },
                     { text: "Contributing", link: "/more/contributing" },
                     { text: "License & credits", link: "/more/credits" },
                 ],
