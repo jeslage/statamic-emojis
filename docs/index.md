@@ -5,9 +5,6 @@ hero:
     name: Statamic Emojis
     text: An emoji picker for the Control Panel
     tagline: Emoji fieldtypes, a Bard button, shortcode suggestions and, with Pro, emoji sets and custom emoji uploads. Stored as Unicode, rendered however you like.
-    image:
-        src: /favicon.svg
-        alt: 😄
     actions:
         - theme: brand
           text: Get started

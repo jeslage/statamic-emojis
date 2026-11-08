@@ -1,4 +1,53 @@
+/*
+ * Theme colors from the Marketplace icon: cornflower blue (#6495ed) and emoji yellow (#fcea2b).
+ * Text-level brand colors are darker/lighter shades so links stay readable.
+ */
+:root {
+    --sme-blue: #6495ed;
+    --sme-yellow: #fcea2b;
+
+    --vp-c-brand-1: #2f5fc4;
+    --vp-c-brand-2: #3d6fd6;
+    --vp-c-brand-3: #4a7ae0;
+    --vp-c-brand-soft: rgb(100 149 237 / 0.16);
+
+    --vp-home-hero-name-color: transparent;
+    --vp-home-hero-name-background: linear-gradient(120deg, #3d6fd6 20%, #e6a400 90%);
+
+    --vp-custom-block-tip-border: transparent;
+    --vp-custom-block-tip-text: var(--vp-c-text-1);
+    --vp-custom-block-tip-bg: rgb(252 234 43 / 0.22);
+    --vp-custom-block-tip-code-bg: rgb(252 234 43 / 0.3);
+}
+
+.dark {
+    --vp-c-brand-1: #9dbcf6;
+    --vp-c-brand-2: #7fa6f1;
+    --vp-c-brand-3: #4f7fdc;
+    --vp-c-brand-soft: rgb(100 149 237 / 0.2);
+
+    --vp-home-hero-name-background: linear-gradient(120deg, #8fb2f4 20%, #fcea2b 90%);
+
+    --vp-custom-block-tip-bg: rgb(252 234 43 / 0.1);
+    --vp-custom-block-tip-code-bg: rgb(252 234 43 / 0.16);
+}
+
 /* The Marketplace icon is a full square; round it like an app icon */
 .VPNavBarTitle .logo {
     border-radius: 6px;
+}
+
+/* Feature cards: a little lift on hover */
+.VPFeature.link {
+    transition:
+        border-color 0.25s,
+        transform 0.25s;
+}
+.VPFeature.link:hover {
+    transform: translateY(-2px);
+}
+
+/* Keep the hero glow and floating emojis from widening the page on small screens */
+.VPHero {
+    overflow-x: clip;
 }
