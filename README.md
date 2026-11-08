@@ -19,39 +19,20 @@ and on the front end.
 - 🔌 **REST & GraphQL**: emoji values with name and image URL
 - 🌍 **Translated**: picker in `en`, `de`, `es` and `fr`, emoji names in the editor's language
 
+Features marked **(Pro)** need a license, see [Editions](#editions).
+
 The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.id) and uses
 [Emojibase](https://emojibase.dev) data, with category tabs, search, skin tones and recently used emojis.
 
 ## Table of contents
 
-- **Getting started:** [Editions](#editions) · [Installation](#installation)
+- **Getting started:** [Installation](#installation)
 - **Usage:** [Fieldtypes](#fieldtypes) · [Settings](#settings) · [Emoji sets](#emoji-sets) · [Templates](#templates) ·
   [Custom emojis](#custom-emojis) · [Shortcode suggestions](#shortcode-suggestions) ·
   [API (REST & GraphQL)](#api-rest--graphql) · [Emoji data](#emoji-data) · [Translations](#translations)
 - **More:** [Notes](#notes) · [Roadmap](#roadmap)
 - **Development:** [Local development](#local-development) · [Tests](#tests) · [Releasing](#releasing)
-- **About:** [License](#license) · [Credits](#credits)
-
-## Editions
-
-| Feature                                                     | Free | Pro |
-| ----------------------------------------------------------- | :--: | :-: |
-| Emoji and Emoji Text fieldtypes, Bard button                |  ✅   |  ✅  |
-| Shortcode suggestions, recently used, skin tones            |  ✅   |  ✅  |
-| `emojis` modifier and tag, REST & GraphQL                   |  ✅   |  ✅  |
-| Native emojis                                               |  ✅   |  ✅  |
-| [Emoji sets](#emoji-sets): Noto, Fluent, OpenMoji, your own |  –   |  ✅  |
-| [Custom emojis](#custom-emojis)                             |  –   |  ✅  |
-
-The free edition is the default. **Pro needs a license from the
-[Statamic Marketplace](https://statamic.com/addons)** for each site in production; enable it in
-`config/statamic/editions.php`:
-
-```php
-'addons' => [
-    'jeslage/statamic-emojis' => 'pro',
-],
-```
+- **About:** [Editions](#editions) · [License](#license) · [Credits](#credits)
 
 ## Installation
 
@@ -307,6 +288,27 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org).
 [release-please](https://github.com/googleapis/release-please) keeps a release PR with changelog and
 version up to date; merging it creates the tag and release, and the workflow attaches `dist.tar.gz`.
 The repository needs **"Allow GitHub Actions to create and approve pull requests"**.
+
+## Editions
+
+| Feature                                                     | Free | Pro |
+| ----------------------------------------------------------- | :--: | :-: |
+| Emoji and Emoji Text fieldtypes, Bard button                |  ✅   |  ✅  |
+| Shortcode suggestions, recently used, skin tones            |  ✅   |  ✅  |
+| `emojis` modifier and tag, REST & GraphQL                   |  ✅   |  ✅  |
+| Native emojis                                               |  ✅   |  ✅  |
+| [Emoji sets](#emoji-sets): Noto, Fluent, OpenMoji, your own |  –   |  ✅  |
+| [Custom emojis](#custom-emojis)                             |  –   |  ✅  |
+
+The free edition is the default. **Pro needs a license from the
+[Statamic Marketplace](https://statamic.com/addons)** for each site in production; enable it in
+`config/statamic/editions.php`:
+
+```php
+'addons' => [
+    'jeslage/statamic-emojis' => 'pro',
+],
+```
 
 ## License
 
