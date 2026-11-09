@@ -4,6 +4,8 @@ namespace StatamicEmojis;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use RuntimeException;
+use Throwable;
 
 class Emojibase
 {
@@ -12,6 +14,9 @@ class Emojibase
         'bn', 'da', 'de', 'en-gb', 'en', 'es-mx', 'es', 'et', 'fi', 'fr', 'hi', 'hu', 'it', 'ja',
         'ko', 'lt', 'ms', 'nb', 'nl', 'pl', 'pt', 'ru', 'sv', 'th', 'uk', 'vi', 'zh-hant', 'zh',
     ];
+
+    // Seconds a failed fetch is remembered before it is tried again.
+    public const FAILURE_TTL = 60;
 
     public const SKIN_TONES = ['none', 'light', 'medium-light', 'medium', 'medium-dark', 'dark'];
 
@@ -106,11 +111,17 @@ class Emojibase
     {
         foreach (self::LOCALES as $locale) {
             foreach (['data.json', 'messages.json'] as $file) {
-                Cache::forget($this->cacheKey($locale, $file));
+                $this->forget($this->cacheKey($locale, $file));
             }
         }
 
-        Cache::forget($this->cacheKey('en', self::SHORTCODES));
+        $this->forget($this->cacheKey('en', self::SHORTCODES));
+    }
+
+    protected function forget(string $key): void
+    {
+        Cache::forget($key);
+        Cache::forget("{$key}:failed");
     }
 
     protected function cacheKey(string $locale, string $file): string
@@ -126,11 +137,33 @@ class Emojibase
     protected function fetch(string $locale, string $file): array
     {
         $url = $this->url($locale, $file);
+        $key = $this->cacheKey($locale, $file);
 
-        return Cache::remember(
-            $this->cacheKey($locale, $file),
-            config('statamic-emojis.emojibase.cache_ttl'),
-            fn () => Http::timeout(15)->get($url)->throw()->json()
-        );
+        if (($data = Cache::get($key)) !== null) {
+            return $data;
+        }
+
+        // Remember a failed fetch briefly, so pages don't each wait for the timeout while the CDN is down.
+        if (Cache::has("{$key}:failed")) {
+            throw new RuntimeException("Fetching {$url} failed recently, retrying later.");
+        }
+
+        try {
+            $data = Http::timeout(15)->get($url)->throw()->json();
+        } catch (Throwable $e) {
+            Cache::put("{$key}:failed", true, self::FAILURE_TTL);
+
+            throw $e;
+        }
+
+        if (! is_array($data)) {
+            Cache::put("{$key}:failed", true, self::FAILURE_TTL);
+
+            throw new RuntimeException("{$url} did not return JSON.");
+        }
+
+        Cache::put($key, $data, config('statamic-emojis.emojibase.cache_ttl'));
+
+        return $data;
     }
 }
