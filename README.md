@@ -30,7 +30,7 @@ The picker is built on [vue-frimousse](https://vue-frimousse.robertshaw.me) and 
 - **Usage:** [Fieldtypes](#fieldtypes) · [Settings](#settings) · [Emoji sets](#emoji-sets) · [Templates](#templates) ·
   [Custom emojis](#custom-emojis) · [Shortcode suggestions](#shortcode-suggestions) ·
   [API (REST & GraphQL)](#api-rest--graphql) · [Emoji data](#emoji-data) · [Translations](#translations)
-- **More:** [Notes](#notes) · [Roadmap](#roadmap)
+- **More:** [Notes](#notes) · [Support](#support) · [Roadmap](#roadmap)
 - **Development:** [Local development](#local-development) · [Tests](#tests) · [Releasing](#releasing)
 - **About:** [Editions](#editions) · [License](#license) · [Credits](#credits)
 
@@ -242,6 +242,11 @@ STATAMIC_EMOJIS_CACHE_TTL=604800
 
 - The picker hides emojis the editor's device can't render (e.g. flags in Chrome on Windows).
 - Values are plain Unicode. If you copy them into your own MySQL columns, **use `utf8mb4`**.
+
+## Support
+
+Questions and bug reports go to [GitHub issues](https://github.com/jeslage/statamic-emojis/issues), for
+the free and the **Pro** edition.
 
 ## Roadmap
 
