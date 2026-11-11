@@ -3,6 +3,7 @@
 namespace StatamicEmojis\Tests;
 
 use StatamicEmojis\ServiceProvider;
+use Illuminate\Support\Facades\Http;
 use Statamic\Addons\Manifest;
 use Statamic\Facades\User;
 use Statamic\Testing\AddonTestCase;
@@ -25,6 +26,23 @@ abstract class TestCase extends AddonTestCase
         $manifest->manifest[$package]['editions'] = $json['extra']['statamic']['editions'] ?? [];
 
         $app['config']->set("statamic.editions.addons.{$package}", 'pro');
+    }
+
+    // Http::fake stub for the Emojibase data the image route checks codes against; put it before catch-alls.
+    protected function emojibaseStub(?array $emojis = null): array
+    {
+        return ['*/en/data.json' => Http::response($emojis ?? [
+            ['emoji' => '😀', 'label' => 'grinning face'],
+            ['emoji' => '❤️', 'label' => 'red heart'],
+            ['emoji' => '1️⃣', 'label' => 'keycap: 1'],
+            ['emoji' => '👍', 'label' => 'thumbs up', 'skins' => [['emoji' => '👍🏽', 'label' => 'thumbs up: medium skin tone']]],
+        ])];
+    }
+
+    // Requests sent to a set's CDN, leaving out the Emojibase data.
+    protected function cdnRequests(): int
+    {
+        return collect(Http::recorded())->reject(fn ($pair) => str_ends_with($pair[0]->url(), '/data.json'))->count();
     }
 
     protected function tearDown(): void

@@ -116,6 +116,8 @@ class Emojibase
         }
 
         $this->forget($this->cacheKey('en', self::SHORTCODES));
+
+        Cache::forget(EmojiSets::CODES_KEY);
     }
 
     protected function forget(string $key): void

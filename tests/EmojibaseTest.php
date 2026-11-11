@@ -3,8 +3,10 @@
 namespace StatamicEmojis\Tests;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use StatamicEmojis\Emojibase;
+use StatamicEmojis\EmojiSets;
 
 class EmojibaseTest extends TestCase
 {
@@ -66,5 +68,14 @@ class EmojibaseTest extends TestCase
         $emojibase->clear();
 
         $this->assertSame('party popper', $emojibase->labels('en')['🎉']);
+    }
+
+    public function test_clearing_forgets_the_image_code_index(): void
+    {
+        Cache::put(EmojiSets::CODES_KEY, ['1f600' => '1f600']);
+
+        app(Emojibase::class)->clear();
+
+        $this->assertFalse(Cache::has(EmojiSets::CODES_KEY));
     }
 }

@@ -43,7 +43,14 @@ class EmojiSets
 
     public const NAME_PATTERN = '/^[a-z]+$/';
 
+    public const CODES_KEY = 'statamic-emojis:sets:codes';
+
+    // Uncached images the image route fetches per visitor and minute.
+    public const FETCH_LIMIT = 60;
+
     protected static array $extended = [];
+
+    protected ?array $codeIndex = null;
 
     public static function extend(string $name, array $definition): void
     {
@@ -326,6 +333,34 @@ class EmojiSets
             ->unique()
             ->values()
             ->all();
+    }
+
+    // The Emojibase form of a requested code, or null for codes Emojibase doesn't know. FE0F and leading zeros
+    // are ignored, so every spelling of an emoji maps to one code (and one cached file).
+    public function canonical(string $codes): ?string
+    {
+        try {
+            $this->codeIndex ??= Cache::remember(
+                self::CODES_KEY,
+                config('statamic-emojis.emojibase.cache_ttl'),
+                fn () => collect($this->allCodes(app(Emojibase::class)))
+                    ->mapWithKeys(fn ($code) => [$this->stripped($code) => $code])
+                    ->all(),
+            );
+        } catch (\Throwable) {
+            // Without Emojibase data nothing can be checked, so nothing is fetched.
+            return null;
+        }
+
+        return $this->codeIndex[$this->stripped($codes)] ?? null;
+    }
+
+    protected function stripped(string $codes): string
+    {
+        return collect(explode('-', strtolower($codes)))
+            ->reject(fn ($code) => $code === self::VARIATION_SELECTOR)
+            ->map(fn ($code) => ltrim($code, '0') ?: '0')
+            ->implode('-');
     }
 
     public function cacheStatus(): array

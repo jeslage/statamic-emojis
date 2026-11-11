@@ -113,6 +113,7 @@ class ExtendSetsTest extends TestCase
     {
         config(['statamic-emojis.sets' => ['twemoji' => ['url' => 'https://cdn.example.com/twemoji/svg']]]);
         Http::fake([
+            ...$this->emojibaseStub(),
             'cdn.example.com/twemoji/svg/31-20e3.svg' => Http::response('<svg id="one"></svg>'),
             '*' => Http::response('', 404),
         ]);
@@ -126,6 +127,7 @@ class ExtendSetsTest extends TestCase
     {
         config(['statamic-emojis.sets' => ['twemoji' => ['url' => 'https://cdn.example.com/twemoji/svg']]]);
         Http::fake([
+            ...$this->emojibaseStub(),
             'cdn.example.com/twemoji/svg/2764.svg' => Http::response('<svg id="heart"></svg>'),
             '*' => Http::response('', 404),
         ]);
