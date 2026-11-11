@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/jeslage/statamic-emojis/compare/1.0.1...1.0.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* only serve emoji images for known codes, stored once ([e82f134](https://github.com/jeslage/statamic-emojis/commit/e82f134b08413000de92e9895b628a7b2be6a395))
+* remember failed Emojibase fetches, add third-party notices and support info ([4bfa19a](https://github.com/jeslage/statamic-emojis/commit/4bfa19a773181e516089923449cfb02c4c7f8318))
+
 ## [1.0.1](https://github.com/jeslage/statamic-emojis/compare/1.0.0...1.0.1) (2026-11-08)
 
 
