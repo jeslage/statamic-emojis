@@ -100,7 +100,8 @@ Apple's emojis are proprietary; Apple users see them with `native`.
 
 Image sets are SVGs the server fetches once, caches in `storage/statamic-emojis/sets` and serves from
 `/!/statamic-emojis/sets/{set}/{codepoints}.svg`, so **browsers never contact a CDN**. Missing emojis fall
-back to the native character.
+back to the native character. The route only fetches emojis listed in the Emojibase data and limits uncached
+fetches per logged-out visitor. To turn sets off entirely, use `disabled_sets`.
 
 ```bash
 php please emojis:warm noto      # fill the cache in advance, e.g. after deploying

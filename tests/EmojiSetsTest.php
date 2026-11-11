@@ -3,10 +3,13 @@
 namespace StatamicEmojis\Tests;
 
 use StatamicEmojis\EmojiSets;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Statamic\Facades\User;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Modifiers\Modify;
@@ -157,6 +160,7 @@ class EmojiSetsTest extends TestCase
     public function test_image_route_fetches_caches_and_serves_svgs(): void
     {
         Http::fake([
+            ...$this->emojibaseStub(),
             '*/openmoji@*/color/svg/2764.svg' => Http::response('<svg id="heart"></svg>'),
             '*' => Http::response('', 404),
         ]);
@@ -170,14 +174,14 @@ class EmojiSetsTest extends TestCase
         $this->assertStringContainsString("default-src 'none'", $response->headers->get('Content-Security-Policy'));
         $this->assertFileExists($this->cachePath().'/openmoji/2764-fe0f.svg');
 
-        Http::assertSentCount(2);
+        $this->assertSame(2, $this->cdnRequests());
         $this->get('/!/statamic-emojis/sets/openmoji/2764-fe0f.svg')->assertOk();
-        Http::assertSentCount(2);
+        $this->assertSame(2, $this->cdnRequests());
     }
 
     public function test_image_route_falls_back_to_the_native_character(): void
     {
-        Http::fake(['*' => Http::response('', 404)]);
+        Http::fake([...$this->emojibaseStub(), '*' => Http::response('', 404)]);
 
         $response = $this->get('/!/statamic-emojis/sets/fluent/1f600.svg');
 
@@ -189,7 +193,7 @@ class EmojiSetsTest extends TestCase
     public function test_network_errors_fall_back_briefly_and_are_retried(): void
     {
         $calls = 0;
-        Http::fake(['*' => function () use (&$calls) {
+        Http::fake([...$this->emojibaseStub(), '*/noto-emoji@*' => function () use (&$calls) {
             if ($calls++ === 0) {
                 throw new \Illuminate\Http\Client\ConnectionException('down');
             }
@@ -203,6 +207,98 @@ class EmojiSetsTest extends TestCase
         $this->assertStringContainsString('max-age=3600', $response->headers->get('Cache-Control'));
 
         $this->assertSame('<svg id="grin"></svg>', $this->get('/!/statamic-emojis/sets/noto/1f600.svg')->getContent());
+    }
+
+    public function test_image_route_stores_variants_once_under_the_canonical_code(): void
+    {
+        Http::fake([
+            ...$this->emojibaseStub(),
+            '*/1f600.svg' => Http::response('<svg id="grin"></svg>'),
+            '*' => Http::response('', 404),
+        ]);
+
+        foreach (['1f600', 'fe0f-1f600', '1f600-fe0f-fe0f', '01f600'] as $codes) {
+            $this->assertSame(
+                '<svg id="grin"></svg>',
+                $this->get("/!/statamic-emojis/sets/fluent/{$codes}.svg")->getContent(),
+            );
+        }
+
+        $this->assertSame(1, $this->cdnRequests());
+        $this->assertSame(['1f600.svg'], array_map(
+            fn ($file) => $file->getFilename(),
+            File::files($this->cachePath().'/fluent'),
+        ));
+    }
+
+    public function test_image_route_maps_unqualified_and_padded_codes_to_emojibase(): void
+    {
+        Http::fake([
+            ...$this->emojibaseStub(),
+            '*/2764.svg' => Http::response('<svg id="heart"></svg>'),
+            '*/0031-fe0f-20e3.svg' => Http::response('<svg id="one"></svg>'),
+            '*' => Http::response('', 404),
+        ]);
+
+        $this->get('/!/statamic-emojis/sets/fluent/2764.svg')->assertSee('<svg id="heart"></svg>', false);
+        $this->get('/!/statamic-emojis/sets/fluent/0031-20e3.svg')->assertSee('<svg id="one"></svg>', false);
+        $this->get('/!/statamic-emojis/sets/fluent/1f44d-1f3fd.svg')->assertSee('<text', false);
+
+        $this->assertTrue($this->sets()->isCached('fluent', '2764-fe0f'));
+        $this->assertTrue($this->sets()->isCached('fluent', '31-fe0f-20e3'));
+    }
+
+    public function test_image_route_does_not_fetch_or_store_unknown_codes(): void
+    {
+        Http::fake([...$this->emojibaseStub(), '*' => Http::response('<svg></svg>')]);
+
+        foreach (['1f600-1f600', 'abcde', 'fe0f'] as $codes) {
+            $response = $this->get("/!/statamic-emojis/sets/fluent/{$codes}.svg");
+            $response->assertOk();
+            $this->assertStringContainsString('<text', $response->getContent());
+            $this->assertStringContainsString('max-age=3600', $response->headers->get('Cache-Control'));
+            $this->assertFalse(Cache::has("statamic-emojis:sets:miss:fluent:0:{$codes}"));
+        }
+
+        $this->assertSame(0, $this->cdnRequests());
+        $this->assertDirectoryDoesNotExist($this->cachePath().'/fluent');
+    }
+
+    public function test_image_route_fetches_nothing_without_emojibase_data(): void
+    {
+        Http::fake(['*/en/data.json' => Http::response('', 503), '*' => Http::response('<svg></svg>')]);
+
+        $this->get('/!/statamic-emojis/sets/fluent/1f600.svg')->assertSee('<text', false);
+
+        $this->assertSame(0, $this->cdnRequests());
+    }
+
+    public function test_image_route_rate_limits_uncached_fetches(): void
+    {
+        Http::fake([...$this->emojibaseStub(), '*' => Http::response('<svg id="fetched"></svg>')]);
+        File::ensureDirectoryExists($this->cachePath().'/fluent');
+        File::put($this->cachePath().'/fluent/2764-fe0f.svg', '<svg id="cached"></svg>');
+
+        for ($i = 0; $i < EmojiSets::FETCH_LIMIT; $i++) {
+            RateLimiter::hit('statamic-emojis:sets:fetch:127.0.0.1');
+        }
+
+        $response = $this->get('/!/statamic-emojis/sets/fluent/1f600.svg');
+        $this->assertStringContainsString('<text', $response->getContent());
+        $this->assertStringContainsString('max-age=3600', $response->headers->get('Cache-Control'));
+        $this->assertSame(0, $this->cdnRequests());
+
+        $this->get('/!/statamic-emojis/sets/fluent/2764-fe0f.svg')->assertSee('<svg id="cached"></svg>', false);
+
+        $this->actingAs(User::make()->email('editor@example.com')->save());
+        $this->get('/!/statamic-emojis/sets/fluent/1f600.svg')->assertSee('<svg id="fetched"></svg>', false);
+        File::delete($this->cachePath().'/fluent/1f600.svg');
+        auth()->logout();
+
+        $this->get('/!/statamic-emojis/sets/fluent/1f600.svg')->assertSee('<text', false);
+
+        $this->travel(61)->seconds();
+        $this->get('/!/statamic-emojis/sets/fluent/1f600.svg')->assertSee('<svg id="fetched"></svg>', false);
     }
 
     public function test_warm_fetches_concurrently_and_reports_failures(): void
