@@ -279,6 +279,10 @@ npm run dev                               # HMR
 npm run build                             # production build -> resources/dist
 ```
 
+Releases ship the built Control Panel assets, which
+[`pixelfear/composer-dist-plugin`](https://github.com/pixelfear/composer-dist-plugin) downloads into
+`resources/dist`. **For a development branch, build them yourself** (`npm ci && npm run build`).
+
 ## Tests
 
 ```bash
